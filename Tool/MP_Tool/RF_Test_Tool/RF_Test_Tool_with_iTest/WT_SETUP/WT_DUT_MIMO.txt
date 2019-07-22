@@ -1,0 +1,244 @@
+/******************************************************************************
+//                      DUT Setup file
+//******************************************************************************
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Dut connection settings
+//
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+WT_DUT_CONN_TYPE			= COM  			//DUT connection type
+WT_DUT_CONN_PORT_1			= 27		//port number
+WT_DUT_CONN_PORT_2			= 0
+WT_DUT_CONN_PORT_3			= 0
+WT_DUT_CONN_PORT_4			= 0
+
+
+
+WT_COM_BAUD				= 115200			//baud rate
+WT_COM_RX_FRAM_GAP			= 100			//rx frame gap
+WT_COM_BYTE_INTER			= 10		//interval times
+WT_COM_RTS_ENABLE			= 0			//enable RTS or not
+								//0:disable
+								//1:enable
+
+WT_DUT_ACK_TOKEN			= 		//DUT ack symbol
+WT_DUT_BT_ACK_TOKEN			= 
+
+WT_DUT_COMMAND_END			= \r\n
+WT_OPEN_DUT_TIMEOUT			= 60			//open DUT times, sec
+WT_COMMUNICATE_TIMEOUT			= 10			// communication time between DUT and tester，sec
+
+WT_AUTO_TEST_WHEN_DUT_READY 		= 0   			// auto testing as DUT ready.
+								//0:manual(test start as clicking START)
+								//1:auto(auto testing as DUT ready)
+
+WT_DUT_LIB_NAME             		= DutLib_Netlink.dll
+
+WT_MAP_FILE				= RTL8822BEH-VQ-(HDK-PM822B10-iPAiLNA_Type12-NonSharedAnt-WL_Combo)-v19.map   
+
+WT_MPSTART_DELAY			= 500			//ms,0~10000，delay time before DUT go to testing
+
+WT_START_TEST_WHEN_POPUP_OK		= 0			//if enable WT_AUTO_TEST_WHEN_DUT_READY , needed to wait to DUT ready to start testing.
+  								// 0：needed DUT READY(default)
+								// 1：no needed DUT READY
+								
+WT_MULTI_CMD_ENABLE			= 0			//DUT transmit command type.
+										//0:send one command one times
+										//1:multi-commands to be send one times.
+
+	 
+
+WT_IS_NEED_LINKMES			= 0			//enable MES or not
+								//0：enable
+								//1: disable
+//WT_MES_LIB_NAME			= WT_MES.dll
+	
+
+	
+	
+WT_WRITE_EFUSE_REQUEST			= 1			//写eFuse时会提示用户确认
+								//1:提示
+								//0:不提示
+	
+
+WT_TX_VERIFY_FREQ_GAINVALUE_SOURCE	= 2		//the source of tx frequency index in verification (without calibration, it will work)
+									//1：from map file
+									//2：from DUT.
+
+WT_TX_VERIFY_PWR_GAINVALUE_SOURCE	= 2			//the source of tx power index in verification (without calibration, it will work)
+									//1：from map file
+									//2：from DUT.	
+
+WT_TX_VERIFY_THERMAL_VALUE_SOURCE	= 2			//the source of thermal index in verification (without calibration, it will work)
+									//1：from map file
+									//2：from DUT.	
+								
+WT_WRITE_ALL_EN				= 0			//flash all the content in map to DUT or not.
+									//0:wrie calibrated index but all-FF value
+									//1：write whole map, including "FFFFFFFF" value.
+
+WT_CHECK_EFUSE_EN			= 1				//pop check window before writing EFUSE.
+
+
+
+WT_BT_PORT			= 1
+
+
+//------------------------------------------------------------------------------
+// execute init command before . Example: [init command] [ack] [timeout]
+WT_DUT_INIT_START
+//[at+mode=3] [NL1000] [2000]
+
+WT_DUT_INIT_END
+//------------------------------------------------------------------------------
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Dut Attribute setting
+//
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WT_DUT_BAND_2G				= 1			//DUT support 2.4G, 0: no, 1: yes
+WT_DUT_BAND_5G				= 0			//DUT support 5G, 0: no, 1: yes
+WT_DUT_HAS_11AC				= 0			//DUT support 11AC, 0: no, 1: yes
+	
+WT_DUT_ANT_2G				= 2			//DUT 2.4G antenna number
+WT_DUT_ANT_5G				= 2			//DUT 5G antenna number.
+
+WT_DUT_IF_2G				= 			//DUT 2G network name.
+WT_DUT_IF_5G				= 			//DUT 5G network name.
+
+WT_DUT_OPRATE_HEAD			= at+
+
+
+WT_DUT_FLASH_OFFSET_2_4G 		= 1			//DUT HT20,OFDM,AC80 the flashing type in EFUSE
+WT_DUT_FLASH_OFFSET_5G 	 		= 1			//DUT HT20,OFDM,AC80 the flashing type in EFUSE
+								// 0：by antenna,antenna 1 in HIGH-bit, antenna 2 in LOW-bit
+								// 1: by DEMODE ，HT20 in HIGH-bit, OFDM in LOW-bit.
+     
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Calibration settings
+//
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//range of DUT frequency index		MIN	MAX
+WT_DUT_FREQ_REG_RANGE		0	63
+WT_DUT_FREQ_REG_RANGE_5G	0	63
+
+//range of DUT power index		MIN	MAX
+WT_DUT_POWER_REG_RANGE		0	63
+WT_DUT_POWER_REG_RANGE_5G   0   63
+
+//------------------------------------------------------------------------------
+// fequency calibration parameter setting
+//------------------------------------------------------------------------------
+WT_FREQ_CAL_DEFAULT_REG		= 25		// default frequency index.
+WT_FREQ_CAL_DEFAULT_REG_5G		= 43   //5G default frequency index
+					
+// default power index.
+//                            Channel [1-2] [3-5] [6-8] [9-11] [12-13] [14]
+WT_POW_CAL_DEFAULT_REG_11B_CH0     	28    50    28     28      50   50
+WT_POW_CAL_DEFAULT_REG_11B_CH1     	32    50    32     31      50   50
+
+//                            Channel [1-2] [3-5] [6-8] [9-11] [12-14]
+WT_POW_CAL_DEFAULT_REG_2_4G_HT40_CH0    50    33    33     33      50
+WT_POW_CAL_DEFAULT_REG_2_4G_HT40_CH1    50    39    38     38      50
+
+//					[36-42]		[44-48]		[52-58]		[60-64]	
+WT_POW_CAL_DEFAULT_REG_5GL_HT40_CH0    	 41    		 43      	 42		 41
+WT_POW_CAL_DEFAULT_REG_5GL_HT40_CH1    	 37    		 42       	 42		 43
+
+//					[100-106] 	[108-112] 	[116-122]	[124-128] 	[132-138] 	[140-144]
+WT_POW_CAL_DEFAULT_REG_5GM_HT40_CH0    	 40    	   	 38        	 40		 41    	   	 42          	 43 
+WT_POW_CAL_DEFAULT_REG_5GM_HT40_CH1    	 45    	   	 46        	 48		 49    	   	 51         	 52 
+
+//					[149-155] 	[157-161] 	[165-171]	[173-177]
+WT_POW_CAL_DEFAULT_REG_5GH_HT40_CH0    	 41    	   	 41        	 40 		 42
+WT_POW_CAL_DEFAULT_REG_5GH_HT40_CH1    	 51    	   	 50        	 51		 51
+
+
+//the power index offset of HT40 for each DEMODE. It will work while the DEMODE do no calibrate.
+//                            		Channel [1-2] 	[3-5] 	[6-8] 	[9-11] 	[12-13] [14]
+WT_POW_CAL_DEFAULT_REG_OFFSET_11B_CH0		 0	 0	0	0	0	0
+WT_POW_CAL_DEFAULT_REG_OFFSET_11B_CH1		 0	 0	0	0	0	0
+
+//                            		Channel [1-14]
+WT_POW_CAL_DEFAULT_REG_OFFSET_2_4G_OFDM_CH0	  0
+WT_POW_CAL_DEFAULT_REG_OFFSET_2_4G_OFDM_CH1	  0
+
+//                            		Channel [1-14]
+WT_POW_CAL_DEFAULT_REG_OFFSET_2_4G_HT20_CH0	  0
+WT_POW_CAL_DEFAULT_REG_OFFSET_2_4G_HT20_CH1	  0
+
+//				 Channel        [36-177]
+WT_POW_CAL_DEFAULT_REG_OFFSET_5G_OFDM_CH0	  0	
+WT_POW_CAL_DEFAULT_REG_OFFSET_5G_OFDM_CH1	  0	
+
+WT_POW_CAL_DEFAULT_REG_OFFSET_5G_HT20_CH0	  0	
+WT_POW_CAL_DEFAULT_REG_OFFSET_5G_HT20_CH1	  0	
+
+WT_POW_CAL_DEFAULT_REG_OFFSET_5G_AC80_CH0	  0	
+WT_POW_CAL_DEFAULT_REG_OFFSET_5G_AC80_CH1	  0
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Other settings
+//
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//------------------------------------------------------------------------------
+// Log生成
+//------------------------------------------------------------------------------
+WT_MAC_LOG_ENABLE		= 1		// enable Mac Log
+						// 1:enable
+						// 0:disable
+						
+WT_TOTAL_LOG_ENABLE		= 1		// enable Total Log
+						// 1:enable
+						// 0:disable
+                                                
+WT_CSV_LOG_ENABLE		= 0		/// enable CSV Log
+						// 1:enable
+						// 0:disable
+						
+WT_CSV_LOG_LIB_NAME		= WT_CSV_LOG.dll
+
+WT_PASS_LOG_NAME_FORMAT		= 1		//LOG name format when test result is PASS
+							//0: DATE_TIME + PASS
+							//1: MAC + DATE_TIME + PASS(default)
+							//2: SN + DATE_TIME + PASS
+
+WT_FAIL_LOG_NAME_FORMAT		= 0		//Log name format when test result is FAIL
+							//0: DATE_TIME + FAIL(default)
+							//1: @@@@@@@@@@@@ + DATE_TIME + FAIL	
+							//2: MAC + DATE_TIME + FAIL 
+							//3: SN + DATE_TIME + FAIL
+							                                                
+//------------------------------------------------------------------------------
+// 统计设置
+//------------------------------------------------------------------------------
+WT_SAVE_TEST_STATISTIC		= 1	// save test result while facility is turning off.
+						// 1:save
+						// 0:do not save
+WT_PASS_NUMBER			= 0
+WT_FAIL_NUMBER			= 0		
+
+WT_PASS_NUMBER_1		= 0
+WT_FAIL_NUMBER_1		= 0
+
+WT_PASS_NUMBER_2		= 0
+WT_FAIL_NUMBER_2		= 0
+
+WT_PASS_NUMBER_3		= 0
+WT_FAIL_NUMBER_3		= 0
+
+WT_PASS_NUMBER_4		= 0
+WT_FAIL_NUMBER_4		= 0						
+						
+
+						
+						

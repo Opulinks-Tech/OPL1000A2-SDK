@@ -1,0 +1,55 @@
+/******************************************************************************
+*  Copyright 2019, Netlink Communication Corp.
+*  ---------------------------------------------------------------------------
+*  Statement:
+*  ----------
+*  This software is protected by Copyright and the information contained
+*  herein is confidential. The software may not be copied and the information
+*  contained herein may not be used or disclosed except with the written
+*  permission of Netlink Communication Corp. (C) 2019
+******************************************************************************/
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include "controller_wifi_com.h"
+#include "wpa_cli.h"
+#include "driver_netlink.h"
+
+#include "controller_wifi_com_patch.h"
+#include "wpa_cli_patch.h"
+
+static int wpa_cli_scan_by_cfg_patch(void *cfg)
+{
+    if (cfg == NULL) return FALSE;
+
+    S_WIFI_MLME_SCAN_CFG *scan_cfg = (S_WIFI_MLME_SCAN_CFG *)cfg;
+
+    if (scan_cfg->u32ActiveScanDur < SCAN_MIN_DURATION_TIME || 
+        scan_cfg->u32ActiveScanDur > SCAN_MAX_NUM_OF_DUR_TIME) {
+        scan_cfg->u32ActiveScanDur = SCAN_ACTIVE_MIN_DUR_TIME_DEF;
+    }
+    
+    if (scan_cfg->u32PassiveScanDur < SCAN_MIN_DURATION_TIME ||
+        scan_cfg->u32PassiveScanDur > SCAN_MAX_NUM_OF_DUR_TIME) {
+        scan_cfg->u32PassiveScanDur = SCAN_PASSIVE_MIN_DUR_TIME_DEF;
+    }
+    
+    if (scan_cfg->u8Channel > WIFI_MLME_SCAN_MAX_NUM_CHANNELS) {
+        scan_cfg->u8Channel = WIFI_MLME_SCAN_ALL_CHANNELS;
+    }
+    
+    if (scan_cfg->u8ResendCnt == 0) {
+        scan_cfg->u8ResendCnt = SCAN_PROBE_REQ_COUNTERS_DEF;
+    }
+    
+    wpa_driver_netlink_scan_by_cfg(scan_cfg);
+
+    return TRUE;
+}
+
+void wpa_cli_func_init_patch(void)
+{
+    wpa_cli_scan_by_cfg        = wpa_cli_scan_by_cfg_patch;
+}

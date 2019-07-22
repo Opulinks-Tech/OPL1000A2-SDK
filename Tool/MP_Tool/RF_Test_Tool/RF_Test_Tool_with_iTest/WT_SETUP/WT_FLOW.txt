@@ -1,0 +1,202 @@
+//******************************************************************************
+//                   WLAN Facility test flow control file
+//******************************************************************************
+
+//
+// [FREQ]    1    2    3    4    5    6    7    8    9   10    11   12   13   14
+// 2.4GHz : 2412 2417 2422 2427 2432 2437 2442 2447 2452 2457 2462 2467 2472 2484
+//
+//          36	 38   40   42   44   46   48   52   54    56   58   60   62   64	
+// 5GHz   : 5180 5190 5200 5210 5220 5230 5240 5260 5270  5280 5290 5300 5310 5320
+//
+//          100  102  104  106  108  110  112  116  118  120  122  124  126  128  
+//          5500 5510 5520 5530 5540 5550 5560 5580 5590 5600 5610 5620 5630 5640 
+//	    
+//          132  134  136  138  140  142  144
+//	    5660 5670 5680 5690 5700 5710 5720
+//
+//	    149  151  153  155  157  159  161  165  167  169  171  173  175  177
+//          5745 5755 5765 5775 5785 5795 5805 5825 5835 5845 5855 5865 5875 5885
+//******************************************************************************
+// [Data Rate]
+// 	11bg:	54M 48M 36M 24M 18M 12M 9M 6M 11M 5.5M 2M 1M
+
+//	   HT20	      HT40	   AC20	       AC40	   AC80
+//	HT20-MCS0  HT40-MCS0    AC20-MCS0   AC40-MCS0    AC80-MCS0
+//	HT20-MCS1  HT40-MCS1    AC20-MCS1   AC40-MCS1    AC80-MCS1
+//	HT20-MCS2  HT40-MCS2    AC20-MCS2   AC40-MCS2    AC80-MCS2
+//	HT20-MCS3  HT40-MCS3    AC20-MCS3   AC40-MCS3    AC80-MCS3
+//	HT20-MCS4  HT40-MCS4    AC20-MCS4   AC40-MCS4    AC80-MCS4
+//	HT20-MCS5  HT40-MCS5    AC20-MCS5   AC40-MCS5    AC80-MCS5
+//	HT20-MCS6  HT40-MCS6    AC20-MCS6   AC40-MCS6    AC80-MCS6
+//	HT20-MCS7  HT40-MCS7    AC20-MCS7   AC40-MCS7    AC80-MCS7
+//				AC20-MCS8   AC40-MCS8    AC80-MCS8
+//					    AC40-MCS9    AC80-MCS9
+//******************************************************************************
+// [CHAIN]
+//
+//	CHAIN0	CHAIN1
+//
+//******************************************************************************
+	WT_CONNECT_TESTER				//connect tester
+
+//WT_DELAY  5000					//delay time in msec
+
+	WT_INSERT_DUT					//Insert DUT
+
+	WT_CHECK_XTAL
+
+	WT_CHECK_OTA
+
+
+
+	WT_USER_COMMAND	[at+sysmode=1] []
+	WT_DELAY  500
+	WT_USER_COMMAND	[at+mprst] []
+	WT_DELAY  2000					//delay time in msec
+	WT_USER_COMMAND	[at+mode=3] []
+	
+// BLE RX	
+	WT_VERIFY_BT_RX_PER    2402    BLE    CHAIN0   
+    WT_VERIFY_BT_RX_PER    2440    BLE    CHAIN0   
+    WT_VERIFY_BT_RX_PER    2478    BLE    CHAIN0
+	
+	WT_USER_COMMAND	[at+dtm=end] []
+	WT_DELAY  500					//delay time in msec
+	WT_USER_COMMAND	[at+mprst] []	
+	WT_DELAY  2000					//delay time in msec
+	WT_USER_COMMAND	[at+mode=3] []
+	WT_DELAY  500					//delay time in msec
+	WT_USER_COMMAND	[at+vco] []
+
+// WIFI RX	
+	WT_VERIFY_RX_PER    2412    11M    CHAIN0   
+	WT_VERIFY_RX_PER    2442    11M    CHAIN0   
+	WT_VERIFY_RX_PER    2484    11M    CHAIN0
+
+	
+
+
+//******************************************************************************
+// Start calibration test categories
+// Power/Freq Calibration Example: 
+// 	Freq Calibration Example: 	WT_CAL_FREQ [FREQ][DATA RATE] [CHAIN]
+//	POW Calibration Example: 	WT_CAL_PWR [FREQ] [DATA RATE] [CHAIN]
+//******************************************************************************
+
+
+//------------------------------------------------------------------------------------
+// TX&RX Verifing 
+// TX Example:	     WT_VERIFY_TX_ALL [FREQ] [DATA RATE] [CHAIN] [HIGH power mode(1)/LOW power mode(0)]
+// RX Example: 	     WT_VERIFY_RX_PER [FREQ] [DATA RATE] [CHAIN]
+// RX Sweep Example: WT_VERIFY_RX_SWEEP  [FREQ] [DATA RATE] [CHAIN] [START POW] [END POW] [STEP]
+//------------------------------------------------------------------------------------
+    
+
+//------------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------------
+// WIFI TX
+//	WT_USER_COMMAND	[at+mprst] []
+//	WT_DELAY  2000					//delay time in msec
+	WT_USER_COMMAND	[at+rfhp=240] []
+	WT_USER_COMMAND	[at+mode=3] []		
+    WT_DELAY  500
+	
+    WT_VERIFY_TX_ALL    2412    1M    CHAIN0 1
+    WT_VERIFY_TX_ALL    2442    1M    CHAIN0 1
+    WT_VERIFY_TX_ALL    2484    1M    CHAIN0 1
+                                             
+    WT_VERIFY_TX_ALL    2412    2M    CHAIN0 1
+    WT_VERIFY_TX_ALL    2442    2M    CHAIN0 1
+    WT_VERIFY_TX_ALL    2484    2M    CHAIN0 1
+    
+    WT_VERIFY_TX_ALL    2412    5.5M  CHAIN0 1
+    WT_VERIFY_TX_ALL    2442    5.5M  CHAIN0 1
+    WT_VERIFY_TX_ALL    2484    5.5M  CHAIN0 1
+
+    WT_VERIFY_TX_ALL    2412    11M   CHAIN0 1
+    WT_VERIFY_TX_ALL    2442    11M   CHAIN0 1
+    WT_VERIFY_TX_ALL    2484    11M   CHAIN0 1
+
+ 
+
+
+//	WT_USER_COMMAND	[at+mprst] []
+//	WT_DELAY  2000					//delay time in msec
+	WT_USER_COMMAND	[at+rfhp=0] []
+	WT_DELAY  500
+	WT_USER_COMMAND	[at+mode=3] []
+	WT_DELAY  500
+
+    WT_VERIFY_TX_ALL    2412    1M    CHAIN0 0
+    WT_VERIFY_TX_ALL    2442    1M    CHAIN0 0
+    WT_VERIFY_TX_ALL    2484    1M    CHAIN0 0
+                                             
+    WT_VERIFY_TX_ALL    2412    2M    CHAIN0 0
+    WT_VERIFY_TX_ALL    2442    2M    CHAIN0 0
+    WT_VERIFY_TX_ALL    2484    2M    CHAIN0 0
+                                             
+    WT_VERIFY_TX_ALL    2412    5.5M  CHAIN0 0
+    WT_VERIFY_TX_ALL    2442    5.5M  CHAIN0 0
+    WT_VERIFY_TX_ALL    2484    5.5M  CHAIN0 0
+                                             
+    WT_VERIFY_TX_ALL    2412    11M   CHAIN0 0
+    WT_VERIFY_TX_ALL    2442    11M   CHAIN0 0
+    WT_VERIFY_TX_ALL    2484    11M   CHAIN0 0
+
+//------------------------------------------------------------------------------------
+
+	
+//------------------------------------------------------------------------------------
+
+//	WT_USER_COMMAND	[at+rst] []
+//	WT_DELAY  2000
+	WT_USER_COMMAND	[at+mode=4] []
+	WT_DELAY  500
+//------------------------------------------------------------------------------------
+	// BLE TX
+//	WT_USER_COMMAND	[at+rfhp=15] []
+//	WT_USER_COMMAND	[at+dtm=end] []
+//	WT_DELAY  500
+//	WT_VERIFY_BT_TX    2402    BLE    CHAIN0    1 27 0
+//	WT_VERIFY_BT_TX    2440    BLE    CHAIN0    1 27 0
+//	WT_VERIFY_BT_TX    2478    BLE    CHAIN0    1 27 0
+
+	WT_USER_COMMAND	[at+dtm=end] []
+	WT_DELAY  500
+	WT_USER_COMMAND	[at+rfhp=0] []
+	WT_DELAY  500
+	WT_VERIFY_BT_TX    2402    BLE    CHAIN0    0 27 0
+	WT_VERIFY_BT_TX    2440    BLE    CHAIN0    0 27 0
+	WT_VERIFY_BT_TX    2478    BLE    CHAIN0    0 27 0
+	
+
+	WT_SET_MAC_ADDRESS
+	
+	WT_USER_COMMAND	[at+macaddrdef=0,1] []
+	WT_USER_COMMAND	[at+macaddrdef=1,1] []
+	
+////------------------------------------------------------------------------------------
+
+
+//******************************************************************************
+WT_SHOW_VERIFY_SUMMARY				//show verification result
+
+
+//******************************************************************************
+
+//WT_REMOVE_BT						//remove bt
+WT_REMOVE_DUT            			//Remove DUT
+WT_DISCONNECT_TESTER				//disconnected from tester.  
+
+
+//WT_USER_COMMAND	[Command] [ok]		 //send command before test plan
+                                                 // [command]: commands
+                                                 // [ack]: ack from DUT.
+
+						 
+//******************************************************************************
+//                              END OF FILE
+//******************************************************************************

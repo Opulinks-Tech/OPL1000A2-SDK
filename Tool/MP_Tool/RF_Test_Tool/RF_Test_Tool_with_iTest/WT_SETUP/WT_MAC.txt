@@ -1,0 +1,118 @@
+//******************************************************************************
+//                  		MAC address control file
+//******************************************************************************
+// Note: MAC address is 48-bit(In hex, there are 12 numbers.) = (24-bit vendor ID) + (24-bit range no.)
+
+//******************************************************************************
+
+					
+//------------------------------------------------------------------------------
+// list all tech to flash MAC or not	1:flash	0:not flash, default = 0
+//------------------------------------------------------------------------------
+//						WIFI 	LAN 	WAN 	WIFI_5G   	BT   	WAN0_1    WAN0_2    WAN0_3   WAN0_4   WAN1_1  WAN1_2  WAN1_3   WAN1_4   EX0   EX1
+WT_MAC_WRITE_ENABLE		1		0		0		0	  		1      	0         0        0          0       0       0       0        0        0    0
+
+//MAC flash order, range(1-15)
+WT_MAC_WRITE_ORDER		1		2		3		4	  		5 	 	6         7        8          9       10      11      12       13       14    15 
+					
+// the following is the MAC number consumed by each tech¡£If set as 0, it means that use the MAC last time.
+// example:By default order, current MAC=8C882B000000, WT_MAC_WIFI_INCREMENT=2, WT_MAC_LAN_INCREMENT=1£»WT_MAC_WAN_INCREMENT=1
+//       WIFI MAC = 8C882B000000, LAN MAC = 8C882B000002, WAN MAC = 8C882B000003
+WT_MAC_WIFI_INCREMENT 		= 1 	// WiFi MAC consume number		
+WT_MAC_LAN_INCREMENT 		= 0 	// LAN consume number									
+WT_MAC_WAN_INCREMENT 		= 0 	// WAN consume number			
+WT_MAC_WIFI_INCREMENT_5G	= 0		// 5G WiFi consume number
+WT_MAC_BT_INCREMENT         = 1		// BT MAC
+WT_MAC_WAN0_1_INCREMENT		= 0
+WT_MAC_WAN0_2_INCREMENT     = 0
+WT_MAC_WAN0_3_INCREMENT     = 0
+WT_MAC_WAN0_4_INCREMENT     = 0
+WT_MAC_WAN1_1_INCREMENT		= 0
+WT_MAC_WAN1_2_INCREMENT		= 0
+WT_MAC_WAN1_3_INCREMENT		= 0
+WT_MAC_WAN1_4_INCREMENT		= 0
+WT_MAC_EX0_INCREMENT		= 0	
+WT_MAC_EX1_INCREMENT		= 0
+
+WT_MAC_SHOW			= 0	//the option to show MAC value at GUI.
+					//0:WIFI(default)
+					//1:LAN
+					//2:WAN
+					//3:5GWIFI
+
+WT_MAC_SOURCE			= 0 	// the source of MAC address
+					// 0: current doc(default)
+					// 1:from outside, ex:scanner, keyboard
+					// 2: from outside server
+
+WT_MAC_GET_FROM_SERVER_POSITION = 0     //time to get MAC server 
+					//0: at the beginning of testing(default)
+					//1: at the WT_WRITE_EFUSE
+					
+WT_MAC_SCANNER_TYPE		= 0	// MAC scanner type
+					// 0:For the MAC numbers, the first one is by scanning, the others are increasing by increment(default)
+					// 1:MAC increment is not working, all the MAC all setting by scanning times.
+
+
+WT_MAC_VENDOR_ID        = 8C882B        // Customer ID.In hex, the first six number of whole MAC.
+
+//******************************************************************************
+
+// DUT1
+WT_MAC_RANGE_BEGIN_1 	= 000000        // product ID, In hex, the last six number of whole MAC.
+WT_MAC_RANGE_END_1 	= 3FFFFF
+WT_MAC_CURRENT_1	= 000014			// current ID
+//******************************************************************************
+
+// DUT2
+WT_MAC_RANGE_BEGIN_2 	= 400000		// product ID, In hex, the last six number of whole MAC.
+WT_MAC_RANGE_END_2	= 7FFFFF		    
+WT_MAC_CURRENT_2	= 400000			// current ID
+//******************************************************************************
+
+// DUT3
+WT_MAC_RANGE_BEGIN_3 	= 800000        // product ID, In hex, the last six number of whole MAC.
+WT_MAC_RANGE_END_3	= BFFFFF            
+WT_MAC_CURRENT_3	= 800000			// current ID
+//******************************************************************************
+
+// DUT4
+WT_MAC_RANGE_BEGIN_4 	= C00000        // product ID, In hex, the last six number of whole MAC.
+WT_MAC_RANGE_END_4	= FFFFFF            
+WT_MAC_CURRENT_4	= C00001			// current ID
+//******************************************************************************
+WT_BT_BD_INDENPENDENT	= 0		// BT consumes the independent MAC pool or not.If enable, the follwing setting is working.
+					// 0:BT consumes the WIFI MAC pool(default)
+					// 1:BT consumes the independent MAC pool(please setting the following configure)
+					
+										
+WT_BT_BD_INCREMENT 	= 1 		// BT MAC increment.
+
+WT_BT_BD_VENDOR		= 8C882B	// vendor ID
+//******************************************************************************
+
+// DUT1
+WT_BT_BD_RANGE_BEGIN_1	= 000000
+WT_BT_BD_RANGE_END_1	= 3FFFFF
+WT_BT_BD_CURRENT_1	= 000000	// current BD Addr
+//******************************************************************************
+
+// DUT2
+WT_BT_BD_RANGE_BEGIN_2	= 400000
+WT_BT_BD_RANGE_END_2	= 7FFFFF
+WT_BT_BD_CURRENT_2	= 400000	// current BD Addr
+//******************************************************************************
+
+// DUT3
+WT_BT_BD_RANGE_BEGIN_3	= 800000
+WT_BT_BD_RANGE_END_3	= BFFFFF
+WT_BT_BD_CURRENT_3	= 800000	// current BD Addr
+//******************************************************************************
+
+// DUT4
+WT_BT_BD_RANGE_BEGIN_4	= C00000
+WT_BT_BD_RANGE_END_4	= FFFFFF
+WT_BT_BD_CURRENT_4	= C00000	// current BD Addr
+//******************************************************************************
+//                              END OF FILE
+//******************************************************************************

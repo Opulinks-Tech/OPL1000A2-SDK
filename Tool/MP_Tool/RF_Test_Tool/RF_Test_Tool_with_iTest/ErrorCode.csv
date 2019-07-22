@@ -1,0 +1,242 @@
+0000,PASS
+1001,Single carrier frequency calibration Fail
+1002,TX frame frequency calibration Fail
+1003,Power calibration Fail
+1004,TX Verify Power Fail
+1005,TX Verify EVM Fail
+1006,TX Verify FreqOffset Fail
+1007,TX Verify Mask Fail
+1008,TX Verify Carrier LeaKage Fail
+1009,TX Verify flatness Fail
+1010,RX Verify PER Fail
+1011,RX Verify min PER  Fail
+1012,RX Verify max received Power Fail
+2001,Single carrier frequency calibration Fail
+2002,TX frame frequency calibration Fail
+2003,Power calibration Fail
+2004,TX Verify Power Fail
+2005,TX Verify EVM Fail
+2006,TX Verify FreqOffset Fail
+2007,TX Verify Mask Fail
+2008,TX Verify Carrier LeaKage Fail
+2009,RX Verify PER Fail
+2010,RX Verify min PER  Fail
+2011,RX Verify max received Power Fail
+3001,Single carrier frequency calibration Fail
+3002,TX frame frequency calibration Fail
+3003,Power calibration Fail
+3004,TX Verify Power Fail
+3005,TX Verify EVM Fail
+3006,TX Verify FreqOffset Fail
+3007,TX Verify Mask Fail
+3008,TX Verify Carrier LeaKage Fail
+3009,RX Verify PER Fail
+3010,RX Verify min PER  Fail
+3011,RX Verify max received Power Fail
+4001,Single carrier frequency calibration Fail
+4002,TX frame frequency calibration Fail
+4003,Power calibration Fail
+4004,TX Verify Power Fail
+4005,TX Verify EVM Fail
+4006,TX Verify FreqOffset Fail
+4007,TX Verify Mask Fail
+4008,TX Verify Carrier LeaKage Fail
+4009,RX Verify PER Fail
+4010,RX Verify min PER  Fail
+4011,RX Verify max received Power Fail
+5001,Single carrier frequency calibration Fail
+5002,TX frame frequency calibration Fail
+5003,Power calibration Fail
+5004,TX Verify Power Fail
+5005,TX Verify EVM Fail
+5006,TX Verify FreqOffset Fail
+5007,TX Verify Mask Fail
+5008,TX Verify Carrier LeaKage Fail
+5009,RX Verify PER Fail
+5010,RX Verify min PER  Fail
+5011,RX Verify max received Power Fail
+6001,Single carrier frequency calibration Fail
+6002,TX frame frequency calibration Fail
+6003,Power calibration Fail
+6004,TX Verify Power Fail
+6005,TX Verify EVM Fail
+6006,TX Verify FreqOffset Fail
+6007,TX Verify Mask Fail
+6008,TX Verify Carrier LeaKage Fail
+6009,RX Verify PER Fail
+6010,RX Verify min PER  Fail
+6011,RX Verify max received Power Fail
+7001,Single carrier frequency calibration Fail
+7002,TX frame frequency calibration Fail
+7003,Power calibration Fail
+7004,TX Verify Power Fail
+7005,TX Verify EVM Fail
+7006,TX Verify FreqOffset Fail
+7007,TX Verify Mask Fail
+7008,TX Verify Carrier LeaKage Fail
+7009,RX Verify PER Fail
+7010,RX Verify min PER  Fail
+7011,RX Verify max received Power Fail
+8001,Single carrier frequency calibration Fail
+8002,TX frame frequency calibration Fail
+8003,Power calibration Fail
+8004,TX Verify Power Fail
+8005,TX Verify EVM Fail
+8006,TX Verify FreqOffset Fail
+8007,TX Verify Mask Fail
+8008,TX Verify Carrier LeaKage Fail
+8009,RX Verify PER Fail
+8010,RX Verify min PER  Fail
+8011,RX Verify max received Power Fail
+9001,Single carrier frequency calibration Fail
+9002,TX frame frequency calibration Fail
+9003,Power calibration Fail
+9004,TX Verify Power Fail
+9005,TX Verify EVM Fail
+9006,TX Verify FreqOffset Fail
+9007,TX Verify Mask Fail
+9008,TX Verify Carrier LeaKage Fail
+9009,RX Verify PER Fail
+9010,RX Verify min PER  Fail
+9011,RX Verify max received Power Fail
+10001,Single carrier frequency calibration Fail
+10002,TX frame frequency calibration Fail
+10003,Power calibration Fail
+10004,TX Verify Power Fail
+10005,TX Verify EVM Fail
+10006,TX Verify FreqOffset Fail
+10007,TX Verify Mask Fail
+10008,TX Verify Carrier LeaKage Fail
+10009,RX Verify PER Fail
+10010,RX Verify min PER  Fail
+10011,RX Verify max received Power Fail
+11001,Single carrier frequency calibration Fail
+11002,TX frame frequency calibration Fail
+11003,Power calibration Fail
+11004,TX Verify Power Fail
+11005,TX Verify EVM Fail
+11006,TX Verify FreqOffset Fail
+11007,TX Verify Mask Fail
+11008,TX Verify Carrier LeaKage Fail
+11009,RX Verify PER Fail
+11010,RX Verify min PER  Fail
+11011,RX Verify max received Power Fail
+12001,Single carrier frequency calibration Fail
+12002,TX frame frequency calibration Fail
+12003,Power calibration Fail
+12004,TX Verify Power Fail
+12005,TX Verify EVM Fail
+12006,TX Verify FreqOffset Fail
+12007,TX Verify Mask Fail
+12008,TX Verify Carrier LeaKage Fail
+12009,RX Verify PER Fail
+12010,RX Verify min PER  Fail
+12011,RX Verify max received Power Fail
+13001,Single carrier frequency calibration Fail
+13002,TX frame frequency calibration Fail
+13003,Power calibration Fail
+13004,TX Verify Power Fail
+13005,TX Verify EVM Fail
+13006,TX Verify FreqOffset Fail
+13007,TX Verify Mask Fail
+13008,TX Verify Carrier LeaKage Fail
+13009,RX Verify PER Fail
+13010,RX Verify min PER  Fail
+13011,RX Verify max received Power Fail
+14001,Single carrier frequency calibration Fail
+14002,TX frame frequency calibration Fail
+14003,Power calibration Fail
+14004,TX Verify Power Fail
+14005,TX Verify EVM Fail
+14006,TX Verify FreqOffset Fail
+14007,TX Verify Mask Fail
+14008,TX Verify Carrier LeaKage Fail
+14009,RX Verify PER Fail
+14010,RX Verify min PER  Fail
+14011,RX Verify max received Power Fail
+15001,Single carrier frequency calibration Fail
+15002,TX frame frequency calibration Fail
+15003,Power calibration Fail
+15004,TX Verify Power Fail
+15005,TX Verify EVM Fail
+15006,TX Verify FreqOffset Fail
+15007,TX Verify Mask Fail
+15008,TX Verify Carrier LeaKage Fail
+15009,RX Verify PER Fail
+15010,RX Verify min PER  Fail
+15011,RX Verify max received Power Fail
+16001,Single carrier frequency calibration Fail
+16002,TX frame frequency calibration Fail
+16003,Power calibration Fail
+16004,TX Verify Power Fail
+16005,TX Verify EVM Fail
+16006,TX Verify FreqOffset Fail
+16007,TX Verify Mask Fail
+16008,TX Verify Carrier LeaKage Fail
+16009,RX Verify PER Fail
+16010,RX Verify min PER  Fail
+16011,RX Verify max received Power Fail
+17001,TX Verify Power Fail
+17002,TX Verify Init Freq Err Fail
+17003,TX Verify Delta F1 Avg Fail
+17004,TX Verify Delta F2 Avg Fail
+17005,TX Verify Delta F2/F1 Fail
+17006,TX Verify Delta F2 Max Fail
+17007,TX Verify Fn Max Fail
+17008,TX Verify F0Fn Max Fail
+17009,TX Verify F1F0 Max Fail
+17010,TX Verify FnFn5 Max Fail
+17011,RX Verify PER Fail
+17012,RX Verify BER Fail
+18001,TX Verify Power Fail
+18002,TX Verify Init Freq Err Fail
+18003,TX Verify Delta F1 Avg Fail
+18004,TX Verify Freq Drift Fail
+18005,TX Verify Freq Drift Rate Fail
+18006,TX Verify Delta F2 Avg Fail
+18007,TX Verify Delta F2/F1 Fail
+18008,TX Verify Delta F2 Max Fail
+18009,RX Verify PER Fail
+18010,RX Verify BER Fail
+19001,TX Verify Power Fail
+19002,TX Verify Init Freq Err Fail
+19003,TX Verify Power Diff Fail
+19004,TX Verify DEVM Avg Fail
+19005,TX Verify DEVM Peak Fail
+19006,TX Verify DEVM 99PCT Fail
+19007,TX Verify Edr Omega I Fail
+19008,TX Verify Edr Omega 0 Fail
+19009,TX Verify Edr Omega I0 Fail
+19010,TX Verify Spec Mask Fail
+19011,RX Verify PER Fail
+19012,RX Verify BER Fail
+20001,TX Verify Power Fail
+20002,TX Verify EVM Fail
+20003,TX Verify FreqOffset Fail
+20004,TX Verify Mask Fail
+20005,RX Verify PER Fail
+20006,RX Verify BER Fail
+20007,Ping DUT Fail
+20008,Connect DUT Fail
+20009,DisConnect DUT Fail
+20010,DUT Operate Fail
+22001,Connect Tester Fail
+22002,DisConnect Tester Fail
+22003,Set Tester VSG Fail
+22004,Set Tester VSA Fail
+22005,Data capture Fail
+22006,Data analyze Fail
+23001,Wirte Data Fail
+23002,Wirte MAC  Fail
+23003,Wirte Efuse Fail
+23004,Check Efuse Fail
+24001,WT_USER_COMMAND  Fail
+24002,WT_USER_EXT_APP  Fail
+24003,WT_OPETATE_EXTERNAL_DEV  Fail
+24004,Thrmal compensation Fail
+24005,Enable NIC Fail
+24005,Disable NIC Fail
+25001,Configure file Fail
+25002,MES Operate Fail
+25003,output CSV LOG Fail
+99999,Other Err

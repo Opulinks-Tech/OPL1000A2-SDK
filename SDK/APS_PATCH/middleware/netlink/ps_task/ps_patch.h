@@ -1,0 +1,93 @@
+/* *****************************************************************************
+ *  Copyright 2019, Opulinks Technology Ltd.
+ *  ---------------------------------------------------------------------------
+ *  Statement:
+ *  ----------
+ *  This software is protected by Copyright and the information contained
+ *  herein is confidential. The software may not be copied and the information
+ *  contained herein may not be used or disclosed except with the written
+ *  permission of Opulinks Technology Ltd. (C) 2018
+ *
+ *******************************************************************************
+ *
+ *  @file ps_patch.h
+ * 
+ *  @brief 
+ *  
+ ******************************************************************************/
+
+#ifndef _PS_PATCH_H_
+#define _PS_PATCH_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*
+ *************************************************************************
+ *                          Include files
+ *************************************************************************
+ */
+#include "ps.h"
+/*
+ *************************************************************************
+ *                          Definitions and Macros
+ *************************************************************************
+ */
+
+
+/*
+ *************************************************************************
+ *                          Typedefs and Structures
+ *************************************************************************
+ */
+
+typedef struct
+{
+	uint32_t last_status;
+
+	t_ps_proc_ctrl proc_ctrl;
+	t_ps_busy_flag busy_flag;
+	t_ps_snap_time snap_time;
+
+	uint64_t wakeup_time;
+	uint32_t sleep_min_limit;
+	uint32_t wakeup_cost_gain;
+	uint32_t wakeup_cost;
+	uint8_t wakeup_cost_precise;
+
+	uint8_t app_apply_sleep;
+	uint8_t app_active_sleep;
+	
+	// patch for public
+	uint8_t xtal_ready_cost;
+	uint8_t app_apply_deep;
+
+    uint32_t app_timer_sleep_duration;
+
+} t_ps_conf_patch;
+
+
+/*
+ *************************************************************************
+ *                          Public Variables
+ *************************************************************************
+ */
+
+
+/*
+ *************************************************************************
+ *                          Public Functions
+ *************************************************************************
+ */
+
+void ps_patch_init(void);
+
+void ps_enable_timer_sleep_patch(uint32_t sleep_duration_ms);
+void ps_config_wakeup_ext_io_patch(E_GpioIdx_t num, int enable, E_ItrType_t type, int invert, T_Gpio_CallBack callback);
+
+
+#ifdef __cplusplus
+}
+#endif
+#endif  /* _PS_PATCH_H_ */

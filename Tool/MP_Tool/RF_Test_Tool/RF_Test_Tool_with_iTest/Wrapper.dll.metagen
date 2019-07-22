@@ -1,0 +1,98 @@
+ImageRuntimeVersion: v4.0.30319
+Assembly Wrapper, Version=0.0.*, Culture=Invariant Language (Invariant Country): 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly Microsoft.VisualC, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a: 
+	hash=None, flags=None
+Struct DemoWrapper.Statistics_CLR: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+  :System.ValueType
+  Fields:
+    Int32 PassCount : Public
+    Int32 FailedCount : Public
+    Int32 TotalCount : Public
+    System.String TesterType : Public
+    System.String TesterSN : Public
+Struct DemoWrapper.RunSetting: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+  :System.ValueType
+  Fields:
+    Boolean m_bIsEfuse : Public
+    Boolean WriteEfuseEnable : Public
+    Boolean SavePassFailNumberEnable : Public
+    Boolean AutoRun : Public
+    Boolean m_bIsMsgBox : Public
+Struct DemoWrapper.VersionInfo: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+  :System.ValueType
+  Fields:
+    System.String SoftVerion : Public
+    System.String DutName : Public
+    Int32 DutNameSize : Public
+Struct DemoWrapper.DutTotalInfo: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+  :System.ValueType
+  Fields:
+    Int32 PassCount : Public
+    Int32 FailedCount : Public
+    Int32 TotalCount : Public
+    System.String MacString : Public
+    System.String SnString : Public
+    Boolean IsMacUsed : Public
+    Boolean IsDutValid : Public
+    Int32 RunStatus : Public
+    Int32 m_nTesterPort : Public
+    System.String ErrString : Public
+    System.String ErrStringDoubleLine : Public
+    System.String PlannedSpeed : Public
+Struct DemoWrapper.PrintingContent: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+  :System.ValueType
+  Fields:
+    Boolean ClearAll : Public
+    Boolean bIsValide : Public
+    System.String NewContent : Public
+    Int32 m_iColor : Public
+    Double m_dFontSize : Public
+Struct DemoWrapper.cArgb: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+  :System.ValueType
+  Fields:
+    Boolean bIsValide : Public
+    Int32 a : Public
+    Int32 r : Public
+    Int32 g : Public
+    Int32 b : Public
+Class DemoWrapper.FacilityWrapper: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Interfaces:
+    System.IDisposable
+  Methods:
+    GetDutCount(): PrivateScope, Public, HideBySig
+    GetDutStartTestNo(): PrivateScope, Public, HideBySig
+    GetConfig(): PrivateScope, Public, HideBySig
+    SetConfig(RunSetting): PrivateScope, Public, HideBySig
+    GetVersion(): PrivateScope, Public, HideBySig
+    GetStatistics(): PrivateScope, Public, HideBySig
+    GetIsNeedRestart(): PrivateScope, Public, HideBySig
+    CreatDutTask(Int32): PrivateScope, Public, HideBySig
+    DutHandleValid(Int32): PrivateScope, Public, HideBySig
+    GetDutInfo(Int32): PrivateScope, Public, HideBySig
+    GetPrintingContent(Int32): PrivateScope, Public, HideBySig
+    GetPrinTitleContent(Int32): PrivateScope, Public, HideBySig
+    vSetMsgBoxResult(Int32, Boolean(HasFieldMarshal)): PrivateScope, Public, HideBySig
+    vGetIsMsgBox(Int32): PrivateScope, Public, HideBySig
+    StartDutTest(Int32): PrivateScope, Public, HideBySig
+    StopDutTest(Int32): PrivateScope, Public, HideBySig
+    vSetDutEnable(Int32, Boolean(HasFieldMarshal)): PrivateScope, Public, HideBySig
+    clearStatisticalNum(): PrivateScope, Public, HideBySig
+    getArgbFromConfigFile(Int32): PrivateScope, Public, HideBySig
+    isStartPopUpFromReday(): PrivateScope, Public, HideBySig
+    isStartTestByPopUpFrom(): PrivateScope, Public, HideBySig
+    isNeedInputDutID(): PrivateScope, Public, HideBySig
+    inputBarCodeNum(): PrivateScope, Public, HideBySig
+    setInputData(Int32, String): PrivateScope, Public, HideBySig
+    Dispose(): PrivateScope, Public, Final, Virtual, HideBySig

@@ -1,0 +1,195 @@
+//******************************************************************************
+//                      Wifi Limit Setup file
+//******************************************************************************
+
+//------------------------------------------------------------------------------
+// frequency calibration seeting
+//------------------------------------------------------------------------------
+WT_FREQ_CAL_TARGET			= 0	// frequency calibration target value in ppm, range (-1000 ~ 1000)
+						// 1ppm¡Ö2.4kHz(2.4G Band)
+						// 1ppm¡Ö5kHz  (5G Band)
+WT_FREQ_CAL_TOLERANCE                   = 2	// frequency calibration offset tolerance, range(0 ~ 1000)
+
+
+//------------------------------------------------------------------------------
+// Tx power calibration parameters.
+//------------------------------------------------------------------------------
+WT_TARGET_PWR_11B_LOW_POWER		= -5    // 11B target power in dBm, range(-100 ~ 100)
+WT_TARGET_PWR_11B_HIGH_POWER	= 10    // 11B target power in dBm, range(-100 ~ 100)
+WT_TARGET_PWR_OFDM_2_4G			= 9	// 2.4G 11g,54M target power in dBm, range(-100 ~ 100)
+WT_TARGET_PWR_HT20_2_4G			= 9	// 2.4G HT20 target power in dBm, range(-100 ~ 100)
+WT_TARGET_PWR_HT40_2_4G			= 9	// 2.4G HT40 target power in dBm, range(-100 ~ 100)
+
+WT_TARGET_PWR_OFDM_5G			= 13	// 5G 11g 54M target power in dBm, range(-100 ~ 100)
+WT_TARGET_PWR_HT20_5G			= 12	// 5G HT20 target power in dBm, range(-100 ~ 100)
+WT_TARGET_PWR_HT40_5G			= 12	// 5G HT40 target power in dBm, range(-100 ~ 100)
+WT_TARGET_PWR_AC20_5G			= 12	// 5G AC20 target power in dBm, range(-100 ~ 100)
+WT_TARGET_PWR_AC40_5G			= 12	// 5G AC40 target power in dBm, range(-100 ~ 100)
+WT_TARGET_PWR_AC80_5G      		= 12    // 5G AC80 target power in dBm, range(-100 ~ 100)
+
+//power differance in differant dataRate,dBm,range (-30 ~ 30)
+//								54M		48M		36M		24M		18M		12M		9M		6M		11M		5.5M	2M		1M
+WT_TARGET_PWR_LEGACY_RATE_DIFF  0     	0   	0		0		0		0		0		0		0       0   	0		0
+
+//				   				MCS9  	MCS8  	MCS7  	MCS6  	MCS5  	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TARGET_PWR_HT20_1S_MCS_DIFF           		0   	0   	0		0		0		0		0		0
+WT_TARGET_PWR_HT40_1S_MCS_DIFF            		0   	0   	0		0		0		0		0		0
+WT_TARGET_PWR_AC20_1S_MCS_DIFF			0		0   	0   	0		0		0		0		0		0
+WT_TARGET_PWR_AC40_1S_MCS_DIFF  0	   	0		0   	0   	0		0		0		0		0		0
+WT_TARGET_PWR_AC80_1S_MCS_DIFF  0	   	0		0   	0   	0		0		0		0		0		0
+
+						
+//------------------------------------------------------------------------------
+// target power tolerance parameters
+//------------------------------------------------------------------------------
+				
+WT_POWER_CAL_TOLERANCE_UP_2G	    = 5    // 2.4G tx power calibration tolerance in dBm, range(0 ~ 100)  
+WT_POWER_CAL_TOLERANCE_LOW_2G	    = 5
+
+WT_POWER_CAL_TOLERANCE_UP_5G	    = 0.5    // 5G tx power calibration tolerance in dBm, range(0 ~ 100)      
+WT_POWER_CAL_TOLERANCE_LOW_5G	    = 0.5
+
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// 					¡ý¡ý¡ý¡ý¡ý¡ýTx Verification settings¡ý¡ý¡ý¡ý¡ý¡ý
+//
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//------------------------------------------------------------------------------
+// Tx Verification - power tolerance 	
+//------------------------------------------------------------------------------
+//power offset tolerance in dBm£¬range(0 ~ 100)		  
+//				    				54M	  48M	36M		24M		18M		12M		9M		6M		11M		5.5M	2M		1M
+WT_TX_POWER_LEGACY_TOLERANCE_UP	    2.0	  2.0	2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0
+WT_TX_POWER_LEGACY_TOLERANCE_LOW    2.0	  2.0	2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0
+								
+//				    				54M	  48M	36M		24M		18M		12M		9M		6M		11M		5.5M	2M		1M
+WT_TX_POWER_5G_11A_TOLERANCE_UP	    2.0	  2.0	2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0
+WT_TX_POWER_5G_11A_TOLERANCE_LOW    2.0	  2.0	2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0
+                                           
+//								    MCS7  MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_POWER_HT20_1S_TOLERANCE_UP    2.0	  2.0	2.0		2.0		2.0		2.0		2.0		2.0
+WT_TX_POWER_HT20_1S_TOLERANCE_LOW   2.0	  2.0	2.0		2.0		2.0		2.0		2.0		2.0
+
+//				 				    	MCS7    MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_POWER_5G_HT20_1S_TOLERANCE_UP    	2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0
+WT_TX_POWER_5G_HT20_1S_TOLERANCE_LOW   	2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0
+                                           
+//				 						MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_POWER_HT40_1S_TOLERANCE_UP    	2.0	  	2.0		2.0		2.0		2.0		2.0		2.0		2.0
+WT_TX_POWER_HT40_1S_TOLERANCE_LOW   	2.0	  	2.0		2.0		2.0		2.0		2.0		2.0		2.0
+
+//				     					MCS7    MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_POWER_5G_HT40_1S_TOLERANCE_UP    	2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0
+WT_TX_POWER_5G_HT40_1S_TOLERANCE_LOW   	2.0		2.0		2.0		2.0		2.0		2.0		2.0		2.0
+                                           
+//				  						MCS8  	MCS7  	MCS6  	MCS5  	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_POWER_AC20_1S_TOLERANCE_UP    	2.0	  	2.0   	2.0   	2.0		2.0		2.0		2.0		2.0		2.0
+WT_TX_POWER_AC20_1S_TOLERANCE_LOW   	2.0	  	2.0   	2.0   	2.0		2.0		2.0		2.0		2.0		2.0
+                                           
+//									    MCS9  	MCS8  	MCS7  	MCS6  	MCS5  	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_POWER_AC40_1S_TOLERANCE_UP    	2.0	  	2.0		2.0   	2.0   	2.0		2.0		2.0		2.0		2.0		2.0
+WT_TX_POWER_AC40_1S_TOLERANCE_LOW   	2.0	  	2.0		2.0   	2.0   	2.0		2.0		2.0		2.0		2.0		2.0
+                                           
+//				    					MCS9  	MCS8  	MCS7  	MCS6  	MCS5  	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_POWER_AC80_1S_TOLERANCE_UP    	2.0	  	2.0		2.0   	2.0   	2.0		2.0		2.0		2.0		2.0		2.0
+WT_TX_POWER_AC80_1S_TOLERANCE_LOW   	2.0	  	2.0		2.0   	2.0   	2.0		2.0		2.0		2.0		2.0		2.0
+
+
+
+//------------------------------------------------------------------------------
+// Tx Verification - frequency offset tolerance
+//------------------------------------------------------------------------------
+WT_TX_FREQ_ERR_TOLERANCE	= 20		// frequency offset tolerance in ppm, range (0-1000)
+
+WT_SPECTRUM_OBW_99_LIMIT = 90
+//------------------------------------------------------------------------------
+// Tx Verification - EVM lower bound£¬range(-45 ~ 0)
+//------------------------------------------------------------------------------
+//							54M		48M		36M		24M		18M		12M		9M		6M		11M		5.5M	2M		1M
+WT_TX_EVM_LEGACY_LIMIT		-25		-22		-19		-16		-13		-10		-8		-5		-10		-10		-10		-10
+		                    
+//							54M		48M		36M		24M		18M		12M		9M		6M		11M		5.5M	2M		1M
+WT_TX_EVM_5G_11A_LIMIT		-25		-22		-19		-16		-13		-10		-8		-5		-10		-10		-10		-10
+                            
+//							MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_EVM_HT20_1S_LIMIT		-25		-25		-22		-19		-16		-13		-10		-5
+                            
+//							MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_EVM_5G_HT20_1S_LIMIT	-25	-25		-22		-19		-16		-13		-10		-5
+                            
+//							MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_EVM_HT40_1S_LIMIT		-25		-25		-22		-19		-16		-13		-10		-5
+                            
+//							MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_EVM_5G_HT40_1S_LIMIT	-25		-25		-22		-19		-16		-13		-10		-5
+                            
+//							MCS8	MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_EVM_AC20_1S_LIMIT		-30		-27		-25		-22		-19		-16		-13		-10		-5
+                            
+//							MCS9	MCS8	MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_EVM_AC40_1S_LIMIT		-32		-30		-27		-25		-22		-19		-16		-13		-10		-5
+                            
+//							MCS9	MCS8	MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_TX_EVM_AC80_1S_LIMIT		-32		-30		-27		-25		-22		-19		-16		-13		-10		-5
+
+
+
+//-------------------------------------------------------------------------------
+// Tx Verification - spectrum mask criteria
+//------------------------------------------------------------------------------
+WT_SPA_FAIL_POINTS_LIMIT	= 5.12		// spectrum mask tolerance in %range (0 ~ 100)
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// RX verification - PER Test settings
+//
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//------------------------------------------------------------------------------
+// RX verification - tester transmitter power in dbm, range (-100 ~ 0)
+//------------------------------------------------------------------------------
+//				54M		48M		36M		24M		18M		12M		9M		6M		11M		5.5M	2M		1M
+WT_PER_SENS_MIN_LEGACY		-65		-66		-70		-74		-77		-79		-81		-82		-70		-70		-70		-80
+											
+//							54M		48M		36M		24M		18M		12M		9M		6M		11M		5.5M	2M		1M
+WT_PER_SENS_MIN_5G_11A		-65		-66		-70		-74		-77		-79		-81		-82		-76		-76		-76		-76
+
+//							MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_SENS_MIN_HT20_1S		-64		-65		-66		-70		-74		-77		-79		-82
+
+//							MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_SENS_MIN_5G_HT20_1S	-64		-65		-66		-70		-74		-77		-79		-82
+
+//							MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_SENS_MIN_HT40_1S		-61		-62		-63		-67		-71		-74		-76		-79
+
+//							MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_SENS_MIN_5G_HT40_1S	-61		-62		-63		-67		-71		-74		-76		-79
+
+//							MCS8	MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_SENS_MIN_AC20_1S		-59		-64		-65		-66		-70		-74		-77		-79		-82
+
+//							MCS9	MCS8	MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_SENS_MIN_AC40_1S		-54		-56		-61		-62		-63		-67		-71		-74		-76		-79
+
+//							MCS9	MCS8	MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_SENS_MIN_AC80_1S		-51		-53		-58		-59		-60		-64		-68		-71		-73		-76
+
+//------------------------------------------------------------------------------
+// RX verification - Package Error Rate(PER) success lower bound
+//------------------------------------------------------------------------------
+PER_MIN_PASS_LIMIT_DSSS		= 92		// 11b PER success rate in %, range (0 ~ 100)
+
+PER_MIN_PASS_LIMIT_OFDM		= 0	// 11a.g.n.ac PER success rate in %, range (0 ~ 100)
+
+//------------------------------------------------------------------------------
+// END of file
+//------------------------------------------------------------------------------
+
+	

@@ -1,0 +1,148 @@
+%This file controls the BT modulator signal generation
+%All lines that have either a % or a space as the first character are ignored.
+%Following fields are defined using Hex by default, MSB--LSB. It might be
+%defined using binary, LSB--MSB. For instance, an LAPhex is '616ceb' in
+%Hex, and it's binary is [1101 0111 0011 0110 1000 0110]. The same for
+%header and payLoad portion.
+
+%The following parameters can be set:
+% sampleRate in Hz, default is 80 MHz
+% modulationIndex default is 0.3
+% symbolRate default is 1 Mbps
+% btProduct modulation filter BT product, default is 0.5
+% nSymbolsFilter sets the length of the modulation FIR filter, default is 6
+% zeroTimeStart sets the duration of zeros before the signal starts in the VSG. 
+%               Default is 10 usec. Recommended not to change this
+% repeatTime sets the total duration of the vector downloaded to the VSG. 
+%            For packets with slot time N, the nominal repeatTime = (N+1) * 625 usec.
+%            If the repeat time is too short for the specified number of payload bits,
+%            the payload is shortened.
+% LAPhex   defines the LAP address in Hex, should be 6 values. This is
+% ignored if syncWord has a valid non-empty entry, otherwise, LAPhex is used. If the
+% length is not 6, generate a random 6 hex value.
+% syncWord defines the Hex of the sync word, should be 16, 17 or 18 values of Hex
+%          If 18 values, the preamble and trailer are used as defined in the
+%          sync word supplied. 
+%          If 17 values, the preamble are used as defined in the
+%          sync word supplied. 
+%          If 16 values, the preamble and trailer should be added.
+% header   defines the Hex for the header. If the Hex is fewer than 14
+%          values, generate one with random value. If more than 13, first 14 taken. 
+%          Note: the first 2 bits of the header hex are ignored. 
+% headerEnable The enable signal of Header portion of the packet
+% packettype   The type of a packet. Is ignored except when 'ID'
+% payLoadType defines the type of payload data: Random, Alternating, User.
+% payLoadLength_bit Sets the length of the payload data field in bit. If the length of 
+%                   payLoad satisfies 0 <= Hex*4 - payLoadLength_bit < 4, 
+%                   take the last payLoadLength_bit bits for payLoad. 
+%                   Note: payLoad length may not be divided by 8 because of FEC length. 
+%                   Is ignored if the payLoadType is set to User and payLoad is not empty.
+% payLoad  defines the hex for the payload. Note: a single string with 0-F only, is 
+%                   interpreted as a sequence of hex numbers, which can continue over 
+%                   multiple lines. Do not put a blank or % as a first character on the line.
+% dataRate  The Data Rate of the packet: 1, 2, 3 for 1,2,3 Mbps
+% edrFilterLength % the filter length for EDR
+% edrRolloff % the filter Roll off for EDR
+% SymbolRateOffsetPpm % The sampling rate offset applied in ppm
+% guardTime  %norminal 5e-6 seconds
+
+% comment  provides the user with a space for a text string
+%
+%Advanced parameters:
+% freqOffsetHz The frequency offset applied in Hz, single number
+% startBit The FM modulator can either start with all 1, -1 or 0 data before the actual 
+%           modulation starts
+% FrequencyDriftTime is used with FrequencyDriftFrequency. These 2 parameters allow the 
+% definition of a frequency profile. Should be vectors of the same length. Linearly 
+% interpolated. Time is in seconds, frequency in Hz.
+%
+%For any parameter not defined in the text file, the default value is used.
+%The input parameters used for the calculation are saved as parIn in the *.mod file 
+%There has to be a blank line between definitions
+
+%Test run 	Carrier frequency offset 	Modulation index 	Symbol timing error 
+%1                  100 kHz                     0.45                - 50 ppm 
+%2                  19 kHz                      0.48                - 50 ppm 
+%3                  - 3 kHz                     0.46                + 50 ppm 
+%4                  1 kHz                       0.52                + 50 ppm 
+%5                  52 kHz                      0.53                + 50 ppm 
+%6                  0 kHz                       0.54                - 50 ppm 
+%7                  - 56 kHz                    0.47                - 50 ppm
+%8                  97 kHz                      0.5                 - 50 ppm
+%9                  -25 kHz                     0.45                - 50 ppm
+%8                 -100 kHz                     0.55                + 50 ppm
+
+%The ...a version has a positive going freq offset
+%The ...b version has a negative going freq offset
+
+%--------------------------------------------------------------------------
+%%%GENERAL, applies to BT classic and LE
+%--------------------------------------------------------------------------
+
+comment  %provides the user with a space for a text string
+LitePoint BT signal
+
+
+sampleRate % in Hz, default is 80 MHz
+80e6
+
+symbolRate %default is 1 Mbps
+1e6
+
+btProduct % modulation filter BT product, default is 0.5. If blank line, default is used
+0.5
+
+nSymbolsFilter %sets the length of the modulation FIR filter, default is 6
+6
+
+startBit  %Options are: 1, -1, or 0  %Note: No longer effective. Now always 0
+0
+
+zeroTimeStart %sets the duration of zeros before the signal starts in the VSG. 
+1e-5
+
+repeatTime %sets the total duration of the vector downloaded to the VSG. 
+0.625e-003
+
+freqOffsetHz % frequency offset in Hz
++100e3
+
+modulationIndex %default is 0.315. For LE the normal value is 0.5.
+0.45
+
+symbolRateOffsetPpm % Symbol rate offset in ppm
+-50
+
+FrequencyDriftTime % the time of frequency profile
+[0e-3    0.0400e-3    0.0800e-3    0.1200e-3    0.1600e-3    0.2000e-3    0.2400e-3    0.2800e-3    0.3200e-3    0.3600e-3    0.4000e-3] 
+
+FrequencyDriftFrequency % the frequency of frequency profile
+-[0e4    0.7822e4    1.5451e4    2.2700e4    2.9389e4    3.5355e4    4.0451e4    4.4550e4    4.7553e4    4.9384e4    5.0000e4]
+
+
+%--------------------------------------------------------------------------
+%Bluetooth Classic, including EDR, parameters
+%--------------------------------------------------------------------------
+%Taken out for the LE generation
+
+%--------------------------------------------------------------------------
+%Bluetooth low energy parameters
+%--------------------------------------------------------------------------
+% Activate BT in LE mode and disable BT in standard mode
+LEenable
+1
+
+% LE header payload type is 4 bits and is defined by LEheaderPayloadType an integer from 0 to 7. 
+% 0 -> 0 0 0 0   or PRBS9
+% 1 -> 0 0 0 1   or '11110000'
+% 2 -> 0 0 1 0   or '10101010'
+%etc for all 8 cases defined in test spec
+LEheaderPayloadType
+0
+
+LEheaderPayloadlength  %in Bytes
+37
+
+%No user defined payload version for LE sofar
+
+%--------------------------------------------------------------------------

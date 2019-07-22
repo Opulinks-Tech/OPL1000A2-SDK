@@ -1,0 +1,145 @@
+//******************************************************************************
+//                      BT Limit Setup file
+//******************************************************************************
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// PER Test settings
+//
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+WT_TARGET_PWR_BLE_LOW_POWER = 0
+WT_TARGET_PWR_BLE_HIGH_POWER = 10
+//------------------------------------------------------------------------------
+// PER功率，取值范围(-100-0)
+//------------------------------------------------------------------------------
+//				BLE	 1M	 2M	 3M
+WT_PER_SENS_MIN_BT              -70	-70	-70	-70
+WT_BER_SENS_MIN_BT		-70	-70	-70	-70
+
+//BT BER测试中，测试仪发送的bit个数，取值范围(1-10000000)
+WT_BT_BER_BIT_NUM_3M		= 81680		//8168的整数倍
+WT_BT_BER_BIT_NUM_2M		= 6790		//679的整数倍
+WT_BT_BER_BIT_NUM_1M		= 3390		//339的整数倍
+WT_BT_BER_BIT_NUM_LE		= 3390		//339的整数倍
+
+WT_BT_BER_TIMEOUT		= 3	        //BER测试超时,sec，取值范围(1-100)
+//------------------------------------------------------------------------------
+// PER指标
+//------------------------------------------------------------------------------
+WT_PER_MIN_PASS_LIMIT_BT                = 90		  //BT PER收包成功率下限，%，取值范围(0-100)
+
+WT_BER_MIN_PASS_LIMIT_BT		= 0.1		  //BT BER指标，%，取值范围(0-100)
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// BT Tx Verification settings
+//
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// Init Freq Err
+WT_BT_ICFT_LIMIT			= 75		//kHz,LE和BR/EDR共用，取值范围(大于or等于0)
+
+// F2avg/F1avg
+WT_BT_DELTA_F2_F1_RATIO_UP		= 2		//LE和BR共用，取值范围(大于or等于0)
+WT_BT_DELTA_F2_F1_RATIO_LOW		= 0.8		//LE和BR共用，取值范围(大于or等于0)
+
+//------------------------------------------------------------------------------
+//----------   1M,2M,3M  BR/EDR   ----------
+//------------------------------------------------------------------------------
+//BT功率偏差容限，dB
+WT_BT_TX_POWER_TOLERANCE_UP	  	= 11		//dBm,BR 功率门限上限值，取值范围(0-50)
+WT_BT_TX_POWER_TOLERANCE_LOW	  	= -3		//dBm,BR 功率门限下限值，取值范围(-50-50)
+WT_BT_TX_POWER_2M_3M_OFFSET         	= -2		//dBm,2M、3M相对于1M的功率门限偏移，取值范围(-50-50)
+
+//------------------------------------------------------------------------------
+//----------   1M BDR   ----------
+//------------------------------------------------------------------------------
+//BT BR Freq.DriftRate
+WT_BT_BR_FREQ_DRIFT_RATE_LIMIT		= 20		// KHz，取值范围(大于or等于0)
+
+//BT BR Freq.Drift
+WT_BT_FREQ_DRIFT_LIMIT_1DH1		= 25		// KHz，取值范围(大于or等于0)
+WT_BT_FREQ_DRIFT_LIMIT_1DH3		= 40		// KHz，取值范围(大于or等于0)
+WT_BT_FREQ_DRIFT_LIMIT_1DH5		= 40		// KHz，取值范围(大于or等于0)
+
+//BT BR Delta F1 avg
+WT_BT_DELTA_F1_TOLERANCE_UP		= 175		// KHz，取值范围(大于or等于0)
+WT_BT_DELTA_F1_TOLERANCE_LOW		= 140		// KHz，取值范围(大于or等于0)
+
+//BT BR Delta F2 avg
+WT_BT_DELTA_F2_TOLERANCE_UP		= 250		// KHz，取值范围(大于or等于0)
+WT_BT_DELTA_F2_TOLERANCE_LOW		= 112		// KHz，取值范围(大于or等于0)
+
+//BT BR Delta F2 max
+WT_BT_DELTA_F2_MAX_TOLERANCE_UP		= 500		// KHz，取值范围(大于or等于0)
+WT_BT_DELTA_F2_MAX_TOLERANCE_LOW	= 115		// KHz，取值范围(大于or等于0)
+
+
+
+//------------------------------------------------------------------------------
+//----------   2M ,3M  EDR   ----------
+//------------------------------------------------------------------------------
+//BT EDR Power Diff
+WT_BT_TX_POWER_DIFF_TOLERANCE_UP	= 1		//dB，取值范围(-200-200)
+WT_BT_TX_POWER_DIFF_TOLERANCE_LOW	= -4		//dB，取值范围(-200-200)
+
+//DEVM  Average
+WT_BT_TX_DEVM_AVG_LIMIT			= 13		//%,0~Value%，取值范围(0-100)
+
+//DEVM  Peak
+WT_BT_TX_DEVM_PEAK_LIMIT		= 25		//%,0~Value%，取值范围(0-100)
+
+//DEVM pass percent
+WT_BT_TX_DEVM_PASS_PCT_LIMIT		= 99		//%,Value%~100%，取值范围(0-100)
+
+//OMEGA
+WT_BT_TX_EDR_OMEGA_I_TOLERANCE		= 75		//KHZ,±Value，取值范围(0-100)
+WT_BT_TX_EDR_OMEGA_O_TOLERANCE		= 10		//KHZ,±Value，取值范围(0-100)
+WT_BT_TX_EDR_OMEGA_IO_TOLERANCE		= 75		//KHZ,±Value，取值范围(0-100)
+
+//Spectrum mask
+WT_BT_SPA_FAIL_POINTS_LIMIT		= 2		//%  EDR,0~Vlaue%，取值范围(0-100)
+
+
+
+
+//------------------------------------------------------------------------------
+//----------  1M LE   ----------
+//------------------------------------------------------------------------------
+//LE功率偏差容限，dB
+WT_BTLE_TX_POWER_TOLERANCE_UP	  	= 2		//dBm,LE功率门限上限值，取值范围(0-50)
+WT_BTLE_TX_POWER_TOLERANCE_LOW	  	= 2		//dBm,LE功率门限下限值，取值范围(-50-50)
+
+//Delta F1 avg
+WT_BTLE_DELTA_F1_TOLERANCE_UP		= 278		// KHz，取值范围(大于or等于0)
+WT_BTLE_DELTA_F1_TOLERANCE_LOW		= 225		// KHz，取值范围(大于or等于0)
+
+//Delta F2 avg
+WT_BTLE_DELTA_F2_TOLERANCE_UP		= 500		// KHz，取值范围(大于or等于0)
+WT_BTLE_DELTA_F2_TOLERANCE_LOW		= 100		// KHz，取值范围(大于or等于0)
+
+//Delta F2 max
+WT_BTLE_DELTA_F2_MAX_TOLERANCE_UP	= 500		// KHz，取值范围(大于or等于0)
+WT_BTLE_DELTA_F2_MAX_TOLERANCE_LOW	= 185		// KHz，取值范围(大于or等于0)
+
+//Fn Max
+WT_BTLE_Fn_MAX_TOLERANCE_UP		= 150		// KHz，取值范围(大于or等于0)
+WT_BTLE_Fn_MAX_TOLERANCE_LOW		= -150		// KHz，取值范围(大于or等于-500)
+
+//F0Fn Max
+WT_BTLE_F0Fn_MAX_TOLERANCE_UP		= 50		// KHz，取值范围(大于or等于0)
+WT_BTLE_F0Fn_MAX_TOLERANCE_LOW		= 0		// KHz，取值范围(大于or等于-500)
+
+//Delta F1F0
+WT_BTLE_DELTA_F1F0_TOLERANCE_UP		= 20		// KHz，取值范围(大于or等于0)
+WT_BTLE_DELTA_F1F0_TOLERANCE_LOW	= 0		// KHz，取值范围(大于or等于-500)
+
+//FnFn5 Max
+WT_BTLE_FnFn5_MAX_TOLERANCE_UP		= 20		// KHz，取值范围(大于or等于0)
+WT_BTLE_FnFn5_MAX_TOLERANCE_LOW		= 0		// KHz，取值范围(大于or等于-500)
+
+//------------------------------------------------------------------------------
+// END of file
+//------------------------------------------------------------------------------
+
+	
