@@ -1,0 +1,34 @@
+#ifndef __ALIYUN_IOT_CONFIG_H__
+#define __ALIYUN_IOT_CONFIG_H__
+
+#define MQTT_COMM_ENABLED
+#define MQTT_DIRECT
+
+/*
+ * Device Model Configurations
+*/
+#define DEVICE_MODEL_ENABLED
+//#define DEVICE_MODEL_GATEWAY
+//#define ALCS_ENABLED
+//#define DEPRECATED_LINKKIT
+#define DEV_BIND_ENABLED
+//#define DEVICE_MODEL_RAWDATA_SOLO
+//@@#define OTA_ENABLED
+//#define OTA_SIGNAL_CHANNEL 1 //if MQTT_COMM_ENABLED == 1
+//#define COAP_COMM_ENABLED
+//#defien HTTP_COMM_ENABLED
+//#define HTTP2_COMM_ENABLED
+//#define HTTP_COMM_ENABLED
+#define SUPPORT_TLS
+//#define FORCE_SSL_VERIFY
+//#define SUPPORT_ITLS
+//#define SAL_ENABLED
+//#define WIFI_PROVISION_ENABLED
+
+//#define ALCS_CLIENT_ENABLED
+//#define ALCS_SERVER_ENABLED
+
+#endif
+
+
+

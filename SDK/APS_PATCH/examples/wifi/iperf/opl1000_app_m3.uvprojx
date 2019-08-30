@@ -422,6 +422,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\components\ftoa_util.c</FilePath>
             </File>
+            <File>
+              <FileName>strerror_util.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\components\strerror_util.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

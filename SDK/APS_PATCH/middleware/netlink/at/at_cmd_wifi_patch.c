@@ -101,6 +101,7 @@ static int at_cmd_wifi_cwlapopt_patch(char *buf, int len, int mode)
 
         case AT_CMD_MODE_SET:
             if (argc >= 2) {
+                /* sorting */
                 if (at_cmd_get_para_as_digital(argv[1], &sort_en) != 0) {
                     goto done;
                 }
@@ -112,6 +113,7 @@ static int at_cmd_wifi_cwlapopt_patch(char *buf, int len, int mode)
                 
                 gATLapOpt.sort_en = sort_en;
                 
+                /* display mask bit */
                 if (argc >= 3) {
                     if (at_cmd_get_para_as_digital(argv[2], &mask) != 0) {
                         goto done;
@@ -128,6 +130,7 @@ static int at_cmd_wifi_cwlapopt_patch(char *buf, int len, int mode)
                 set_sorting(gATLapOpt.sort_en, gATLapOpt.mask);
             }
 
+            /* scan duration */
             if (argc >= 4) {
                 if (at_cmd_get_para_as_digital(argv[3], &times) != 0) {
                     goto done;
@@ -142,6 +145,7 @@ static int at_cmd_wifi_cwlapopt_patch(char *buf, int len, int mode)
                 gATScanCfg.u32PassiveScanDur = AT_SCAN_PASSIVE_INT_DEF * times;
             }
             
+            /* probe request counter */
             if (argc >= 5) {
                 if (at_cmd_get_para_as_digital(argv[4], &probe_counters) != 0) {
                     goto done;
@@ -193,7 +197,8 @@ done:
 static int at_cmd_wifi_cwlap_patch(char *buf, int len, int mode)
 {
     char *argv[AT_MAX_CMD_ARGS] = {0};
-    int argc = 0, i, iRet = 0;
+    int argc = 0, iRet = 0;
+    uint8_t ssid_len = 0;
     uint8_t mac[MAC_ADDR_LEN] = {0};
     int ch;
     char *pstr;
@@ -214,23 +219,19 @@ static int at_cmd_wifi_cwlap_patch(char *buf, int len, int mode)
         
         case AT_CMD_MODE_SET:
             if (argc >= 2) { //ssid
-                g_wifi_argc++;
                 if (strlen(argv[1]) != 0) {
                     if (strlen(argv[1]) > MAX_LEN_OF_SSID) {
                         goto done;
                     }
                     
-                    g_wifi_argv[1] = malloc(strlen(argv[1]) + 1);
-                    if(g_wifi_argv[1] == NULL) {
-                        goto done;
-                    }
-                    
-                    strcpy(g_wifi_argv[1], argv[1]);
+                    ssid_len = strlen(argv[1]);
+                    if (ssid_len > MAX_LEN_OF_SSID)
+                        ssid_len = MAX_LEN_OF_SSID;
+                    memcpy(&scan_cfg.u8aSsid[0], argv[1], ssid_len);
                 }
             }
             
             if (argc >= 3) { //mac address
-                g_wifi_argc++;
                 if (strlen(argv[2]) != 0) {
                     pstr = at_cmd_param_trim(argv[2]);
                     
@@ -254,20 +255,12 @@ static int at_cmd_wifi_cwlap_patch(char *buf, int len, int mode)
                     if (is_zero_ether_addr(mac)) {
                         goto done;
                     }
-            
-                    g_wifi_argv[2] = malloc(strlen(argv[2]) + 1);
-                    if(g_wifi_argv[2] == NULL) {
-                        goto done;
-                    }
                     
-                    strcpy(g_wifi_argv[2], argv[2]);
+                    memcpy(&scan_cfg.u8aBssid, &mac[0], MAC_ADDR_LEN);
                 }
             }
             
             if (argc >= 4) { //channel
-#if 1
-                g_wifi_argc++;
-#endif
                 if (at_cmd_get_para_as_digital(argv[3], &ch) != 0) {
                     goto done;
                 }
@@ -275,14 +268,7 @@ static int at_cmd_wifi_cwlap_patch(char *buf, int len, int mode)
                 if (ch < 1 || ch > 14) {
                     goto done;
                 }
-#if 1
-                g_wifi_argv[3] = malloc(strlen(argv[3]) + 1);
-                if(g_wifi_argv[3] == NULL) {
-                    goto done;
-                }
                 
-                strcpy(g_wifi_argv[3], argv[3]);
-#endif
                 scan_cfg.u8Channel = ch;
             }
             break;
@@ -290,24 +276,19 @@ static int at_cmd_wifi_cwlap_patch(char *buf, int len, int mode)
         default:
             break;
     }
-    
-    iRet = 1;
-    wpa_cli_scan_by_cfg(&scan_cfg);
+
+    if (!wpa_cli_scan_by_cfg(&scan_cfg)) {
+        //Error
+        goto done;
+    }
+    else {
+        iRet = 1;
+    }
 
 done:
     if(!iRet)
     {
-        for(i = 0; i < g_wifi_argc; i++)
-        {
-            if(g_wifi_argv[i])
-            {
-                free(g_wifi_argv[i]);
-                g_wifi_argv[i] = NULL;
-            }
-        }
-
         g_wifi_argc = 0;
-        
         at_output("\r\nERROR\r\n");
     }
 
@@ -321,6 +302,8 @@ void at_cmd_wifi_func_init_patch(void)
     gATScanCfg.u32ActiveScanDur = 100;
     gATScanCfg.u32PassiveScanDur = 150;
     gATScanCfg.u8Channel = 0;
+    memset(gATScanCfg.u8aSsid, 0, MAX_LEN_OF_SSID + 1);
+    memset(gATScanCfg.u8aBssid, 0, MAC_ADDR_LEN);
     
     gATLapOpt.mask = 31;
     gATLapOpt.times = 1;

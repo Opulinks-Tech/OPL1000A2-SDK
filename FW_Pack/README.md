@@ -11,11 +11,12 @@ For use download tool  please refer document "OPL1000-patch-download-tool-user-g
 
 # File list and brief description
 1. opl1000_m0.bin: OPL1000 M0 binary corresponding to use internal PMU power supply. It is fixed and cannot be changed. 
-2. opl1000_ota_loader.bin: OTA boot agent binary. It is used to create OTA type firmware. 
-3. PatchData.txt: script file that used to pack M0 and M3 binary file together. 
+2. opl1000_m0_ldo.bin: OPL1000 M0 binary corresponding to use external LDO power supply. It is fixed and cannot be changed. 
+3. opl1000_ota_loader.bin: OTA boot agent binary. It is used to create OTA type firmware. 
+4. PatchData.txt: script file that used to pack M0 and M3 binary file together. 
 
 [Note] 
 
-1. OPL1000 hardware setting is different when adopt different power supply method. 
+1. OPL1000 hardware setting is different when adopt different power supply method. Hence user shall choose opl1000_m0.bin or opl1000_m0_ldo.bin according to hardware design scheme. 
 3. When user develops own application, M3 binary will be created by user. And it shall be packed with  M0 binary file in order to generate integrated firmware.  
 

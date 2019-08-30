@@ -16,7 +16,7 @@
 /*
 FIM version
 */
-#define MW_FIM_VER08_PROJECT            0x04    // 0x00 ~ 0xFF
+#define MW_FIM_VER11_PROJECT            0x02    // 0x00 ~ 0xFF
 
 /*
 Smart sleep
@@ -66,6 +66,12 @@ IoT device
 #define IOT_DEVICE_DATA_TASK_STACK_SIZE_RX  (1024)
 #define IOT_DEVICE_DATA_QUEUE_SIZE_TX       (20)
 
+/*
+after the time, change the system state
+*/
+#define BLEWIFI_COM_SYS_TIME_INIT       (5000)      // ms from init to normal
+#define BLEWIFI_COM_SYS_TIME_NORMAL     (120000)    // ms from normal to ble off
+
 
 // BLE part
 /*
@@ -95,6 +101,12 @@ method 2: full name
 */
 #define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_MIN  0x640  // For 1 Second
 #define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_MAX  0x640  // For 1 Second
+
+/* For power saving
+10000 (ms) / 0.625 (ms) = 16000 = 0x3E80
+*/
+#define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_PS_MIN   0x3E80  // 10 sec
+#define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_PS_MAX   0x3E80  // 10 sec
 
 
 // Wifi part

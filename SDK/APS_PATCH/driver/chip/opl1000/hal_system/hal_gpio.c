@@ -230,27 +230,10 @@ E_SLEEP_IO_STATUS Hal_Gpio_SleepIoAutoCtrlGet(E_GpioIdx_t eIdx, E_SLEEP_IO_CFG *
     return SLEEP_IO_SUCCESS;
 }
 
-/**
- * @brief Set wake up IO. Call by PS
- * @param eIdx [in] Assign IO as wake up pin.
- *                  GPIO_IDX_00, GPIO_IDX_01, and etc.
- *                  Set GPIO_IDX_MAX or other value can disable wake up IO
- */
-void Hal_Gpio_SetWakeupIo(E_GpioIdx_t eIdx)
-{
-    if (eIdx >= GPIO_IDX_MAX)
-        g_psHal_Gpio_SleepIoCfg->s32WkupIoIdx = -1; /* Disable */
-    else
-        g_psHal_Gpio_SleepIoCfg->s32WkupIoIdx = eIdx;
-}
-
-
-
 
 void Hal_Gpio_Init(void)
 {
     g_psHal_Gpio_SleepIoCfg = (S_SLEEP_IO_CFG *)g_u32IpcSleepIoCfgAddr;
-    g_psHal_Gpio_SleepIoCfg->s32WkupIoIdx     = -1;   /* Disable */
     g_psHal_Gpio_SleepIoCfg->u32UsrCtrl       = 0;
     g_psHal_Gpio_SleepIoCfg->u32UsrOutEn      = 0;
     g_psHal_Gpio_SleepIoCfg->u32UsrOutLvl     = 0;

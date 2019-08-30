@@ -106,7 +106,7 @@ void __Patch_EntryPoint(void) __attribute__((used));
 static void Main_PinMuxUpdate(void);
 static void Main_FlashLayoutUpdate(void);
 static void Main_MiscModulesInit(void);
-void Main_AppInit_patch(void);
+static void Main_AppInit_patch(void);
 void User_Demo(void);
 
 static void Main_AppThread_1(void *argu);

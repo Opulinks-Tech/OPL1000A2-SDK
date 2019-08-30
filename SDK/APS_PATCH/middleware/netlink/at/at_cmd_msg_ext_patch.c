@@ -27,27 +27,6 @@ wifi_scan_info_t g_scan_history[16]={0};
 
 extern void at_msg_ext_wifi_show_one_ap_impl(int argc, char *argv[]);
 
-void at_msg_ext_wifi_show_one_ap_patch(int argc, char *argv[])
-{
-    int i;
-    u16 apCount = 0;
-    
-    wifi_scan_get_ap_num(&apCount);
-    if (apCount == 0) {
-        for(i = 0; i < g_wifi_argc; i++)
-        {
-            if(g_wifi_argv[i])
-            {
-                free(g_wifi_argv[i]);
-                g_wifi_argv[i] = NULL;
-            }
-        }
-        return;
-    }
-    
-    at_msg_ext_wifi_show_one_ap_impl(argc, argv);
-}
-
 #ifdef __ATCWLAP_SCAN_HISTORY_EN__
 void at_msg_ext_wifi_show_all_scan_history_patch(int argc, char *argv[])
 {
@@ -64,7 +43,6 @@ void at_msg_ext_wifi_show_all_scan_history_patch(int argc, char *argv[])
 
 void at_msg_ext_init_patch(void)
 {
-    at_msg_ext_wifi_show_one_ap      = at_msg_ext_wifi_show_one_ap_patch;
     #ifdef __ATCWLAP_SCAN_HISTORY_EN__
     at_msg_ext_wifi_show_all = at_msg_ext_wifi_show_all_scan_history_patch;
     #endif

@@ -44,7 +44,6 @@ Head Block of The File
 #include "sys_os_config.h"
 #include "https_client_request.h"
 
-//#include "hal_wdt.h"
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
 // the number of elements in the message queue
@@ -80,7 +79,6 @@ static void Main_FlashLayoutUpdate(void);
 static void Main_AppInit_patch(void);
 
 
-//static void Main_MiscModulesInit(void);
 /***********
 C Functions
 ***********/
@@ -136,27 +134,6 @@ static void Main_FlashLayoutUpdate(void)
 {
     // update here
 }
-
-/*************************************************************************
-* FUNCTION:
-*   Main_MiscModulesInit
-*
-* DESCRIPTION:
-*   the initial of driver part for cold and warm boot
-*
-* PARAMETERS
-*   none
-*
-* RETURNS
-*   none
-*
-*************************************************************************/
-/*
-static void Main_MiscModulesInit(void)
-{
-	  //Hal_Wdt_Stop();   //disable watchdog here.
-}
-*/
 
 /*************************************************************************
 * FUNCTION:

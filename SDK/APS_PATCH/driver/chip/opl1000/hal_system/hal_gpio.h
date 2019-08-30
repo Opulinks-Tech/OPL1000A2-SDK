@@ -119,7 +119,6 @@ typedef struct
 
 typedef struct
 {
-    int32_t  s32WkupIoIdx;      /* Wakeup IO index */
     uint32_t u32UsrCtrl;        /* Output control by User. If the bit is set to one, the IO setting will use oen_user and level_user.
                                    Otherwise, user oen_auto and level_auto. */
     uint32_t u32UsrOutEn;       /* Output enable. Control by user, priority is higher than oen_auto. (1: Enable, 0:Disable) */
@@ -229,13 +228,6 @@ E_SLEEP_IO_STATUS Hal_Gpio_SleepIoAutoCtrlSet(E_GpioIdx_t eIdx, E_SLEEP_IO_CFG e
  * @retval SLEEP_IO_FAIL        Set fail
  */
 E_SLEEP_IO_STATUS Hal_Gpio_SleepIoAutoCtrlGet(E_GpioIdx_t eIdx, E_SLEEP_IO_CFG *peSleepIoCfg);
-/**
- * @brief Set wake up IO. Call by PS
- * @param eIdx [in] Assign IO as wake up pin.
- *                  GPIO_IDX_00, GPIO_IDX_01, and etc.
- *                  Set GPIO_IDX_MAX or other value can disable wake up IO
- */
-void Hal_Gpio_SetWakeupIo(E_GpioIdx_t eIdx);
 
 void Hal_Gpio_Init(void);
 

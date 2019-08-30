@@ -111,11 +111,6 @@ void initial_network(void *args)
     
     /* Tcpip stack and net interface initialization,  dhcp client process initialization. */
     lwip_network_init(WIFI_MODE_STA);
-
-    /* Waiting for connection & got IP from DHCP server */
-    lwip_net_ready();
-
-    osDelay(500);
     
     vTaskDelete(NULL);
 }

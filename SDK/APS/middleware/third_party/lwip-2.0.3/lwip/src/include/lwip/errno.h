@@ -179,9 +179,14 @@ This area is identified by __user_libspace(). The __aeabi_errno_addr() returns t
 address of the C library errno variable when the C library attempts to read or write errno.
 */
 #ifndef errno
+#ifdef __GNUC__
+extern volatile int *__aeabi_errno_addr(void);
+#define errno (* __aeabi_errno_addr())
+#else
 extern int errno;
 extern _ARMABI_PURE volatile int *__aeabi_errno_addr(void);
 #define errno (*__CLIBNS __aeabi_errno_addr())
+#endif /* #ifndef __GNUC__ */
 #endif
 
 #else /* LWIP_PROVIDE_ERRNO */

@@ -110,9 +110,16 @@ static void http_request(void)
         do {
             memset(recv_buf, 0, sizeof(recv_buf));
             r = read(s, recv_buf, sizeof(recv_buf)-1);
+#ifndef GCC
             for (int i = 0; i < r; i++) {
                 putchar(recv_buf[i]);
             }
+#else
+						if(r > 0) {
+							  recv_buf[r] = '\n';
+							  printf("%s",recv_buf);
+						}
+#endif
         } while (r > 0);
 
         printf("... done reading from socket. Last read return=%d errno=%d\r\n", r, errno);

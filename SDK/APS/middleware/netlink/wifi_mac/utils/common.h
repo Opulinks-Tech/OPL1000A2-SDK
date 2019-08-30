@@ -226,12 +226,12 @@ static inline unsigned int wpa_swap_32(unsigned int v)
 #define WPA_BYTE_SWAP_DEFINED
 #endif /* !WPA_BYTE_SWAP_DEFINED */
 
-
+#ifndef GCC
 #define htonl(x) host_to_be32(x)
 #define ntohl(x) be_to_host32(x)
 #define htons(x) host_to_be16(x)
 #define ntohs(x) be_to_host16(x)
-
+#endif
 
 /* Macros for handling unaligned memory accesses */
 

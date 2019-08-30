@@ -49,14 +49,14 @@ Head Block of The File
 #endif
 #include "at_cmd_common_patch.h"
 #include "mw_fim.h"
+#include "mw_fim_default.h"
 #include "hal_dbg_uart.h"
 #include "hal_vic.h"
 #include "boot_sequence.h"
 
 #include "blewifi_app.h"
 #include "blewifi_configuration.h"
-#include "mw_fim_default_group08.h"
-#include "mw_fim_default_group08_project.h"
+#include "mw_fim_default_group11_project.h"
 
 //#include "hal_wdt.h"
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
@@ -97,6 +97,7 @@ static void Main_AppInit_patch(void);
 #ifdef __BLEWIFI_TRANSPARENT__
 static int Main_BleWifiInit(void);
 #endif
+static void Main_ApsUartRxDectecConfig(void);
 static void Main_ApsUartRxDectecCb(E_GpioIdx_t tGpioIdx);
 
 /***********
@@ -208,8 +209,11 @@ static void Main_PinMuxUpdate(void)
 *************************************************************************/
 static void Main_FlashLayoutUpdate(void)
 {
-    MwFim_GroupInfoUpdate(0, 8, (T_MwFimFileInfo *)g_taMwFimGroupTable08_project);
-    MwFim_GroupVersionUpdate(0, 8, MW_FIM_VER08_PROJECT);
+    g_taMwFimZoneInfoTable[1].ulBaseAddr = 0x00090000;
+    g_taMwFimZoneInfoTable[1].ulBlockNum = 9;
+
+    MwFim_GroupInfoUpdate(1, 1, (T_MwFimFileInfo *)g_taMwFimGroupTable11_project);
+    MwFim_GroupVersionUpdate(1, 1, MW_FIM_VER11_PROJECT);
 }
 
 /*************************************************************************
@@ -228,36 +232,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-    E_GpioLevel_t eGpioLevel;
-
     //Hal_Wdt_Stop();   //disable watchdog here.
-
-    // IO 1 : detect the GPIO high level if APS UART Rx is connected to another UART Tx port.
-    // cold boot
-    if (0 == Boot_CheckWarmBoot())
-    {
-        if (HAL_PIN_TYPE_IO_1 == PIN_TYPE_UART_APS_RX)
-        {
-            Hal_Pin_ConfigSet(1, PIN_TYPE_GPIO_INPUT, PIN_DRIVING_LOW);
-            eGpioLevel = Hal_Vic_GpioInput(GPIO_IDX_01);
-            if (GPIO_LEVEL_HIGH == eGpioLevel)
-            {
-                // it it connected
-                Hal_Pin_ConfigSet(1, HAL_PIN_TYPE_IO_1, HAL_PIN_DRIVING_IO_1);
-                Hal_DbgUart_RxIntEn(1);
-            }
-            else //if (GPIO_LEVEL_LOW == eGpioLevel)
-            {
-                // it is not conncected, set the high level to trigger the GPIO interrupt
-                Hal_Vic_GpioCallBackFuncSet(GPIO_IDX_01, Main_ApsUartRxDectecCb);
-                //Hal_Vic_GpioDirection(GPIO_IDX_01, GPIO_INPUT);
-                Hal_Vic_GpioIntTypeSel(GPIO_IDX_01, INT_TYPE_LEVEL);
-                Hal_Vic_GpioIntInv(GPIO_IDX_01, 0);
-                Hal_Vic_GpioIntMask(GPIO_IDX_01, 0);
-                Hal_Vic_GpioIntEn(GPIO_IDX_01, 1);
-            }
-        }
-    }
 }
 
 /*************************************************************************
@@ -318,6 +293,18 @@ static void Main_AppInit_patch(void)
 {
     // add the application initialization from here
     printf("AppInit\n");
+
+    // IO 1 : detect the GPIO high level if APS UART Rx is connected to another UART Tx port.
+    // cold boot
+    if (0 == Boot_CheckWarmBoot())
+    {
+        Hal_DbgUart_RxIntEn(0);
+        
+        if (HAL_PIN_TYPE_IO_1 == PIN_TYPE_UART_APS_RX)
+        {
+            Main_ApsUartRxDectecConfig();
+        }
+    }
     
 #ifdef __BLEWIFI_TRANSPARENT__
     // the blewifi init will be triggered by AT Cmd
@@ -348,6 +335,44 @@ static int Main_BleWifiInit(void)
     return 0;
 }
 #endif
+
+/*************************************************************************
+* FUNCTION:
+*   Main_ApsUartRxDectecConfig
+*
+* DESCRIPTION:
+*   detect the GPIO high level if APS UART Rx is connected to another UART Tx port.
+*
+* PARAMETERS
+*   none
+*
+* RETURNS
+*   none
+*
+*************************************************************************/
+static void Main_ApsUartRxDectecConfig(void)
+{
+    E_GpioLevel_t eGpioLevel;
+
+    Hal_Pin_ConfigSet(1, PIN_TYPE_GPIO_INPUT, PIN_DRIVING_LOW);
+    eGpioLevel = Hal_Vic_GpioInput(GPIO_IDX_01);
+    if (GPIO_LEVEL_HIGH == eGpioLevel)
+    {
+        // it is connected
+        Hal_Pin_ConfigSet(1, HAL_PIN_TYPE_IO_1, HAL_PIN_DRIVING_IO_1);
+        Hal_DbgUart_RxIntEn(1);
+    }
+    else //if (GPIO_LEVEL_LOW == eGpioLevel)
+    {
+        // it is not conncected, set the high level to trigger the GPIO interrupt
+        Hal_Vic_GpioCallBackFuncSet(GPIO_IDX_01, Main_ApsUartRxDectecCb);
+        //Hal_Vic_GpioDirection(GPIO_IDX_01, GPIO_INPUT);
+        Hal_Vic_GpioIntTypeSel(GPIO_IDX_01, INT_TYPE_LEVEL);
+        Hal_Vic_GpioIntInv(GPIO_IDX_01, 0);
+        Hal_Vic_GpioIntMask(GPIO_IDX_01, 0);
+        Hal_Vic_GpioIntEn(GPIO_IDX_01, 1);
+    }
+}
 
 /*************************************************************************
 * FUNCTION:

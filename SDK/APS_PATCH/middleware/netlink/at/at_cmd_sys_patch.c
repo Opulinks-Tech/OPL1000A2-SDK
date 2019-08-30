@@ -42,6 +42,7 @@
 #include "at_cmd_task.h"
 #include "hal_pin.h"
 #include "hal_pin_def.h"
+#include "mw_ota.h"
 
 #define CMD_TOKEN_SIZE          16
 #define AT_CMD_SYS_WAIT_TIME    1000   // ms
@@ -216,6 +217,46 @@ int at_cmd_sys_sleep_patch(char *buf, int len, int mode)
     return true;
 }
 
+/*
+ * @brief Command at+fwver
+ *
+ * @param [in] argc count of parameters
+ *
+ * @param [in] argv parameters array
+ *
+ * @return 0 fail 1 success
+ *
+ */
+int at_cmd_sys_fwver_patch(char *buf, int len, int mode)
+{
+    uint16_t uwProjectId = 0;
+    uint16_t uwChipId = 0;
+    uint16_t uwFirmwareId = 0;
+
+    switch (mode)
+    {
+        case AT_CMD_MODE_READ:
+            if (MW_OTA_OK == MwOta_VersionGet(&uwProjectId, &uwChipId, &uwFirmwareId))
+            {
+                msg_print_uart1("ProjectId : %u\r\n", uwProjectId);
+                msg_print_uart1("ChipId    : %u\r\n", uwChipId);
+                msg_print_uart1("FwId      : %u\r\n", uwFirmwareId);
+                msg_print_uart1("OK\r\n");
+            }
+            else
+            {
+                msg_print_uart1("ERROR\r\n");
+            }
+            break;
+
+        default:
+            msg_print_uart1("ERROR\r\n");
+            break;
+    }
+    
+    return true;
+}
+
 /**
   * @brief AT Command Table for System Module
   *
@@ -240,6 +281,7 @@ void at_cmd_sys_func_init_patch(void)
     gAtCmdTbl_Sys[1].cmd_handle = at_cmd_sys_gmr_patch;
     gAtCmdTbl_Sys[2].cmd_handle = at_cmd_sys_gslp_patch;
     gAtCmdTbl_Sys[7].cmd_handle = at_cmd_sys_sleep_patch;
+    gAtCmdTbl_Sys[15].cmd_handle = at_cmd_sys_fwver_patch;
 
     g_u32FlashReadStart         = AT_FLASH_READ_START;
     g_u32FlashReadEnd           = AT_FLASH_READ_END;

@@ -70,7 +70,7 @@ int at_wifi_event_handler_cb_patch(wifi_event_id_t event_id, void *data, uint16_
         break;
     case WIFI_EVENT_SCAN_COMPLETE:
         if (at_ip_mode != true) {
-            at_msg_ext_wifi_show_ap_by_filter();
+            at_msg_ext_wifi_show_all(NULL, NULL);
             at_uart1_printf("\r\nOK\r\n");
         } else {
             at_wifi_trans_reconnect_impl();

@@ -51,6 +51,7 @@ extern "C" {
 #if defined(GCC)
     #define RET_DATA    __attribute__((section("RET_REGION"), used))
     #define RET_STATIC  __attribute__((section("RET_STATIC_REGION"), used))
+    #define __forceinline inline
 #else
     #define RET_DATA    __attribute__((section("RET_REGION"), used, zero_init))
     #define RET_STATIC  __attribute__((section("RET_STATIC_REGION"), used, zero_init))

@@ -254,7 +254,7 @@ typedef struct {
 /** @brief Parameters for an SSID scan. */
 typedef struct {
     uint8_t *ssid;                             /**< SSID of AP */
-    uint8_t *bssid;                            /**< MAC address of AP */
+    uint8_t *bssid;                            /**< MAC address of AP, point to array[WIFI_MAC_ADDRESS_LENGTH] */
     uint8_t channel;                           /**< channel, scan the specific channel */
     bool show_hidden;                          /**< enable to scan AP whose SSID is hidden */
     wifi_scan_type_t scan_type;                /**< scan type, active or passive */

@@ -111,7 +111,7 @@ void __Patch_EntryPoint(void) __attribute__((section("ENTRY_POINT")));
 void __Patch_EntryPoint(void) __attribute__((used));
 static void Main_PinMuxUpdate(void);
 static void Main_FlashLayoutUpdate(void);
-void Main_AppInit_patch(void);
+static void Main_AppInit_patch(void);
 static void Main_AppThread_1(void *argu);
 static void Main_AppThread_2(void *argu);
 static osStatus Main_AppMessageQSend(S_MessageQ *ptMsg);

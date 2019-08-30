@@ -30,7 +30,10 @@
 #include "hal_spi_patch.h"
 #include "hal_uart_patch.h"
 #include "hal_dbg_uart_patch.h"
+#include "hal_flash.h"
+#include "hal_wdt.h"
 #include "boot_sequence.h"
+#include "at_cmd_common.h"
 #include "at_cmd_func_patch.h"
 #include "controller_task_patch.h"
 #include "controller_wifi_patch.h"
@@ -45,6 +48,7 @@
 #include "ble_host_patch_init.h"
 #include "ps_patch.h"
 #include "mw_fim_patch.h"
+#include "sys_cfg_patch.h"
 
 
 /*
@@ -52,6 +56,17 @@
  *                          Definitions and Macros
  *************************************************************************
  */
+#define BOOT_MODE_ICE       0x2
+#define BOOT_MODE_JTAG      0x3
+#define BOOT_MODE_NORMAL    0xA
+
+#define WDT_TIMEOUT_SECS    10
+
+#define SYS_SPARE_LOAD_PATCH_READY  (1 << 3)
+#define SYS_SPARE_MSQ_CLOCK_READY   (1 << 4)
+#define SYS_SPARE_DEEP_SLEEP_EN     (1 << 5)
+#define SYS_SPARE_MSQ_FLASH_READY   (1 << 6)
+#define SYS_SPARE_APS_CLOCK_READY   (1 << 7)
 
 /*
  *************************************************************************
@@ -60,10 +75,26 @@
  */
 
 /*
-*************************************************************************
-*                           Declarations of Private Functions
-*************************************************************************
-*/
+ *************************************************************************
+ *                           Declarions of Private Functions
+ *************************************************************************
+ */
+extern T_Sys_PowerSetup_fp Sys_PowerSetup;
+extern T_Sys_ClockSetup_fp Sys_ClockSetup;
+extern T_Sys_UartInit_fp Sys_UartInit;
+extern T_Sys_MiscModulesInit_fp Sys_MiscModulesInit;
+extern T_Sys_MiscDriverConfigSetup_fp Sys_MiscDriverConfigSetup;
+extern T_Sys_DriverInit_fp Sys_DriverInit;
+extern T_Sys_WaitforMsqReady_fp Sys_WaitforMsqReady;
+extern T_Sys_WaitForMsqFlashAccessDone_fp Sys_WaitForMsqFlashAccessDone;
+extern T_Sys_RomVersion_fp Sys_RomVersion;
+extern T_Sys_ServiceInit_fp Sys_ServiceInit;
+extern T_Sys_AppInit_fp Sys_AppInit;
+extern T_Sys_PostInit_fp Sys_PostInit;
+extern T_Sys_StackOverflowHook_fp Sys_StackOverflowHook;
+extern T_Sys_IdleHook_fp Sys_IdleHook;
+
+__forceinline static void Sys_NotifyReadyToMsq(uint32_t indicator);
 
 /*
  *************************************************************************
@@ -92,7 +123,7 @@ uint32_t sramEndBound;
  *                          Public Functions
  *************************************************************************
  */
-
+extern void Sys_ServiceInit_impl(void);
 
 void Test_ForSwPatch_patch(void)
 {
@@ -171,10 +202,10 @@ void Sys_SwitchOffUnusedSram(uint32_t memFootPrint)
 
 /*************************************************************************
 * FUNCTION:
-*   Sys_MiscDriverConfigSetup
+*   Sys_DriverInit
 *
 * DESCRIPTION:
-*   set the configuration for misc driver
+*   the initial for driver
 *
 * PARAMETERS
 *   none
@@ -183,8 +214,91 @@ void Sys_SwitchOffUnusedSram(uint32_t memFootPrint)
 *   none
 *
 *************************************************************************/
-void Sys_MiscDriverConfigSetup_patch(void)
+void Sys_DriverInit_patch(void)
 {
+    // Wait for M0 initialization to be completed
+    Sys_WaitforMsqReady();
+
+    // First restore APS clock after MSQ ready
+    if (Boot_CheckWarmBoot())
+    {
+		Hal_Sys_ApsClkResume();
+        Sys_NotifyReadyToMsq(SYS_SPARE_APS_CLOCK_READY);
+    }
+
+    // Set power
+    Sys_PowerSetup();
+
+    // Set system clock
+    Sys_ClockSetup();
+
+    // Set pin-mux
+    // cold boot
+    if (0 == Boot_CheckWarmBoot())
+        Hal_SysPinMuxAppInit();
+
+    if (!Boot_CheckWarmBoot())
+    {
+        // Init VIC
+        Hal_Vic_Init();
+
+	    // Init GPIO
+	    Hal_Vic_GpioInit();
+    }
+    // Fetch GPIO interrupt status at warm-boot
+    else
+    {
+        ps_update_boot_gpio_int_status(Hal_Vic_GpioIntStatRead());
+    }
+
+	// Init IPC
+    Hal_Vic_IpcIntEn(IPC_IDX_0, 1);
+    Hal_Vic_IpcIntEn(IPC_IDX_1, 1);
+    Hal_Vic_IpcIntEn(IPC_IDX_2, 1);
+    Hal_Vic_IpcIntEn(IPC_IDX_3, 1);
+
+    // Init DBG_UART
+    Hal_DbgUart_Init(115200);
+    printf("\n");
+
+    // Init SPI 0
+    Hal_Spi_Init(SPI_IDX_0, SystemCoreClockGet()/2,
+        SPI_CLK_PLOAR_HIGH_ACT, SPI_CLK_PHASE_START, SPI_FMT_MOTOROLA, SPI_DFS_08_bit, 1);
+
+    // Init flash on SPI 0
+    Hal_Flash_Init(SPI_IDX_0);
+
+    // FIM
+    MwFim_Init();
+
+    // Init UART1
+    Sys_UartInit();
+    
+    // for APP patch only. Do NOT patch it!!!
+    // Other modules' init
+    Sys_MiscModulesInit();
+
+    //-------------------------------------------------------------------------------------
+    // Other driver config need by Task-level (sleep strategy)
+
+    // Diag task
+    Hal_DbgUart_RxCallBackFuncSet(uartdbg_rx_int_handler);
+    // cold boot
+    if (0 == Boot_CheckWarmBoot())
+    {
+        // the default is on
+        Hal_DbgUart_RxIntEn(1);
+    }
+    // warm boot
+    else
+    {
+        Hal_DbgUart_RxIntEn(Hal_DbgUart_RxIntEnStatusGet());
+    }
+
+    // HCI and AT command
+    uart1_mode_set_default();
+
+    // Turn-off SRAM
     if (!Boot_CheckWarmBoot())
     {
       #if defined(GCC)
@@ -193,6 +307,76 @@ void Sys_MiscDriverConfigSetup_patch(void)
         Sys_SwitchOffUnusedSram((uint32_t) Image$$RW_IRAM1$$ZI$$Base + (uint32_t) &Image$$RW_IRAM1$$ZI$$Length);
       #endif
     }
+
+	// power-saving module init
+	ps_init();
+
+	if (Boot_CheckWarmBoot())
+	{
+		// TODO: Revision will be provided by Ophelia after peripheral restore mechanism completed
+		uart1_mode_set_default();
+		uart1_mode_set_at();
+
+        // Init GPIO
+        Hal_Vic_GpioInit();
+	}
+
+    //Watch Dog
+    if (Hal_Sys_StrapModeRead() == BOOT_MODE_NORMAL)
+    {
+        Hal_Vic_IntTypeSel(WDT_IRQn, INT_TYPE_FALLING_EDGE);
+        Hal_Vic_IntInv(WDT_IRQn, 1);
+        Hal_Wdt_Init(WDT_TIMEOUT_SECS * SystemCoreClockGet());
+    }
+
+    // for APP patch only. Do NOT patch it!!!
+    // Other tasks' driver config.
+    Sys_MiscDriverConfigSetup();
+}
+
+/*************************************************************************
+* FUNCTION:
+*   Sys_ServiceInit
+*
+* DESCRIPTION:
+*   the initial for service
+*
+* PARAMETERS
+*   none
+*
+* RETURNS
+*   none
+*
+*************************************************************************/
+void Sys_ServiceInit_patch(void)
+{
+    Sys_ServiceInit_impl();
+
+    // SYS config
+    sys_cfg_init();
+}
+
+/*************************************************************************
+* FUNCTION:
+*   Sys_PostInit
+*
+* DESCRIPTION:
+*   the post initial for sys init
+*
+* PARAMETERS
+*   none
+*
+* RETURNS
+*   none
+*
+*************************************************************************/
+void Sys_PostInit_patch(void)
+{
+    extern void Sys_PostInit_impl(void);
+
+    sys_cfg_rf_init_patch(NULL);
+ 
+    Sys_PostInit_impl();
 }
 
 void Sys_RomVersion_patch(void)
@@ -224,8 +408,10 @@ void SysInit_EntryPoint(void)
     // 2. boot sequence
 
     // 3. sys init
-    Sys_MiscDriverConfigSetup = Sys_MiscDriverConfigSetup_patch;
+    Sys_DriverInit = Sys_DriverInit_patch;
     Sys_RomVersion = Sys_RomVersion_patch;
+    Sys_ServiceInit = Sys_ServiceInit_patch;
+    Sys_PostInit = Sys_PostInit_patch;
     
     // 4. IPC
     Ipc_PreInit_patch();
@@ -292,7 +478,8 @@ void SysInit_EntryPoint(void)
     
     // 25. System Common
     
-    // 26. RF config
+    // 26. SYS config
+    sys_cfg_pre_init_patch();
 
     // 27. User App Task
 }
@@ -303,5 +490,10 @@ void SysInit_EntryPoint(void)
  *************************************************************************
  */
 
+__forceinline static void Sys_NotifyReadyToMsq(uint32_t indicator)
+{
+	uint32_t reg_spare_0_val;
 
-
+	Hal_Sys_SpareRegRead(SPARE_0, &reg_spare_0_val);
+	Hal_Sys_SpareRegWrite(SPARE_0, reg_spare_0_val | indicator);
+}

@@ -1,4 +1,39 @@
 ## Release Version:
+SDK Package: MP2.9
+Patch_Lib : 4004
+ROM_CODE: 1655 
+
+## Release Date: 2019/8/30
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 OPL1000-SDK-Development-guide,R01-v16, Add  Setting up GUN ARM GCC toolchain and build tool Section. 
+   1.2 OPL1000-AT-instruction-set-and-examples,R05-v37, Modify AT+CWLAP section’s description
+   1.3 OPL1000-WIFI-BLE-API-guide,MP2.9, Support specific ssid/bssic for wifi scan
+2. Tool version information and update:
+   2.1 download tool: v0.27. Enhance compatibility of different boards.
+   2.2 pin-mux tool: v0.8. No update.
+   2.3 MP_Tool: v2.3. Fix ble mac address writing issue.
+3. Add ext LDO binary to SDK.
+4. support building project by GNU ARM GCC
+5. Add a new MQTT example under SDK\APS_PATCH\examples\protocols\mqtt folder; This example shows how to establish a private MQTT service in local area network.
+6. Add a new demo "MQTT" under Demo\MQTT to show how to use "MQTT" example to establish a local MQTT service in LAN. Here EMQ is used as MQTT broker. 
+7. Support specific ssid/bssic for wifi scan in WIFI-API.
+
+## Bug Fix List 
+1. fix "peer address type is wrong for LE Enhanced Connection Complete Event" issue
+2. fix "M3 may send BLE commands before M0 IPC initialization done" issue.
+3. fix "Even AT command echo is off, AT task still prompts unexpected CR+LF before processing command" issue
+4. fix "AP is far from LM80, DTIM will have more power consumption" issue
+5. fix "peak current exceeding to 40mA during system initializing" issue.
+6. fix "the size of M3 Bin built with GCC is too large" issue
+7. fix "update write Wi-Fi MAC address format in OTP" issue
+
+## Notes List 
+
+*****
+
+## Release Version:
 
 SDK Package: MP v2.6
 Patch_Lib : 3840

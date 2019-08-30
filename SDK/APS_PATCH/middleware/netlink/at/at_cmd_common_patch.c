@@ -229,6 +229,11 @@ void uart1_rx_int_do_at_patch(uint32_t u32Data)
 
             if( (u8Buff == 0x0A) || (u8Buff == 0x0D) )
             {
+                if(at_echo_on)
+                {
+                    Hal_Uart_DataSend(UART_IDX_1, u8Buff);
+                }
+
                 // 0x0A:LF, 0x0D:CR. "ENTER" key. Windows:CR+LF, Linux:CR and Mac:LF
                 p->buf[ p->in++ ] = u8Buff;
                 p->buf[ p->in ] = 0x00;
@@ -249,17 +254,25 @@ void uart1_rx_int_do_at_patch(uint32_t u32Data)
                 {
                     p->in--;
                     p->buf[ p->in ] = 0x00;
-                    Hal_Uart_DataSend(UART_IDX_1, 0x08);
-                    Hal_Uart_DataSend(UART_IDX_1, 0x20);
-                    Hal_Uart_DataSend(UART_IDX_1, 0x08);
+
+                    if(at_echo_on)
+                    {
+                        Hal_Uart_DataSend(UART_IDX_1, 0x08);
+                        Hal_Uart_DataSend(UART_IDX_1, 0x20);
+                        Hal_Uart_DataSend(UART_IDX_1, 0x08);
+                    }
                 }
             }
             else
             {
                 // Others 
                 p->buf[ p->in ] = u8Buff;
-                if(at_echo_on) 
+
+                if(at_echo_on)
+                {
                     Hal_Uart_DataSend(UART_IDX_1, p->buf[p->in]);
+                }
+
                 p->in++;
             }
         }

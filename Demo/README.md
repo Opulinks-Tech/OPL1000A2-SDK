@@ -5,6 +5,7 @@
 3. OTA_WIFI: Demonstrate how to setup a TCP server on PC and complete OTA through WIFI path.
 4. TCP_Client: Demonstrate TCP data communication between OPL1000 (TCP client) and TCP server while enable OPL1000 smart sleep work mode. 
 5. current_measure: Provide a tool for user to measure OPL1000 power consumption while keep connection with an AP.  
+6. MQTT: Demonstrate how to establish a private MQTT service in local area network (LAN). 
 
 ## BLE_Config_AP
 
@@ -16,7 +17,7 @@ This demo shows how to use (Android) mobile APP to control OPL1000 completes bel
 
 Note: 
 
-(1) Refer "OPL1000-Demo-BLE-setup-network-guide.pdf" to know how to execute this demo 
+(1) Refer "OPL1000-Demo-BLE-setup-network-and-BLE-OTA-guide.pdf" to know how to execute this demo 
 
 (2) To evaluate BLE OTA function mobile app needs to store an OTA image file in advance     
 
@@ -50,10 +51,19 @@ Please refer "OPL1000-Demo-tcp-client-guide.pdf" to know detailed information of
 
 ## current_measure 
 
-This demo provides users with a quick method to measure power consumption of OPL1000 with different options. By this demonstration user can
+This demo provides user with a quick method to measure power consumption of OPL1000 with different options. By this demonstration user can
 
 1. Configure and update the parameters of  wpa2_station project with special requirements 
 2. Download opl1000.bin file for measuring power consumption of OPL1000 with different configurations. 
 
 Please refer to "readme.md" and "OPL1000-Demo-low-power-current-measure-guide.pdf" files in current_measure folder for more information of how to use it. 
+
+## MQTT
+
+This demo shows how to establish MQTT service (publish and subscribe) in a local area network. By this demonstration user can
+
+1. Use  MQTT example (under SDK\APS_PATCH\examples\protocols\mqtt folder) to build an firmware image to support private MQTT service.
+2. Install EMQ tool on a PC act as MQTT broker. And then OPL1000 device can establish MQTT service with broker. 
+
+Please refer "OPL1000-Demo-MQTT-guide.pdf" document  in MQTT folder for more information of how to use it. 
 

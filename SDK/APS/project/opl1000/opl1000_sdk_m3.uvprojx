@@ -482,6 +482,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\APS_PATCH\middleware\netlink\at\at_cmd_msg_ext_patch.c</FilePath>
             </File>
+            <File>
+              <FileName>at_cmd_ble_patch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\APS_PATCH\middleware\netlink\at\at_cmd_ble_patch.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

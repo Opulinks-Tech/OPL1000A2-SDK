@@ -27,6 +27,7 @@
 
 #include "at_cmd_data_process_patch.h"
 #include "at_cmd_task_patch.h"
+#include "at_cmd_ble_patch.h"
 
 extern int g_at_lock;
 extern int g_at_ble_data_len;
@@ -105,6 +106,145 @@ void data_process_lock_patch(int module, int data_len)
     }
 }
 
+int data_process_wifi_patch(char *pbuf, int len, int mode)
+{
+    const at_command_t *cmd_ptr = NULL;
+
+    if(pbuf == 0) return false;
+
+    for(cmd_ptr=g_AtCmdTbl_Wifi_Ptr; cmd_ptr->cmd; cmd_ptr++)
+    {
+        if(strcasecmp((char*)at_cmd_info.cmd, cmd_ptr->cmd) == 0)
+        {
+            //msg_print_uart1("\r\n"); // it should be handled by "at_echo_on" flag in "uart1_rx_int_do_at()"
+            cmd_ptr->cmd_handle(pbuf, len, mode);
+            return true;
+        }
+    }
+
+	return false;
+}
+
+int data_process_ble_patch(char *pbuf, int len, int mode)
+{
+    if (strncasecmp(pbuf, "at+mpbleaddr", strlen("at+mpbleaddr"))==0)
+    {
+        msg_print_uart1("\r\nOK\r\n");
+        at_cmd_mp_ble_addr_patch(pbuf, len, mode);
+        return true;
+    }
+    else
+    {
+        extern int data_process_ble(char *pbuf, int len, int mode);
+        return data_process_ble(pbuf, len, mode);
+    }
+}
+
+int data_process_tcpip_patch(char *pbuf, int len, int mode)
+{
+    const at_command_t *cmd_ptr = NULL;
+
+    if(pbuf == 0) return false;
+
+    for(cmd_ptr=g_AtCmdTbl_Tcpip_Ptr; cmd_ptr->cmd; cmd_ptr++)
+    {
+        if(strcasecmp((char*)at_cmd_info.cmd, cmd_ptr->cmd) == 0)
+        {
+            //msg_print_uart1("\r\n"); // it should be handled by "at_echo_on" flag in "uart1_rx_int_do_at()"
+            cmd_ptr->cmd_handle(pbuf, len, mode);
+            return true;
+        }
+    }
+
+	return false;
+}
+
+int data_process_sys_patch(char *pbuf, int len, int mode)
+{
+    const at_command_t *cmd_ptr = NULL;
+
+    if(pbuf == 0) return false;
+
+    for(cmd_ptr=g_AtCmdTbl_Sys_Ptr; cmd_ptr->cmd; cmd_ptr++)
+    {
+        if(strcasecmp((char*)at_cmd_info.cmd, cmd_ptr->cmd) == 0)
+        {
+            //msg_print_uart1("\r\n"); // it should be handled by "at_echo_on" flag in "uart1_rx_int_do_at()"
+            cmd_ptr->cmd_handle(pbuf, len, mode);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int data_process_rf_patch(char *pbuf, int len, int mode)
+{
+    const at_command_t *cmd_ptr = NULL;
+
+    if(pbuf == 0) return false;
+
+    for(cmd_ptr=g_AtCmdTbl_Rf_Ptr; cmd_ptr->cmd; cmd_ptr++)
+    {
+        if(strcasecmp((char*)at_cmd_info.cmd, cmd_ptr->cmd) == 0)
+        {
+            //msg_print_uart1("\r\n"); // it should be handled by "at_echo_on" flag in "uart1_rx_int_do_at()"
+            cmd_ptr->cmd_handle(pbuf, len, mode);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int data_process_property_patch(char *pbuf, int len, int mode)
+{
+    const at_command_t *cmd_ptr = NULL;
+
+    if(pbuf == 0) return false;
+
+    for(cmd_ptr=g_AtCmdTbl_property_Ptr; cmd_ptr->cmd; cmd_ptr++)
+    {
+        if(strcasecmp((char*)at_cmd_info.cmd, cmd_ptr->cmd) == 0)
+        {
+            //msg_print_uart1("\r\n"); // it should be handled by "at_echo_on" flag in "uart1_rx_int_do_at()"
+            cmd_ptr->cmd_handle(pbuf, len, mode);
+            return true;
+        }
+    }
+
+	return false;
+}
+
+int data_process_others_patch(char *pbuf, int len, int mode)
+{
+    int iRet = 0;
+    T_CmdTblLst *ptLst = NULL;
+    const at_command_t *cmd_ptr = NULL;
+
+    if(pbuf == 0)
+    {
+        goto done;
+    }
+
+    for(ptLst = &g_tAtCmdExtTblLst; ptLst != NULL; ptLst = ptLst->ptNext)
+    {
+        for(cmd_ptr = ptLst->taCmdTbl; cmd_ptr->cmd; cmd_ptr++)
+        {
+            if(strcasecmp((char*)at_cmd_info.cmd, cmd_ptr->cmd) == 0)
+            {
+                //msg_print_uart1("\r\n"); // it should be handled by "at_echo_on" flag in "uart1_rx_int_do_at()"
+                cmd_ptr->cmd_handle(pbuf, len, mode);
+                iRet = 1;
+                goto done;
+            }
+        }
+    }
+    
+done:
+    return iRet;
+}
+
 int data_process_handler_patch(char *pbuf, int len)
 {
     int mode = AT_CMD_MODE_INVALID;
@@ -141,26 +281,26 @@ int data_process_handler_patch(char *pbuf, int len)
 
     if (g_at_lock == LOCK_NONE) //AT command input
     {
-        if (data_process_wifi(pbuf, len, mode))
+        if (data_process_wifi_patch(pbuf, len, mode))
             return true;
 
-        if (data_process_ble(pbuf, len, mode))
+        if (data_process_ble_patch(pbuf, len, mode))
         {
             at_cmd_crlf_term_set(1); // Enable CR-LF termination for BLE AT commands
             return true;
         }
 
-        if (data_process_tcpip(pbuf, len, mode))
+        if (data_process_tcpip_patch(pbuf, len, mode))
             return true;
-        if (data_process_sys(pbuf, len, mode))
+        if (data_process_sys_patch(pbuf, len, mode))
             return true;
-        if (data_process_rf(pbuf, len, mode))
+        if (data_process_rf_patch(pbuf, len, mode))
             return true;
         if (data_process_pip(pbuf, len, mode))
             return true;
-        if (data_process_property(pbuf, len, mode))
+        if (data_process_property_patch(pbuf, len, mode))
             return true;
-        if (data_process_others(pbuf, len, mode))
+        if (data_process_others_patch(pbuf, len, mode))
             return true;
 
         at_response_result(AT_RESULT_CODE_ERROR);

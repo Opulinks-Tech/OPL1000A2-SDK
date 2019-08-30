@@ -295,7 +295,8 @@ int httpclient_parse_url(const char *url, char *scheme, size_t max_scheme_len, c
     host_ptr += 3;
 
     port_ptr = strchr(host_ptr, ':');
-    if ( port_ptr != NULL ) {
+    path_ptr = strchr(host_ptr, '/');
+    if (( port_ptr != NULL )&&( path_ptr != NULL )&&( port_ptr < path_ptr )||(( port_ptr != NULL )&&( path_ptr == NULL ))) {
         uint16_t tport;
         host_len = port_ptr - host_ptr;
         port_ptr++;
@@ -307,7 +308,7 @@ int httpclient_parse_url(const char *url, char *scheme, size_t max_scheme_len, c
     } else {
         *port = 0;
     }
-    path_ptr = strchr(host_ptr, '/');
+    
     if ( host_len == 0 ) {
         host_len = path_ptr - host_ptr;
     }

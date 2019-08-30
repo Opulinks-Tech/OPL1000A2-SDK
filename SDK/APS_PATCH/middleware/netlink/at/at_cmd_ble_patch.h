@@ -56,7 +56,7 @@ extern "C" {
  *                          Public Functions
  *************************************************************************
  */
-
+int at_cmd_mp_ble_addr_patch(char *buf, int len, int mode);
 
 #ifdef __cplusplus
 }

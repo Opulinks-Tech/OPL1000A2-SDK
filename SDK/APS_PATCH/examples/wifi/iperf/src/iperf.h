@@ -39,7 +39,7 @@ extern "C" {
 //for iperf 2.0.09 you can set 1472
 #define IPERF_UDP_TX_LEN     (1432)
 #define IPERF_UDP_RX_LEN     (16<<7)
-#define IPERF_TCP_TX_LEN     (16<<6)
+#define IPERF_TCP_TX_LEN     (16<<8)
 #define IPERF_TCP_RX_LEN     (16<<6)
 
 #define IPERF_MAX_DELAY      64

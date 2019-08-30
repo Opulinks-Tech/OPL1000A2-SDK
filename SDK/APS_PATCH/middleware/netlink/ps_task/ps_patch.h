@@ -84,7 +84,6 @@ typedef struct
 void ps_patch_init(void);
 
 void ps_enable_timer_sleep_patch(uint32_t sleep_duration_ms);
-void ps_config_wakeup_ext_io_patch(E_GpioIdx_t num, int enable, E_ItrType_t type, int invert, T_Gpio_CallBack callback);
 
 
 #ifdef __cplusplus

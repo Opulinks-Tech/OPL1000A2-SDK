@@ -17,6 +17,7 @@
 #include "iperf.h"
 #include "opulinks_log.h"
 #include "ftoa_util.h"
+#include "strerror_util.h"
 
 static const char *TAG="iperf";
 
@@ -40,30 +41,13 @@ static iperf_ctrl_t iperf_server_ctrl;
 
 static int iperf_task_create(char *name, uint32_t size, uint32_t pri, os_pthread fn, osThreadId *thread);
 
-int iperf_get_socket_error_code(int sockfd)
+static int iperf_show_socket_error_reason(const char *str, int sockfd)
 {
-    uint32_t optlen = sizeof(int);
-    int result;
-    int err;
-
-    err = getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &result, (socklen_t *)&optlen);
-    if (err == -1) {
-        LOGE(TAG, "getsockopt failed: ret=%d", err);
-        return -1;
+    if (errno != 0) {
+        LOGE(TAG, "%s error, error code: %d, reason: %s", str, errno, util_strerr(errno));
     }
 
-    return result;
-}
-
-int iperf_show_socket_error_reason(const char *str, int sockfd)
-{
-    int err = iperf_get_socket_error_code(sockfd);
-
-    if (err != 0) {
-        LOGE(TAG, "%s error, error code: %d, reason: %s", str, err, strerror(err));
-    }
-
-    return err;
+    return errno;
 }
 
 void iperf_report_task(void* arg)
@@ -187,7 +171,7 @@ static int iperf_report_task_create(void)
     return 0;
 }
 
-int iperf_start_report(void)
+static int iperf_start_report(void)
 {
     int ret;
     
@@ -309,7 +293,8 @@ void iperf_run_udp_server(void *arg)
     int sockfd;
     int opt;
     int is_dual = false;
-    
+    int report_created = false;
+
     malloc_service_buffer(&iperf_server_ctrl, IPERF_UDP_RX_LEN);
     
     sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -335,9 +320,6 @@ void iperf_run_udp_server(void *arg)
     buffer = iperf_server_ctrl.buffer;
     want_recv = iperf_server_ctrl.buffer_len;
     LOGI(TAG, "want recv=%d", want_recv);
-
-    t.tv_sec = IPERF_SOCKET_RX_TIMEOUT;
-    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &t, sizeof(t));
     
     while (!iperf_server_ctrl.finish) {
         actual_recv = recvfrom(sockfd, buffer, want_recv, 0, (struct sockaddr *)&addr, &addr_len);
@@ -345,6 +327,16 @@ void iperf_run_udp_server(void *arg)
         if (actual_recv < 0) {
             iperf_show_socket_error_reason("udp server recv", sockfd);
         } else {
+            if (!report_created) {
+                if (!IS_CLIENT_DUAL_TEST)
+                    iperf_start_report();
+                
+                t.tv_sec = IPERF_SOCKET_RX_TIMEOUT;
+                t.tv_usec = 0;
+                setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &t, sizeof(t));
+                report_created = true;
+            }
+
             if (!is_dual) {
                 iperf_udp_pkt_t *udp = (iperf_udp_pkt_t *)buffer;
                 is_dual = check_dual_test_by_client((iperf_client_hdr_t *)(udp+1), &addr);
@@ -384,7 +376,6 @@ void iperf_run_udp_client(void *arg)
     uint8_t *buffer;
     int sockfd;
     int opt;
-    int err;
     int id;
     
     malloc_service_buffer(&iperf_client_ctrl, IPERF_UDP_TX_LEN);
@@ -413,6 +404,11 @@ void iperf_run_udp_client(void *arg)
     udp = (iperf_udp_pkt_t *)buffer;
     want_send = iperf_client_ctrl.buffer_len;
     id = 0;
+    iperf_start_report();
+
+    if (IS_CLIENT_DUAL_TEST) {
+        client_init_to_server(NULL, (iperf_client_hdr_t *)(udp+1));
+    }
 
     while (!iperf_client_ctrl.finish) {
         if (false == retry) {
@@ -420,18 +416,13 @@ void iperf_run_udp_client(void *arg)
             udp->id = htonl(id);
             delay = 1;
         }
-
-        if (IS_CLIENT_DUAL_TEST) {
-            client_init_to_server(NULL, (iperf_client_hdr_t *)(udp+1));
-        }
         
         retry = false;
         actual_send = sendto(sockfd, buffer, want_send, 0, (struct sockaddr *)&addr, sizeof(addr));
 
         if (actual_send != want_send) {
-            err = iperf_get_socket_error_code(sockfd);
-            if (err == ENOMEM) {
-                //LOGI(TAG, "socket queue full, waiting %d ...", delay);
+            if (errno == ENOMEM) {
+                LOGI(TAG, "socket queue full, waiting %d ...", delay);
                 vTaskDelay(delay);
                 if (delay < IPERF_MAX_DELAY) {
                     delay <<= 1;
@@ -439,7 +430,7 @@ void iperf_run_udp_client(void *arg)
                 retry = true;
                 continue;
             } else {
-                LOGE(TAG, "udp client send abort: err=%d", err);
+                iperf_show_socket_error_reason("udp client send abort", sockfd);
                 goto done;
             }
         } else {
@@ -515,7 +506,11 @@ void iperf_run_tcp_server(void *arg)
             LOGI(TAG, "server accept: %s,%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
 
             t.tv_sec = IPERF_SOCKET_RX_TIMEOUT;
+            t.tv_usec = 0;
             setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &t, sizeof(t));
+            
+            if (!IS_CLIENT_DUAL_TEST)
+                iperf_start_report();
         }
 
         while (!iperf_server_ctrl.finish) {
@@ -533,8 +528,6 @@ void iperf_run_tcp_server(void *arg)
                         goto done;
                     }
                 }
-                if (is_dual || IS_DUAL_TEST) //Temporary delay for TCP dual test to limit RX packets.
-                    vTaskDelay(4);
             }
         }
         
@@ -604,6 +597,8 @@ void iperf_run_tcp_client(void *arg)
     buffer = iperf_client_ctrl.buffer;
     want_send = iperf_client_ctrl.buffer_len;
    
+    iperf_start_report();
+
     while (!iperf_client_ctrl.finish) {
         actual_send = send(sockfd, buffer, want_send, 0);
         if (actual_send <= 0) {
@@ -644,11 +639,11 @@ static int iperf_task_create(char *name, uint32_t size, uint32_t pri, os_pthread
     
     *thread = osThreadCreate(&task_def, (void*)NULL);
     if(*thread == NULL) {
-        LOGE_DRCT(TAG, "%s Task create fail \r\n", name);
+        LOGE(TAG, "%s Task create fail \r\n", name);
         return -1;
     }
     else {
-        LOGI_DRCT(TAG, "%s Task create successful", name);
+        LOGI(TAG, "%s Task create successful", name);
     }
 
     return 0;
@@ -734,8 +729,6 @@ int iperf_start(iperf_cfg_t *cfg)
     memcpy(&s_iperf_ctrl, cfg, sizeof(iperf_cfg_t));
     memset(&iperf_client_ctrl, 0, sizeof(iperf_ctrl_t));
     memset(&iperf_server_ctrl, 0, sizeof(iperf_ctrl_t));
-
-    iperf_start_report();
 
     for (p_ft=&iperf_fun_table[0]; p_ft->idx; p_ft++) {
         if (p_ft->idx == cfg_mode) {

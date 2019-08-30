@@ -75,7 +75,6 @@ Declaration of static Global Variables & Functions
 // Sec 7: declaration of static function prototype
 void __Patch_EntryPoint(void) __attribute__((section("ENTRY_POINT")));
 void __Patch_EntryPoint(void) __attribute__((used));
-
 static void Main_FlashLayoutUpdate(void);
 static void Main_AppInit_patch(void);
 
@@ -107,7 +106,11 @@ void __Patch_EntryPoint(void)
     // update the flash layout
     MwFim_FlashLayoutUpdate = Main_FlashLayoutUpdate;
     
-    Sys_SetUnsuedSramEndBound(0x440000);
+    // modify the heap size, from 0x43C000 to 0x44F000
+    g_ucaMemPartAddr = (uint8_t*) 0x43E000;
+    g_ulMemPartTotalSize = 0x11000; //0x44F000 - 0x43E000
+
+    
     // application init
     Sys_AppInit = Main_AppInit_patch;
 }

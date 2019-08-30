@@ -26,6 +26,7 @@ static int wpa_cli_scan_by_cfg_patch(void *cfg)
 
     S_WIFI_MLME_SCAN_CFG *scan_cfg = (S_WIFI_MLME_SCAN_CFG *)cfg;
 
+    /* Duration */
     if (scan_cfg->u32ActiveScanDur < SCAN_MIN_DURATION_TIME || 
         scan_cfg->u32ActiveScanDur > SCAN_MAX_NUM_OF_DUR_TIME) {
         scan_cfg->u32ActiveScanDur = SCAN_ACTIVE_MIN_DUR_TIME_DEF;
@@ -36,17 +37,24 @@ static int wpa_cli_scan_by_cfg_patch(void *cfg)
         scan_cfg->u32PassiveScanDur = SCAN_PASSIVE_MIN_DUR_TIME_DEF;
     }
     
+    /* channel */
     if (scan_cfg->u8Channel > WIFI_MLME_SCAN_MAX_NUM_CHANNELS) {
         scan_cfg->u8Channel = WIFI_MLME_SCAN_ALL_CHANNELS;
     }
     
+    /* re-send counter */
     if (scan_cfg->u8ResendCnt == 0) {
         scan_cfg->u8ResendCnt = SCAN_PROBE_REQ_COUNTERS_DEF;
     }
     
-    wpa_driver_netlink_scan_by_cfg(scan_cfg);
+    /* mac address */
+    if (is_broadcast_ether_addr(scan_cfg->u8aBssid))
+        return FALSE;
+    
+    if (is_multicast_ether_addr(scan_cfg->u8aBssid))
+        return FALSE;
 
-    return TRUE;
+    return wpa_driver_netlink_scan_by_cfg(scan_cfg);
 }
 
 void wpa_cli_func_init_patch(void)
