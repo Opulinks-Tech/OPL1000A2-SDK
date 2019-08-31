@@ -40,4 +40,6 @@ Refer OPL1000-pinmux-tool-user-guide.pdf under "Doc" folder to know how to confi
 Refer OPL1000-SDK-getting-start-guide.pdf and OPL1000-SDK-Development-guide.pdf to understand how to develop own application. 
 
 # Development tool 
-Please use Keil uVision 5 on Windows system to develop application
+User can use two methods to develop application. 
+- use Keil uVision 5 on Windows system. "opl1000_app_m3.uvprojx" project file is provided for each individual example under SDK\APS_PATCH\examples folder. User can open it by KeilC and add own function freely.     
+- use GNU arm GCC tool. "Makefile" is provided for each individual example under SDK\APS_PATCH\examples folder. User can use Make tool to compile and link own application. How to install GCC development environment under Windows system please refer chapter4 of "OPL1000-SDK-Development-guide.pdf" document.   
