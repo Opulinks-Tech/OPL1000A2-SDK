@@ -19,8 +19,7 @@
 #include "blewifi_server_app_gatt.h"
 #include "blewifi_ctrl.h"
 
-#include "mw_fim_default_group08.h"
-#include "mw_fim_default_group08_project.h"
+#include "mw_fim_default_group11_project.h"
 
 // This is used for GATT service
 static UINT16 gGattSvcUuid = ATT_SVC_GENERIC_ATTRIBUTE;
@@ -355,16 +354,16 @@ static void BleWifi_Ble_ServerAppGattMsgHandler_NotifyCfm(TASK task, MESSAGEID i
 
 static void BleWifi_Ble_ServerAppGattMsgHandler_InitCfm(TASK task, MESSAGEID id, MESSAGE message)
 {
-    T_MwFim_GP08_BleServiceUUID tBleServiceUUID;
+    T_MwFim_GP11_BleServiceUUID tBleServiceUUID;
     
     // !!! after LeGattInit
     BLEWIFI_INFO("APP-LE_GATT_MSG_INIT_CFM\r\n");
 
     // get the settings of BLE service UUID
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP08_PROJECT_BLE_SERVICE_UUID, 0, MW_FIM_GP08_BLE_SERVICE_UUID_SIZE, (uint8_t*)&tBleServiceUUID))
+	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_BLE_SERVICE_UUID, 0, MW_FIM_GP11_BLE_SERVICE_UUID_SIZE, (uint8_t*)&tBleServiceUUID))
     {
         // if fail, get the default value
-        memcpy(&tBleServiceUUID, &g_tMwFimDefaultGp08BleServiceUUID, MW_FIM_GP08_BLE_SERVICE_UUID_SIZE);
+        memcpy(&tBleServiceUUID, &g_tMwFimDefaultGp11BleServiceUUID, MW_FIM_GP11_BLE_SERVICE_UUID_SIZE);
     }
     gBleWifiSvcUuid = tBleServiceUUID.uwServiceUUID;
     gBleWifiDataInUuid = tBleServiceUUID.uwDataInUUID;

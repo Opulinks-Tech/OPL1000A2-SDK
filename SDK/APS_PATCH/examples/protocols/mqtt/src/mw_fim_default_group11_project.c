@@ -16,8 +16,8 @@ Head Block of The File
 
 
 // Sec 1: Include File
-#include "mw_fim_default_group08.h"
-#include "mw_fim_default_group08_project.h"
+#include "mw_fim_default_group11.h"
+#include "mw_fim_default_group11_project.h"
 #include "blewifi_configuration.h"
 
 
@@ -35,17 +35,17 @@ Declaration of Global Variables & Functions
 ********************************************/
 // Sec 4: declaration of global variable
 // the default value of power saving
-const T_MwFim_GP08_PowerSaving g_tMwFimDefaultGp08PowerSaving =
+const T_MwFim_GP11_PowerSaving g_tMwFimDefaultGp11PowerSaving =
 {
     BLEWIFI_COM_POWER_SAVE_EN,      // uint8_t ubPowerSaving;
     BLEWIFI_COM_RF_POWER_SETTINGS,  // uint8_t ubRFPower;
     0xFF, 0xFF                      // uint8_t ubaReserved[2];
 };
 // the address buffer of power saving
-uint32_t g_ulaMwFimAddrBufferGp08PowerSaving[MW_FIM_GP08_POWER_SAVING_NUM];
+uint32_t g_ulaMwFimAddrBufferGp11PowerSaving[MW_FIM_GP11_POWER_SAVING_NUM];
 
 // the default value of BLE service UUID
-const T_MwFim_GP08_BleServiceUUID g_tMwFimDefaultGp08BleServiceUUID =
+const T_MwFim_GP11_BleServiceUUID g_tMwFimDefaultGp11BleServiceUUID =
 {
     BLEWIFI_BLE_UUID_SERVICE,   // uint16_t uwServiceUUID;
     BLEWIFI_BLE_UUID_DATA_IN,   // uint16_t uwDataInUUID;
@@ -53,10 +53,10 @@ const T_MwFim_GP08_BleServiceUUID g_tMwFimDefaultGp08BleServiceUUID =
     0xFF, 0xFF                  // uint8_t ubaReserved[2];
 };
 // the address buffer of BLE service UUID
-uint32_t g_ulaMwFimAddrBufferGp08BleServiceUUID[MW_FIM_GP08_BLE_SERVICE_UUID_NUM];
+uint32_t g_ulaMwFimAddrBufferGp11BleServiceUUID[MW_FIM_GP11_BLE_SERVICE_UUID_NUM];
 
 // the default value of BLE device name
-const T_MwFim_GP08_BleDeviceName g_tMwFimDefaultGp08BleDeviceName =
+const T_MwFim_GP11_BleDeviceName g_tMwFimDefaultGp11BleDeviceName =
 {
     .ubNameMethod           = BLEWIFI_BLE_DEVICE_NAME_METHOD,
     .ubNamePostfixMacCount  = BLEWIFI_BLE_DEVICE_NAME_POST_COUNT,
@@ -65,19 +65,19 @@ const T_MwFim_GP08_BleDeviceName g_tMwFimDefaultGp08BleDeviceName =
     .ubaReserved            = {0xFF, 0xFF}
 };
 // the address buffer of BLE device name
-uint32_t g_ulaMwFimAddrBufferGp08BleDeviceName[MW_FIM_GP08_BLE_DEVICE_NAME_NUM];
+uint32_t g_ulaMwFimAddrBufferGp11BleDeviceName[MW_FIM_GP11_BLE_DEVICE_NAME_NUM];
 
 // the default value of BLE advertisement interval
-const T_MwFim_GP08_BleAdvInterval g_tMwFimDefaultGp08BleAdvInterval =
+const T_MwFim_GP11_BleAdvInterval g_tMwFimDefaultGp11BleAdvInterval =
 {
     BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_MIN, // uint16_t uwIntervalMin;
     BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_MAX  // uint16_t uwIntervalMax;
 };
 // the address buffer of BLE advertisement interval
-uint32_t g_ulaMwFimAddrBufferGp08BleAdvInterval[MW_FIM_GP08_BLE_ADV_INTERVAL_NUM];
+uint32_t g_ulaMwFimAddrBufferGp11BleAdvInterval[MW_FIM_GP11_BLE_ADV_INTERVAL_NUM];
 
 // the default value of Wifi connect settings
-const T_MwFim_GP08_WifiConnectSettings g_tMwFimDefaultGp08WifiConnectSettings =
+const T_MwFim_GP11_WifiConnectSettings g_tMwFimDefaultGp11WifiConnectSettings =
 {
     BLEWIFI_WIFI_AUTO_CONNECT_INTERVAL_INIT,    // uint32_t ulAutoConnectIntervalInit;
     BLEWIFI_WIFI_AUTO_CONNECT_INTERVAL_DIFF,    // uint32_t ulAutoConnectIntervalDiff;
@@ -87,16 +87,16 @@ const T_MwFim_GP08_WifiConnectSettings g_tMwFimDefaultGp08WifiConnectSettings =
     0xFF, 0xFF, 0xFF                            // uint8_t ubaReserved[3];
 };
 // the address buffer of Wifi connect settings
-uint32_t g_ulaMwFimAddrBufferGp08WifiConnectSettings[MW_FIM_GP08_WIFI_CONNECT_SETTINGS_NUM];
+uint32_t g_ulaMwFimAddrBufferGp11WifiConnectSettings[MW_FIM_GP11_WIFI_CONNECT_SETTINGS_NUM];
 
-// the information table of group 08
-const T_MwFimFileInfo g_taMwFimGroupTable08_project[] =
+// the information table of group 11
+const T_MwFimFileInfo g_taMwFimGroupTable11_project[] =
 {
-    {MW_FIM_IDX_GP08_PROJECT_POWER_SAVING,          MW_FIM_GP08_POWER_SAVING_NUM,           MW_FIM_GP08_POWER_SAVING_SIZE,          (uint8_t*)&g_tMwFimDefaultGp08PowerSaving,          g_ulaMwFimAddrBufferGp08PowerSaving},
-    {MW_FIM_IDX_GP08_PROJECT_BLE_SERVICE_UUID,      MW_FIM_GP08_BLE_SERVICE_UUID_NUM,       MW_FIM_GP08_BLE_SERVICE_UUID_SIZE,      (uint8_t*)&g_tMwFimDefaultGp08BleServiceUUID,       g_ulaMwFimAddrBufferGp08BleServiceUUID},
-    {MW_FIM_IDX_GP08_PROJECT_BLE_DEVICE_NAME,       MW_FIM_GP08_BLE_DEVICE_NAME_NUM,        MW_FIM_GP08_BLE_DEVICE_NAME_SIZE,       (uint8_t*)&g_tMwFimDefaultGp08BleDeviceName,        g_ulaMwFimAddrBufferGp08BleDeviceName},
-    {MW_FIM_IDX_GP08_PROJECT_BLE_ADV_INTERVAL,      MW_FIM_GP08_BLE_ADV_INTERVAL_NUM,       MW_FIM_GP08_BLE_ADV_INTERVAL_SIZE,      (uint8_t*)&g_tMwFimDefaultGp08BleAdvInterval,       g_ulaMwFimAddrBufferGp08BleAdvInterval},
-    {MW_FIM_IDX_GP08_PROJECT_WIFI_CONNECT_SETTINGS, MW_FIM_GP08_WIFI_CONNECT_SETTINGS_NUM,  MW_FIM_GP08_WIFI_CONNECT_SETTINGS_SIZE, (uint8_t*)&g_tMwFimDefaultGp08WifiConnectSettings,  g_ulaMwFimAddrBufferGp08WifiConnectSettings},
+    {MW_FIM_IDX_GP11_PROJECT_POWER_SAVING,          MW_FIM_GP11_POWER_SAVING_NUM,           MW_FIM_GP11_POWER_SAVING_SIZE,          (uint8_t*)&g_tMwFimDefaultGp11PowerSaving,          g_ulaMwFimAddrBufferGp11PowerSaving},
+    {MW_FIM_IDX_GP11_PROJECT_BLE_SERVICE_UUID,      MW_FIM_GP11_BLE_SERVICE_UUID_NUM,       MW_FIM_GP11_BLE_SERVICE_UUID_SIZE,      (uint8_t*)&g_tMwFimDefaultGp11BleServiceUUID,       g_ulaMwFimAddrBufferGp11BleServiceUUID},
+    {MW_FIM_IDX_GP11_PROJECT_BLE_DEVICE_NAME,       MW_FIM_GP11_BLE_DEVICE_NAME_NUM,        MW_FIM_GP11_BLE_DEVICE_NAME_SIZE,       (uint8_t*)&g_tMwFimDefaultGp11BleDeviceName,        g_ulaMwFimAddrBufferGp11BleDeviceName},
+    {MW_FIM_IDX_GP11_PROJECT_BLE_ADV_INTERVAL,      MW_FIM_GP11_BLE_ADV_INTERVAL_NUM,       MW_FIM_GP11_BLE_ADV_INTERVAL_SIZE,      (uint8_t*)&g_tMwFimDefaultGp11BleAdvInterval,       g_ulaMwFimAddrBufferGp11BleAdvInterval},
+    {MW_FIM_IDX_GP11_PROJECT_WIFI_CONNECT_SETTINGS, MW_FIM_GP11_WIFI_CONNECT_SETTINGS_NUM,  MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE, (uint8_t*)&g_tMwFimDefaultGp11WifiConnectSettings,  g_ulaMwFimAddrBufferGp11WifiConnectSettings},
 
     // the end, don't modify and remove it
     {0xFFFFFFFF,            0x00,              0x00,               NULL,                            NULL}

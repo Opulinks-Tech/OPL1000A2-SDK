@@ -244,7 +244,7 @@ M_SRC += ./src/blewifi_http_ota.c
 M_SRC += ./src/blewifi_server_app.c
 M_SRC += ./src/blewifi_server_app_gatt.c
 M_SRC += ./src/blewifi_wifi_api.c
-M_SRC += ./src/mw_fim_default_group08_project.c
+M_SRC += ./src/mw_fim_default_group11_project.c
 M_SRC += ./tcpip/tcp_client.c
 
 #############   build   ##############

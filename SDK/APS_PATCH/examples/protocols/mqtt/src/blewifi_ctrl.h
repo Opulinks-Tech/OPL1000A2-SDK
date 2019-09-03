@@ -23,8 +23,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "blewifi_configuration.h"
-#include "mw_fim_default_group08.h"
-#include "mw_fim_default_group08_project.h"
+#include "mw_fim_default_group11_project.h"
 
 #define BLEWIFI_CTRL_QUEUE_SIZE         (20)
 
@@ -56,6 +55,9 @@ typedef enum blewifi_ctrl_msg_type
     BLEWIFI_CTRL_MSG_OTHER_OTA_ON = 0x100,      //OTA
     BLEWIFI_CTRL_MSG_OTHER_OTA_OFF,             //OTA success
     BLEWIFI_CTRL_MSG_OTHER_OTA_OFF_FAIL,        //OTA fail
+    BLEWIFI_CTRL_MSG_OTHER_SYS_TIMER,           //SYS timer
+    BLEWIFI_CTRL_MSG_NETWORKING_START,          //Networking Start
+    BLEWIFI_CTRL_MSG_NETWORKING_STOP,           //Networking Stop
     
     BLEWIFI_CTRL_MSG_OTHER__NUM
 } blewifi_ctrl_msg_type_e;
@@ -67,12 +69,22 @@ typedef struct
     uint8_t ucaMessage[];
 } xBleWifiCtrlMessage_t;
 
+typedef enum blewifi_ctrl_sys_state
+{
+    BLEWIFI_CTRL_SYS_INIT = 0x00,       // PS(0), Wifi(1), Ble(1)
+    BLEWIFI_CTRL_SYS_NORMAL,            // PS(1), Wifi(1), Ble(1)
+    BLEWIFI_CTRL_SYS_BLE_OFF,           // PS(1), Wifi(1), Ble(0)
+
+    BLEWIFI_CTRL_SYS_NUM
+} blewifi_ctrl_sys_state_e;
+
 // event group bit (0 ~ 23 bits)
 #define BLEWIFI_CTRL_EVENT_BIT_BLE      0x00000001U
 #define BLEWIFI_CTRL_EVENT_BIT_WIFI     0x00000002U
 #define BLEWIFI_CTRL_EVENT_BIT_OTA      0x00000004U
 #define BLEWIFI_CTRL_EVENT_BIT_GOT_IP   0x00000008U
 #define BLEWIFI_CTRL_EVENT_BIT_IOT_INIT 0x00000010U
+#define BLEWIFI_CTRL_EVENT_BIT_NETWORK  0x00000020U
 
 typedef void (*T_BleWifi_Ctrl_EvtHandler_Fp)(uint32_t evt_type, void *data, int len);
 typedef struct
@@ -84,7 +96,7 @@ typedef struct
 #define BLEWIFI_CTRL_AUTO_CONN_STATE_IDLE   (g_tAppCtrlWifiConnectSettings.ubConnectRetry + 1)
 #define BLEWIFI_CTRL_AUTO_CONN_STATE_SCAN   (BLEWIFI_CTRL_AUTO_CONN_STATE_IDLE + 1)
 
-extern T_MwFim_GP08_WifiConnectSettings g_tAppCtrlWifiConnectSettings;
+extern T_MwFim_GP11_WifiConnectSettings g_tAppCtrlWifiConnectSettings;
 
 void BleWifi_Ctrl_SysModeSet(uint8_t mode);
 uint8_t BleWifi_Ctrl_SysModeGet(void);
@@ -95,6 +107,9 @@ void BleWifi_Ctrl_DtimTimeSet(uint32_t value);
 uint32_t BleWifi_Ctrl_DtimTimeGet(void);
 int BleWifi_Ctrl_MsgSend(int msg_type, uint8_t *data, int data_len);
 void BleWifi_Ctrl_Init(void);
+
+void BleWifi_Ctrl_NetworkingStart(void);
+void BleWifi_Ctrl_NetworkingStop(void);
 
 #endif /* __BLEWIFI_CTRL_H__ */
 

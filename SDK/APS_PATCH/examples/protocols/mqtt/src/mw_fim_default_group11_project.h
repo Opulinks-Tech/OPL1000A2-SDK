@@ -12,8 +12,8 @@
 /***********************
 Head Block of The File
 ***********************/
-#ifndef _MW_FIM_DEFAULT_GROUP08_PROJECT_H_
-#define _MW_FIM_DEFAULT_GROUP08_PROJECT_H_
+#ifndef _MW_FIM_DEFAULT_GROUP11_PROJECT_H_
+#define _MW_FIM_DEFAULT_GROUP11_PROJECT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,7 +24,6 @@ extern "C" {
 
 // Sec 1: Include File
 #include "mw_fim.h"
-#include "mw_fim_default_group08.h"
 
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
@@ -35,18 +34,18 @@ extern "C" {
 //                     ^^^^ ^^^^ ^^^^ ^^^^ File ID, start from 0
 typedef enum
 {
-    MW_FIM_IDX_GP08_PROJECT_START = 0x00080000,             // the start IDX of group 08
+    MW_FIM_IDX_GP11_PROJECT_START = 0x01010000,             // the start IDX of group 11
 
-    MW_FIM_IDX_GP08_PROJECT_POWER_SAVING,
+    MW_FIM_IDX_GP11_PROJECT_POWER_SAVING,
     
-    MW_FIM_IDX_GP08_PROJECT_BLE_SERVICE_UUID,
-    MW_FIM_IDX_GP08_PROJECT_BLE_DEVICE_NAME,
-    MW_FIM_IDX_GP08_PROJECT_BLE_ADV_INTERVAL,
+    MW_FIM_IDX_GP11_PROJECT_BLE_SERVICE_UUID,
+    MW_FIM_IDX_GP11_PROJECT_BLE_DEVICE_NAME,
+    MW_FIM_IDX_GP11_PROJECT_BLE_ADV_INTERVAL,
 
-    MW_FIM_IDX_GP08_PROJECT_WIFI_CONNECT_SETTINGS,
+    MW_FIM_IDX_GP11_PROJECT_WIFI_CONNECT_SETTINGS,
     
-    MW_FIM_IDX_GP08_PROJECT_MAX
-} E_MwFimIdxGroup08_Project;
+    MW_FIM_IDX_GP11_PROJECT_MAX
+} E_MwFimIdxGroup11_Project;
 
 
 /******************************
@@ -59,10 +58,10 @@ typedef struct
     uint8_t ubPowerSaving;
     uint8_t ubRFPower;
     uint8_t ubaReserved[2];
-} T_MwFim_GP08_PowerSaving;
+} T_MwFim_GP11_PowerSaving;
 
-#define MW_FIM_GP08_POWER_SAVING_SIZE   sizeof(T_MwFim_GP08_PowerSaving)
-#define MW_FIM_GP08_POWER_SAVING_NUM    1
+#define MW_FIM_GP11_POWER_SAVING_SIZE   sizeof(T_MwFim_GP11_PowerSaving)
+#define MW_FIM_GP11_POWER_SAVING_NUM    1
 
 // BLE service uuid
 typedef struct
@@ -71,10 +70,10 @@ typedef struct
     uint16_t uwDataInUUID;
     uint16_t uwDataOutUUID;
     uint8_t ubaReserved[2];
-} T_MwFim_GP08_BleServiceUUID;
+} T_MwFim_GP11_BleServiceUUID;
 
-#define MW_FIM_GP08_BLE_SERVICE_UUID_SIZE   sizeof(T_MwFim_GP08_BleServiceUUID)
-#define MW_FIM_GP08_BLE_SERVICE_UUID_NUM    1
+#define MW_FIM_GP11_BLE_SERVICE_UUID_SIZE   sizeof(T_MwFim_GP11_BleServiceUUID)
+#define MW_FIM_GP11_BLE_SERVICE_UUID_NUM    1
 
 // BLE device name
 typedef struct
@@ -84,20 +83,20 @@ typedef struct
     uint8_t ubaNamePrefix[30];
     uint8_t ubaNameFull[30];
     uint8_t ubaReserved[2];
-} T_MwFim_GP08_BleDeviceName;
+} T_MwFim_GP11_BleDeviceName;
 
-#define MW_FIM_GP08_BLE_DEVICE_NAME_SIZE   sizeof(T_MwFim_GP08_BleDeviceName)
-#define MW_FIM_GP08_BLE_DEVICE_NAME_NUM    1
+#define MW_FIM_GP11_BLE_DEVICE_NAME_SIZE   sizeof(T_MwFim_GP11_BleDeviceName)
+#define MW_FIM_GP11_BLE_DEVICE_NAME_NUM    1
 
 // BLE advertisement interval
 typedef struct
 {
     uint16_t uwIntervalMin;
     uint16_t uwIntervalMax;
-} T_MwFim_GP08_BleAdvInterval;
+} T_MwFim_GP11_BleAdvInterval;
 
-#define MW_FIM_GP08_BLE_ADV_INTERVAL_SIZE   sizeof(T_MwFim_GP08_BleAdvInterval)
-#define MW_FIM_GP08_BLE_ADV_INTERVAL_NUM    1
+#define MW_FIM_GP11_BLE_ADV_INTERVAL_SIZE   sizeof(T_MwFim_GP11_BleAdvInterval)
+#define MW_FIM_GP11_BLE_ADV_INTERVAL_NUM    1
 
 // Wifi connect settings
 typedef struct
@@ -108,23 +107,23 @@ typedef struct
     uint32_t ulDtimInterval;
     uint8_t ubConnectRetry;
     uint8_t ubaReserved[3];
-} T_MwFim_GP08_WifiConnectSettings;
+} T_MwFim_GP11_WifiConnectSettings;
 
-#define MW_FIM_GP08_WIFI_CONNECT_SETTINGS_SIZE  sizeof(T_MwFim_GP08_WifiConnectSettings)
-#define MW_FIM_GP08_WIFI_CONNECT_SETTINGS_NUM   1
+#define MW_FIM_GP11_WIFI_CONNECT_SETTINGS_NUM    sizeof(T_MwFim_GP11_WifiConnectSettings)
+#define MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE   1
 
 
 /********************************************
 Declaration of Global Variables & Functions
 ********************************************/
 // Sec 4: declaration of global variable
-extern const T_MwFimFileInfo g_taMwFimGroupTable08_project[];
+extern const T_MwFimFileInfo g_taMwFimGroupTable11_project[];
 
-extern const T_MwFim_GP08_PowerSaving g_tMwFimDefaultGp08PowerSaving;
-extern const T_MwFim_GP08_BleServiceUUID g_tMwFimDefaultGp08BleServiceUUID;
-extern const T_MwFim_GP08_BleDeviceName g_tMwFimDefaultGp08BleDeviceName;
-extern const T_MwFim_GP08_BleAdvInterval g_tMwFimDefaultGp08BleAdvInterval;
-extern const T_MwFim_GP08_WifiConnectSettings g_tMwFimDefaultGp08WifiConnectSettings;
+extern const T_MwFim_GP11_PowerSaving g_tMwFimDefaultGp11PowerSaving;
+extern const T_MwFim_GP11_BleServiceUUID g_tMwFimDefaultGp11BleServiceUUID;
+extern const T_MwFim_GP11_BleDeviceName g_tMwFimDefaultGp11BleDeviceName;
+extern const T_MwFim_GP11_BleAdvInterval g_tMwFimDefaultGp11BleAdvInterval;
+extern const T_MwFim_GP11_WifiConnectSettings g_tMwFimDefaultGp11WifiConnectSettings;
 
 // Sec 5: declaration of global function prototype
 
@@ -142,4 +141,4 @@ Declaration of static Global Variables & Functions
 }
 #endif
 
-#endif // _MW_FIM_DEFAULT_GROUP08_PROJECT_H_
+#endif // _MW_FIM_DEFAULT_GROUP11_PROJECT_H_

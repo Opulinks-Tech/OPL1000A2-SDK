@@ -10,12 +10,13 @@
       <TargetName>OPL1000_APP</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060183::V5.06 update 2 (build 183)::ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>ARMCM3</Device>
           <Vendor>ARM</Vendor>
-          <PackID>ARM.CMSIS.4.5.0</PackID>
+          <PackID>ARM.CMSIS.5.3.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x20000) IROM(0x00000000,0x40000) CPUTYPE("Cortex-M3") CLOCK(12000000) ESEL ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -323,6 +324,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>1</uSurpInc>
             <uC99>1</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -330,6 +332,7 @@
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
+            <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--preinclude=sys_common.h</MiscControls>
               <Define>__noSIMULATOR__ __BLE__ __LE_HOST_USE_CMD__ __LWIP_TASK__ __WPA_SUPPLICANT__ __noHW_CRYPTO_ENGINE__ __WIFI_MAC_TASK__ __NL1000_An__ __PMP_ENABLE__ __PMP_REGION__ __HEAP_REGION__ noLWIP_DYNAMIC_DEBUG_ENABLE __AT_CMD_TASK__ __noRTL_SIMULATION__ __WIFI_AUTO_CONNECT__ OPL1000_APS</Define>
@@ -347,6 +350,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>1</uSurpInc>
             <useXO>0</useXO>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -518,9 +522,9 @@
               <FilePath>.\src\blewifi_wifi_api.c</FilePath>
             </File>
             <File>
-              <FileName>mw_fim_default_group08_project.c</FileName>
+              <FileName>mw_fim_default_group11_project.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\mw_fim_default_group08_project.c</FilePath>
+              <FilePath>.\src\mw_fim_default_group11_project.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -557,5 +561,11 @@
       </Groups>
     </Target>
   </Targets>
+
+  <RTE>
+    <apis/>
+    <components/>
+    <files/>
+  </RTE>
 
 </Project>

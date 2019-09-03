@@ -37,23 +37,25 @@
 #include "hal_system.h"
 #include "mw_fim_default_group03.h"
 #include "mw_fim_default_group03_patch.h"
-#include "mw_fim_default_group08.h"
-#include "mw_fim_default_group08_project.h"
+#include "mw_fim_default_group11_project.h"
+#include "ps_public.h"
 
 #define BLEWIFI_CTRL_RESET_DELAY    (3000)  // ms
 
 osThreadId   g_tAppCtrlTaskId;
 osMessageQId g_tAppCtrlQueueId;
 osTimerId    g_tAppCtrlAutoConnectTriggerTimer;
+osTimerId    g_tAppCtrlSysTimer;
 EventGroupHandle_t g_tAppCtrlEventGroup;
 
 uint8_t g_ulAppCtrlSysMode;
+uint8_t g_ubAppCtrlSysStatus;
 
 uint8_t g_ubAppCtrlRequestRetryTimes;
 uint32_t g_ulAppCtrlAutoConnectInterval;
 uint32_t g_ulAppCtrlWifiDtimTime;
 
-T_MwFim_GP08_WifiConnectSettings g_tAppCtrlWifiConnectSettings;
+T_MwFim_GP11_WifiConnectSettings g_tAppCtrlWifiConnectSettings;
 
 static void BleWifi_Ctrl_TaskEvtHandler_BleInitComplete(uint32_t evt_type, void *data, int len);
 static void BleWifi_Ctrl_TaskEvtHandler_BleAdvertisingCfm(uint32_t evt_type, void *data, int len);
@@ -72,6 +74,9 @@ static void BleWifi_Ctrl_TaskEvtHandler_WifiAutoConnectInd(uint32_t evt_type, vo
 static void BleWifi_Ctrl_TaskEvtHandler_OtherOtaOn(uint32_t evt_type, void *data, int len);
 static void BleWifi_Ctrl_TaskEvtHandler_OtherOtaOff(uint32_t evt_type, void *data, int len);
 static void BleWifi_Ctrl_TaskEvtHandler_OtherOtaOffFail(uint32_t evt_type, void *data, int len);
+static void BleWifi_Ctrl_TaskEvtHandler_OtherSysTimer(uint32_t evt_type, void *data, int len);
+static void BleWifi_Ctrl_TaskEvtHandler_NetworkingStart(uint32_t evt_type, void *data, int len);
+static void BleWifi_Ctrl_TaskEvtHandler_NetworkingStop(uint32_t evt_type, void *data, int len);
 static T_BleWifi_Ctrl_EvtHandlerTbl g_tCtrlEvtHandlerTbl[] =
 {
     {BLEWIFI_CTRL_MSG_BLE_INIT_COMPLETE,                BleWifi_Ctrl_TaskEvtHandler_BleInitComplete},
@@ -93,7 +98,9 @@ static T_BleWifi_Ctrl_EvtHandlerTbl g_tCtrlEvtHandlerTbl[] =
     {BLEWIFI_CTRL_MSG_OTHER_OTA_ON,                     BleWifi_Ctrl_TaskEvtHandler_OtherOtaOn},
     {BLEWIFI_CTRL_MSG_OTHER_OTA_OFF,                    BleWifi_Ctrl_TaskEvtHandler_OtherOtaOff},
     {BLEWIFI_CTRL_MSG_OTHER_OTA_OFF_FAIL,               BleWifi_Ctrl_TaskEvtHandler_OtherOtaOffFail},
-    
+    {BLEWIFI_CTRL_MSG_OTHER_SYS_TIMER,                  BleWifi_Ctrl_TaskEvtHandler_OtherSysTimer},
+    {BLEWIFI_CTRL_MSG_NETWORKING_START,                 BleWifi_Ctrl_TaskEvtHandler_NetworkingStart},
+    {BLEWIFI_CTRL_MSG_NETWORKING_STOP,                  BleWifi_Ctrl_TaskEvtHandler_NetworkingStop},
     {0xFFFFFFFF,                                        NULL}
 };
 
@@ -214,6 +221,58 @@ void BleWifi_Ctrl_DoAutoConnect(void)
 void BleWifi_Ctrl_AutoConnectTrigger(void const *argu)
 {
     BleWifi_Ctrl_MsgSend(BLEWIFI_CTRL_MSG_WIFI_AUTO_CONNECT_IND, NULL, 0);
+}
+
+void BleWifi_Ctrl_SysStatusChange(void)
+{
+    T_MwFim_SysMode tSysMode;
+    T_MwFim_GP11_PowerSaving tPowerSaving;
+
+    // get the settings of system mode
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP03_PATCH_SYS_MODE, 0, MW_FIM_SYS_MODE_SIZE, (uint8_t*)&tSysMode))
+    {
+        // if fail, get the default value
+        memcpy(&tSysMode, &g_tMwFimDefaultSysMode, MW_FIM_SYS_MODE_SIZE);
+    }
+		
+    // get the settings of power saving
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_POWER_SAVING, 0, MW_FIM_GP11_POWER_SAVING_SIZE, (uint8_t*)&tPowerSaving))
+    {
+        // if fail, get the default value
+        memcpy(&tPowerSaving, &g_tMwFimDefaultGp11PowerSaving, MW_FIM_GP11_POWER_SAVING_SIZE);
+    }
+		
+    // change from init to normal
+    if (g_ubAppCtrlSysStatus == BLEWIFI_CTRL_SYS_INIT)
+    {
+        g_ubAppCtrlSysStatus = BLEWIFI_CTRL_SYS_NORMAL;
+
+        /* Power saving settings */
+        if (tSysMode.ubSysMode == MW_FIM_SYS_MODE_USER)
+            ps_smart_sleep(tPowerSaving.ubPowerSaving);
+				
+//        // start the sys timer
+//        osTimerStop(g_tAppCtrlSysTimer);
+//        osTimerStart(g_tAppCtrlSysTimer, BLEWIFI_COM_SYS_TIME_NORMAL);
+    }
+    // change from normal to ble off
+    else if (g_ubAppCtrlSysStatus == BLEWIFI_CTRL_SYS_NORMAL)
+    {
+        g_ubAppCtrlSysStatus = BLEWIFI_CTRL_SYS_BLE_OFF;
+
+//        // change the advertising time
+//        BleWifi_Ble_AdvertisingTimeChange(BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_PS_MIN, BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_PS_MAX);
+    }
+}
+
+uint8_t BleWifi_Ctrl_SysStatusGet(void)
+{
+    return g_ubAppCtrlSysStatus;
+}
+
+void BleWifi_Ctrl_SysTimeout(void const *argu)
+{
+    BleWifi_Ctrl_MsgSend(BLEWIFI_CTRL_MSG_OTHER_SYS_TIMER, NULL, 0);
 }
 
 static void BleWifi_Ctrl_TaskEvtHandler_BleInitComplete(uint32_t evt_type, void *data, int len)
@@ -368,13 +427,14 @@ static void BleWifi_Ctrl_TaskEvtHandler_WifiDisconnectionInd(uint32_t evt_type, 
 static void BleWifi_Ctrl_TaskEvtHandler_WifiGotIpInd(uint32_t evt_type, void *data, int len)
 {
     BLEWIFI_INFO("BLEWIFI: MSG BLEWIFI_CTRL_MSG_WIFI_GOT_IP_IND \r\n");
-    BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_GOT_IP, true);
 #if (SNTP_FUNCTION_EN == 1)		    
     BleWifi_SntpInit();
 #endif
     BleWifi_Wifi_UpdateBeaconInfo();
     BleWifi_Wifi_SetDTIM(BleWifi_Ctrl_DtimTimeGet());
     BleWifi_Wifi_SendStatusInfo(BLEWIFI_IND_IP_STATUS_NOTIFY);
+
+    BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_GOT_IP, true);
 }
 
 static void BleWifi_Ctrl_TaskEvtHandler_WifiAutoConnectInd(uint32_t evt_type, void *data, int len)
@@ -405,6 +465,50 @@ static void BleWifi_Ctrl_TaskEvtHandler_OtherOtaOffFail(uint32_t evt_type, void 
     BLEWIFI_INFO("BLEWIFI: MSG BLEWIFI_CTRL_MSG_OTHER_OTA_OFF_FAIL \r\n");
     BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_OTA, false);
     msg_print_uart1("ERROR\r\n");
+}
+
+static void BleWifi_Ctrl_TaskEvtHandler_OtherSysTimer(uint32_t evt_type, void *data, int len)
+{
+    BLEWIFI_INFO("BLEWIFI: MSG BLEWIFI_CTRL_MSG_OTHER_SYS_TIMER \r\n");
+    BleWifi_Ctrl_SysStatusChange();
+}
+
+void BleWifi_Ctrl_NetworkingStart(void)
+{
+    if (false == BleWifi_Ctrl_EventStatusGet(BLEWIFI_CTRL_EVENT_BIT_NETWORK))
+    {
+        BLEWIFI_INFO("[%s %d] start\n", __func__, __LINE__);
+
+        BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_NETWORK, true);
+    }
+    else
+    {
+        BLEWIFI_WARN("[%s %d] BLEWIFI_CTRL_EVENT_BIT_NETWORK already true\n", __func__, __LINE__);
+    }
+}
+
+void BleWifi_Ctrl_NetworkingStop(void)
+{
+    if (true == BleWifi_Ctrl_EventStatusGet(BLEWIFI_CTRL_EVENT_BIT_NETWORK))
+    {
+        BLEWIFI_INFO("[%s %d] start\n", __func__, __LINE__);
+
+        BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_NETWORK, false);
+    }
+    else
+    {
+        BLEWIFI_WARN("[%s %d] BLEWIFI_CTRL_EVENT_BIT_NETWORK already false\n", __func__, __LINE__);
+    }
+}
+
+static void BleWifi_Ctrl_TaskEvtHandler_NetworkingStart(uint32_t evt_type, void *data, int len)
+{
+    BleWifi_Ctrl_NetworkingStart();
+}
+
+static void BleWifi_Ctrl_TaskEvtHandler_NetworkingStop(uint32_t evt_type, void *data, int len)
+{
+    BleWifi_Ctrl_NetworkingStop();
 }
 
 void BleWifi_Ctrl_TaskEvtHandler(uint32_t evt_type, void *data, int len)
@@ -497,6 +601,7 @@ void BleWifi_Ctrl_Init(void)
     osThreadDef_t task_def;
     osMessageQDef_t blewifi_queue_def;
     osTimerDef_t timer_auto_connect_def;
+    osTimerDef_t timer_sys_def;
 
     /* Create ble-wifi task */
     task_def.name = "blewifi ctrl";
@@ -530,6 +635,14 @@ void BleWifi_Ctrl_Init(void)
         BLEWIFI_ERROR("BLEWIFI: ctrl task create auto-connection timer fail \r\n");
     }
 
+    /* create timer to trig the sys state */
+    timer_sys_def.ptimer = BleWifi_Ctrl_SysTimeout;
+    g_tAppCtrlSysTimer = osTimerCreate(&timer_sys_def, osTimerOnce, NULL);
+    if(g_tAppCtrlSysTimer == NULL)
+    {
+        BLEWIFI_ERROR("BLEWIFI: ctrl task create SYS timer fail \r\n");
+    }
+
     /* Create the event group */
     g_tAppCtrlEventGroup = xEventGroupCreate();
     if(g_tAppCtrlEventGroup == NULL)
@@ -541,11 +654,18 @@ void BleWifi_Ctrl_Init(void)
     g_ulAppCtrlSysMode = MW_FIM_SYS_MODE_INIT;
 
     // get the settings of Wifi connect settings
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP08_PROJECT_WIFI_CONNECT_SETTINGS, 0, MW_FIM_GP08_WIFI_CONNECT_SETTINGS_SIZE, (uint8_t*)&g_tAppCtrlWifiConnectSettings))
+	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_WIFI_CONNECT_SETTINGS, 0, MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE, (uint8_t*)&g_tAppCtrlWifiConnectSettings))
     {
         // if fail, get the default value
-        memcpy(&g_tAppCtrlWifiConnectSettings, &g_tMwFimDefaultGp08WifiConnectSettings, MW_FIM_GP08_WIFI_CONNECT_SETTINGS_SIZE);
+        memcpy(&g_tAppCtrlWifiConnectSettings, &g_tMwFimDefaultGp11WifiConnectSettings, MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE);
     }
+
+    /* the init state of SYS is init */
+    g_ubAppCtrlSysStatus = BLEWIFI_CTRL_SYS_INIT;
+    // start the sys timer
+    osTimerStop(g_tAppCtrlSysTimer);
+    osTimerStart(g_tAppCtrlSysTimer, BLEWIFI_COM_SYS_TIME_INIT);
+
     /* Init the DTIM time (ms) */
     g_ulAppCtrlWifiDtimTime = g_tAppCtrlWifiConnectSettings.ulDtimInterval;
 

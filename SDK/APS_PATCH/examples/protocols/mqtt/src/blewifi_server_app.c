@@ -21,8 +21,7 @@
 #include "blewifi_server_app_gatt.h"
 #include "blewifi_ctrl.h"
 
-#include "mw_fim_default_group08.h"
-#include "mw_fim_default_group08_project.h"
+#include "mw_fim_default_group11_project.h"
 
 extern LE_ERR_STATE LeGapGetBdAddr(BD_ADDR addr);
 extern T_BleWifi_Ble_MsgHandlerTbl gBleGattMsgHandlerTbl[];
@@ -207,15 +206,15 @@ static void BleWifi_Ble_SetAdvData(void)
 
 static void BleWifi_Ble_SetScanData(void)
 {
-    T_MwFim_GP08_BleDeviceName tBleDeviceName;
+    T_MwFim_GP11_BleDeviceName tBleDeviceName;
     uint8_t ubLen;
     BOOL isOk = FALSE;
 
     // get the settings of BLE device name
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP08_PROJECT_BLE_DEVICE_NAME, 0, MW_FIM_GP08_BLE_DEVICE_NAME_SIZE, (uint8_t*)&tBleDeviceName))
+	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_BLE_DEVICE_NAME, 0, MW_FIM_GP11_BLE_DEVICE_NAME_SIZE, (uint8_t*)&tBleDeviceName))
     {
         // if fail, get the default value
-        memcpy(&tBleDeviceName, &g_tMwFimDefaultGp08BleDeviceName, MW_FIM_GP08_BLE_DEVICE_NAME_SIZE);
+        memcpy(&tBleDeviceName, &g_tMwFimDefaultGp11BleDeviceName, MW_FIM_GP11_BLE_DEVICE_NAME_SIZE);
     }
     
     if (tBleDeviceName.ubNameMethod == 1)
@@ -294,16 +293,16 @@ static void BleWifi_Ble_SetScanData(void)
 
 static void BleWifi_Ble_CmMsgHandler_InitCompleteCfm(TASK task, MESSAGEID id, MESSAGE message)
 {
-    T_MwFim_GP08_BleAdvInterval tBleAdvInterval;
+    T_MwFim_GP11_BleAdvInterval tBleAdvInterval;
 
     // !!! after LeCmInit
     BLEWIFI_INFO("APP-LE_CM_MSG_INIT_COMPLETE_CFM\r\n");
 
     // get the settings of BLE advertisement interval
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP08_PROJECT_BLE_ADV_INTERVAL, 0, MW_FIM_GP08_BLE_ADV_INTERVAL_SIZE, (uint8_t*)&tBleAdvInterval))
+	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_BLE_ADV_INTERVAL, 0, MW_FIM_GP11_BLE_ADV_INTERVAL_SIZE, (uint8_t*)&tBleAdvInterval))
     {
         // if fail, get the default value
-        memcpy(&tBleAdvInterval, &g_tMwFimDefaultGp08BleAdvInterval, MW_FIM_GP08_BLE_ADV_INTERVAL_SIZE);
+        memcpy(&tBleAdvInterval, &g_tMwFimDefaultGp11BleAdvInterval, MW_FIM_GP11_BLE_ADV_INTERVAL_SIZE);
     }
     
     LeGattInit(&gTheBle.task);
