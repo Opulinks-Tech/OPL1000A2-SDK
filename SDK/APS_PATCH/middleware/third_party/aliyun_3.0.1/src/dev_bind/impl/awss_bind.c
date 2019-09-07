@@ -18,10 +18,12 @@ static void *awss_bind_mutex = NULL;
 #ifdef DEVICE_MODEL_ENABLED
 extern int awss_report_reset_to_cloud();
 #endif
-
+    
+int awss_bind_inited = 0; //Netlink Kevin modify for rebinding
+    
 int awss_start_bind()
 {
-    static int awss_bind_inited = 0;
+//    static int awss_bind_inited = 0;
 
     if (awss_bind_mutex == NULL) {
         awss_bind_mutex = HAL_MutexCreate();

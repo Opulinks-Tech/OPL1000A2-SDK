@@ -370,7 +370,7 @@ int IOT_MQTT_Nwk_Event_Handler(void *handle, iotx_mqtt_nwk_event_t event, iotx_m
 #define CONFIG_MQTT_REQ_TIMEOUT_MIN             (500)
 
 /* Maximum timeout interval of MQTT request in millisecond */
-#define CONFIG_MQTT_REQ_TIMEOUT_MAX             (5000)
+#define CONFIG_MQTT_REQ_TIMEOUT_MAX             (15000)
 
 /* Minimum keepalive interval of MQTT request in second */
 #define CONFIG_MQTT_KEEPALIVE_INTERVAL_MIN      (30)

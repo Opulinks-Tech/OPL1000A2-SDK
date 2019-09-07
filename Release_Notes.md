@@ -1,7 +1,34 @@
 ## Release Version:
+SDK Package: MP_2.10
+Patch_Lib : 4004
+
+## Release Date: 2019/9/7
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 OPL1000-multiple-dev-download-tool-user-guide,R01-v05, fix some typo. 
+2. Tool version information and update:
+   2.1 download tool: v0.27. no update.
+   2.2 pin-mux tool: v0.8. No update.
+   2.3 MP RF test tool: v2.3. no update
+   2.4 MP multi-dev download tool: v2.2, support A2 chip firmware download and BLE/WIFI MAC programming.
+3. Add ali_blewifi example.
+
+
+## Bug Fix List 
+1. fix "BLE scan fial in MP2.9 ( SCA VS VCO output bevavir abnormal)" issue
+2. fix "there is no linking error report when the size is overflow" issue.
+3. fix "the initial flow of driver part" issue
+4. fix "RF power setting failed at BleWifiAppInit" issue
+5. fix "UART rx interrupt triggered wrongly" issue.
+
+## Notes List 
+
+*****
+
+## Release Version:
 SDK Package: MP2.9
 Patch_Lib : 4004
-ROM_CODE: 1655 
 
 ## Release Date: 2019/8/30
 

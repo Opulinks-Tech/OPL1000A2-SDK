@@ -92,6 +92,7 @@ void __Patch_EntryPoint(void) __attribute__((used));
 static void Main_PinMuxUpdate(void);
 static void Main_FlashLayoutUpdate(void);
 static void Main_MiscModulesInit(void);
+static void Main_MiscDriverConfigSetup(void);
 static void Main_AtUartDbgUartSwitch(void);
 static void Main_AppInit_patch(void);
 #ifdef __BLEWIFI_TRANSPARENT__
@@ -129,9 +130,11 @@ void __Patch_EntryPoint(void)
     
     // update the flash layout
     MwFim_FlashLayoutUpdate = Main_FlashLayoutUpdate;
-    
+
     // the initial of driver part for cold and warm boot
     Sys_MiscModulesInit = Main_MiscModulesInit;
+
+    Sys_MiscDriverConfigSetup = Main_MiscDriverConfigSetup;
 
     // update the switch AT UART / dbg UART function
     at_cmd_switch_uart1_dbguart = Main_AtUartDbgUartSwitch;
@@ -232,7 +235,38 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
+    
+}
+
+/*************************************************************************
+* FUNCTION:
+*   Main_MiscDriverConfigSetup
+*
+* DESCRIPTION:
+*   the initial of driver part for cold and warm boot
+*
+* PARAMETERS
+*   none
+*
+* RETURNS
+*   none
+*
+*************************************************************************/
+static void Main_MiscDriverConfigSetup(void)
+{
     //Hal_Wdt_Stop();   //disable watchdog here.
+
+    // IO 1 : detect the GPIO high level if APS UART Rx is connected to another UART Tx port.
+    // cold boot
+    if (0 == Boot_CheckWarmBoot())
+    {
+        Hal_DbgUart_RxIntEn(0);
+        
+        if (HAL_PIN_TYPE_IO_1 == PIN_TYPE_UART_APS_RX)
+        {
+            Main_ApsUartRxDectecConfig();
+        }
+    }
 }
 
 /*************************************************************************
@@ -294,18 +328,6 @@ static void Main_AppInit_patch(void)
     // add the application initialization from here
     printf("AppInit\n");
 
-    // IO 1 : detect the GPIO high level if APS UART Rx is connected to another UART Tx port.
-    // cold boot
-    if (0 == Boot_CheckWarmBoot())
-    {
-        Hal_DbgUart_RxIntEn(0);
-        
-        if (HAL_PIN_TYPE_IO_1 == PIN_TYPE_UART_APS_RX)
-        {
-            Main_ApsUartRxDectecConfig();
-        }
-    }
-    
 #ifdef __BLEWIFI_TRANSPARENT__
     // the blewifi init will be triggered by AT Cmd
 #else

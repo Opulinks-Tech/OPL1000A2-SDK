@@ -17,3 +17,8 @@
 %FROM_ELF% %AXF_FULL_PATH% --bin --output %OBJ_PATH%%OUTPUT_NAME%.bin
 
 
+
+
+
+
+

@@ -41,6 +41,8 @@
 /* Library initialization definition include */
 #include "aws_lib_init.h"
 
+//#define xQueueReceive( xQueue, pvBuffer, xTicksToWait ) xQueueGenericReceive( ( xQueue ), ( pvBuffer ), ( xTicksToWait ), pdFALSE )
+
 /**
  * @brief Opaque handle to represent an MQTT client.
  *

@@ -98,5 +98,7 @@ void Ali_Netlink_AliSendAwssSucNotify(uint32_t evt_type, void *data, int len);
 
 void Ali_Netlink_Awss_Process_Get_Devinfo(uint32_t evt_type, void *data, int len);
 void Ali_Netlink_Awss_Report_Reset_To_Cloud(uint32_t evt_type, void *data, int len);
+//Netlink Kevin modify for rebinding
+void HAL_ResetAliBindflag(void);
 #endif
 

@@ -375,7 +375,7 @@ static void prvChangeDesiredTask( void * pvParameters )
 {
     uint8_t ucBulbState = 0;
     uint32_t ulInitialReportLength;
-    TickType_t xLastWakeTime;
+    //TickType_t xLastWakeTime;
     ShadowTaskParam_t * pxShadowTaskParam;
     ShadowQueueData_t xShadowQueueData;
     char pcInitialReportBuffer[ shadowDemoINITIAL_REPORT_BUFFER_LENGTH ];
@@ -397,7 +397,7 @@ static void prvChangeDesiredTask( void * pvParameters )
     configASSERT( xQueueSendToBack( xUpdateQueue, &xShadowQueueData, shadowDemoSEND_QUEUE_WAIT_TICKS ) == pdTRUE );
     configASSERT( ulTaskNotifyTake( pdTRUE, shadowDemoNOTIFY_WAIT_MS ) == 1 );
 
-    xLastWakeTime = xTaskGetTickCount();
+    // xLastWakeTime = xTaskGetTickCount();
 
     /* Keep changing the desired state of light bulb periodically. */
     for( ; ; )

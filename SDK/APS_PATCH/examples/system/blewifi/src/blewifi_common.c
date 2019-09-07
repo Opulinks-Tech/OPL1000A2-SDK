@@ -13,6 +13,7 @@
 #include <string.h>
 #include "blewifi_common.h"
 #include "sys_common_api.h"
+#include "sys_cfg_patch.h"
 
 #if (SNTP_FUNCTION_EN == 1)
 #include "cmsis_os.h"
@@ -208,9 +209,11 @@ Set RF power (0x00 - 0xFF)
 */
 void BleWifi_RFPowerSetting(uint8_t level)
 {
+    T_RfCfg tCfg;
     int ret = 0;
 
-    ret = sys_set_config_rf_power_level(level);
-    printf("RF Power Settings is = %s \n", (ret == 1 ? "successful":"false"));
+    tCfg.u8HighPwrStatus = level;
+    ret = sys_cfg_rf_init_patch(&tCfg);
+    printf("RF Power Settings is = %s \n", (ret == 0 ? "successful" : "false"));
 }
 

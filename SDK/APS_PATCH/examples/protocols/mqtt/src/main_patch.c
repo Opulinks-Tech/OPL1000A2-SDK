@@ -305,7 +305,7 @@ static void Main_AppInit_patch(void)
 {
     // add the application initialization from here
     printf("AppInit\n");
-    
+
 #ifdef __BLEWIFI_TRANSPARENT__
     // the blewifi init will be triggered by AT Cmd
 #else

@@ -56,6 +56,8 @@ typedef enum blewifi_ctrl_msg_type
     BLEWIFI_CTRL_MSG_OTHER_OTA_OFF,             //OTA success
     BLEWIFI_CTRL_MSG_OTHER_OTA_OFF_FAIL,        //OTA fail
     BLEWIFI_CTRL_MSG_OTHER_SYS_TIMER,           //SYS timer
+    BLEWIFI_CTRL_MSG_NETWORKING_START,          //Networking Start
+    BLEWIFI_CTRL_MSG_NETWORKING_STOP,           //Networking Stop
     
     BLEWIFI_CTRL_MSG_OTHER__NUM
 } blewifi_ctrl_msg_type_e;
@@ -82,6 +84,7 @@ typedef enum blewifi_ctrl_sys_state
 #define BLEWIFI_CTRL_EVENT_BIT_OTA      0x00000004U
 #define BLEWIFI_CTRL_EVENT_BIT_GOT_IP   0x00000008U
 #define BLEWIFI_CTRL_EVENT_BIT_IOT_INIT 0x00000010U
+#define BLEWIFI_CTRL_EVENT_BIT_NETWORK  0x00000020U
 
 typedef void (*T_BleWifi_Ctrl_EvtHandler_Fp)(uint32_t evt_type, void *data, int len);
 typedef struct
@@ -104,6 +107,9 @@ void BleWifi_Ctrl_DtimTimeSet(uint32_t value);
 uint32_t BleWifi_Ctrl_DtimTimeGet(void);
 int BleWifi_Ctrl_MsgSend(int msg_type, uint8_t *data, int data_len);
 void BleWifi_Ctrl_Init(void);
+
+void BleWifi_Ctrl_NetworkingStart(void);
+void BleWifi_Ctrl_NetworkingStop(void);
 
 #endif /* __BLEWIFI_CTRL_H__ */
 

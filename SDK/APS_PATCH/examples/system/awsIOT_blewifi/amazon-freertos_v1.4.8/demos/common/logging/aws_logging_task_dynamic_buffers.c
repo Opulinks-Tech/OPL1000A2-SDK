@@ -41,6 +41,8 @@
 #include <stdarg.h>
 #include <string.h>
 
+#include "aws_mqtt_agent.h"
+
 /* Sanity check all the definitions required by this file are set. */
 #define configPRINT_STRING printf
 

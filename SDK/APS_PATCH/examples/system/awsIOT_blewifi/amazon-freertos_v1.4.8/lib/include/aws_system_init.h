@@ -31,5 +31,6 @@
 #endif
 
 BaseType_t SYSTEM_Init( void );
+BaseType_t AWS_SYSTEM_Init( void );
 
 #endif /* _AWS_SYSTEM_INIT_H_ */

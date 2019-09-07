@@ -16,7 +16,7 @@
 *
 *  Project:
 *  --------
-*  OPL1000_A1 series
+*  OPL1000 Project - the pin config definition file
 *
 *  Description:
 *  ------------
@@ -45,6 +45,9 @@ Head Block of The File
 #include "hal_pin_def.h"
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
+/* Select IO 0/1 UART mode. For switching UART use */
+#define HAL_PIN_0_1_UART_MODE       IO01_UART_MODE_AT       // IO01_UART_MODE_AT
+                                                            // IO01_UART_MODE_DBG
 // IO type select
 #define HAL_PIN_TYPE_IO_0   PIN_TYPE_UART1_TX       // PIN_TYPE_NONE
                                                     // PIN_TYPE_GPIO_INPUT
@@ -238,7 +241,7 @@ Head Block of The File
                                                     // PIN_TYPE_ICE_M3_CLK
                                                     // PIN_TYPE_ICE_M0_DAT
 
-#define HAL_PIN_TYPE_IO_14  PIN_TYPE_SPI0_IO_0      // PIN_TYPE_NONE
+#define HAL_PIN_TYPE_IO_14  PIN_TYPE_SPI0_IO_MOSI   // PIN_TYPE_NONE
                                                     // PIN_TYPE_GPIO_INPUT
                                                     // PIN_TYPE_GPIO_OUTPUT_LOW
                                                     // PIN_TYPE_GPIO_OUTPUT_HIGH
@@ -251,7 +254,7 @@ Head Block of The File
                                                     // PIN_TYPE_ICE_M3_DAT
                                                     // PIN_TYPE_ICE_M0_CLK
 
-#define HAL_PIN_TYPE_IO_15  PIN_TYPE_SPI0_IO_1      // PIN_TYPE_NONE
+#define HAL_PIN_TYPE_IO_15  PIN_TYPE_SPI0_IO_MISO   // PIN_TYPE_NONE
                                                     // PIN_TYPE_GPIO_INPUT
                                                     // PIN_TYPE_GPIO_OUTPUT_LOW
                                                     // PIN_TYPE_GPIO_OUTPUT_HIGH

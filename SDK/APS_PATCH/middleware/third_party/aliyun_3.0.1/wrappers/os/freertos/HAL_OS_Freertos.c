@@ -46,7 +46,8 @@
 
 static osSemaphoreId g_tDevInfoSem = NULL;
 
-
+extern int awss_reported;
+extern int awss_bind_inited;
 /**
  * @brief Deallocate memory block
  *
@@ -902,4 +903,11 @@ int HAL_GetFirmwareVersion(_OU_ char *version)
 //#endif
     return strlen(version);
 }
+
+//Netlink Kevin modify for rebinding
+void HAL_ResetAliBindflag()
+{
+    awss_reported = 0;
+    awss_bind_inited = 0;
+}    
 

@@ -15,3 +15,5 @@ LR_IROM1 SCT_PATCH_START SCT_PATCH_LEN
    .ANY (+RW +ZI)
   }
 }
+ScatterAssert(ImageLength(LR_IROM1) <= SCT_PATCH_LEN)
+

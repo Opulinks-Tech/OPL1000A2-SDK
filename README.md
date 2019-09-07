@@ -2,7 +2,7 @@
 - OPL1000A2-SDK is Opulinks official software development kit for OPL1000 A2 chip.
 - Provide 33 documents under "Doc" folder, includes Chinese and English version. Content covers DEVKIT use, SDK getting start and development, Chip boot mode, Flash use, Adaptive DTIM solution, API use introduction etc. 
 - Provide three sets of tools for Pin multiplexing Settings, firmware download and mass production. 
-- Provide 29 examples include WIFI, BLE, Peripheral, protocols and OTA examples. 
+- Provide 31 examples include WIFI, BLE, Peripheral, protocols and OTA examples. 
 - Provide 6 dedicate Demo for user to evaluate OPL1000 functions/features.    
 
 # Developing With the OPL1000A2-SDK
@@ -41,5 +41,6 @@ Refer OPL1000-SDK-getting-start-guide.pdf and OPL1000-SDK-Development-guide.pdf 
 
 # Development tool 
 User can use two methods to develop application. 
+
 - use Keil uVision 5 on Windows system. "opl1000_app_m3.uvprojx" project file is provided for each individual example under SDK\APS_PATCH\examples folder. User can open it by KeilC and add own function freely.     
-- use GNU arm GCC tool. "Makefile" is provided for each individual example under SDK\APS_PATCH\examples folder. User can use Make tool to compile and link own application. How to install GCC development environment under Windows system please refer chapter4 of "OPL1000-SDK-Development-guide.pdf" document.   
+- use GNU arm GCC tool. "Makefile" is provided for each individual example under SDK\APS_PATCH\examples folder. User can use Make tool to compile and link own application. How to install GCC development environment under Windows system please refer chapter4 of "OPL1000-SDK-Development-guide.pdf" document.

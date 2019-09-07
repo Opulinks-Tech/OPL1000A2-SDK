@@ -45,6 +45,7 @@
 #include "task.h"
 
 #include "Cmsis_os.h"
+#include "string.h"
 
 #include <stdbool.h>
 

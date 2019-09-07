@@ -45,6 +45,9 @@ Head Block of The File
 #include "hal_pin_def.h"
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
+/* Select IO 0/1 UART mode. For switching UART use */
+#define HAL_PIN_0_1_UART_MODE       IO01_UART_MODE_AT       // IO01_UART_MODE_AT
+                                                            // IO01_UART_MODE_DBG
 // IO type select
 #define HAL_PIN_TYPE_IO_0   PIN_TYPE_UART1_TX       // PIN_TYPE_NONE
                                                     // PIN_TYPE_GPIO_INPUT

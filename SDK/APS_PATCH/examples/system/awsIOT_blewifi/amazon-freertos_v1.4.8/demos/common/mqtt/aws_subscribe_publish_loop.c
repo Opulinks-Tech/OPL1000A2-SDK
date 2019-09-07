@@ -38,6 +38,7 @@
 /* Standard includes. */
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
@@ -499,7 +500,7 @@ static BaseType_t prvStringPublishSubscribe( MQTTAgentConnectParams_t * pxConnec
 {
     MQTTAgentSubscribeParams_t xSubscribeParams;
     MQTTAgentPublishParams_t xPublishParams;
-    MQTTAgentUnsubscribeParams_t xUnsubscribeParams;
+    //MQTTAgentUnsubscribeParams_t xUnsubscribeParams;
     BaseType_t xResult = pdPASS;
     extern bool bMQTTconnected;
 
@@ -552,7 +553,7 @@ static BaseType_t prvStringPublishSubscribe( MQTTAgentConnectParams_t * pxConnec
                 }
                 else
                 {
-                    printf( ( "ERROR %s did not published to topic %s\r\n", __FUNCTION__, (char *) (xPublishParams.pucTopic) ) );
+                    printf( "ERROR %s did not published to topic %s\r\n", __FUNCTION__, (char *) (xPublishParams.pucTopic) );
                     xResult = pdFAIL;
                 }
 
@@ -703,7 +704,7 @@ static BaseType_t prvStringPublishSubscribe( MQTTAgentConnectParams_t * pxConnec
 
     }
     
-    return xResult;
+    //return xResult;
 }
 /*-----------------------------------------------------------*/
 
@@ -822,7 +823,7 @@ static void prvSubscribePublishDemo( MQTTAgentHandle_t xMQTTClientHandle,
 void prvPublishSubscribeTask( void * pvParameters )
 {
     BaseType_t xSecureConnection;
-    BaseType_t xResult;
+    //BaseType_t xResult;
     /* The MQTT client used for all the publish and subscribes. */
     MQTTAgentHandle_t xMQTTClientHandle;
 

@@ -159,10 +159,12 @@ int dm_client_subscribe_all(char product_key[IOTX_PRODUCT_KEY_LEN + 1], char dev
     return SUCCESS_RETURN;
 }
 
+int awss_reported = 0; //Netlink Kevin modify for rebinding
+
 static void _dm_client_event_cloud_connected_handle(void)
 {
 #ifdef DEV_BIND_ENABLED
-    static int awss_reported = 0;
+//    static int awss_reported = 0;
     if(awss_reported == 0) {
         awss_reported = 1;
         awss_report_cloud();

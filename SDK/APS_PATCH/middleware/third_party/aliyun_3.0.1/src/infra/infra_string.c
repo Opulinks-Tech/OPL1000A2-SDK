@@ -37,7 +37,7 @@ void infra_int2str(uint32_t input, char output[10])
         output[--i] = tmp[j++];
     }while(i > 0);
 }
-
+/*
 char *infra_strtok(char *str, const char *delim)
 {
     int only_delim = 1;
@@ -77,6 +77,51 @@ char *infra_strtok(char *str, const char *delim)
         }
     }
 
+    return target;
+}
+*/
+char *infra_strtok_r(char *str, const char *delim, char **ppPos)
+{
+    int only_delim = 1;
+    char *pos = NULL;
+    char *target = NULL;
+
+    pos = (str == NULL)?(*ppPos):(str);
+
+    if (pos == NULL || delim == NULL ||
+        strlen(pos) <= strlen(delim)) {
+        goto done;
+    }
+
+    target = pos;
+    while (strlen(pos) >= strlen(delim)) {
+        if (memcmp(pos,delim,strlen(delim)) != 0) {
+            only_delim = 0;
+            pos++;
+            continue;
+        }
+
+        if (strlen(pos) == strlen(delim)) {
+            memset(pos,0,strlen(delim));
+            if (only_delim) {
+                target = NULL;
+                goto done;
+            }
+            goto done;
+        }
+
+        if (target == pos) {
+            pos += strlen(delim);
+            target = pos;
+        }else{
+            memset(pos,0,strlen(delim));
+            pos += strlen(delim);
+            break;
+        }
+    }
+
+done:
+    *ppPos = pos;
     return target;
 }
 

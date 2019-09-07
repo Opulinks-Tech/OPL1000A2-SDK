@@ -2274,6 +2274,7 @@ static int iotx_mc_check_topic(const char *topicName, iotx_mc_topic_type_t type)
     char *delim = "/";
     char *iterm = NULL;
     char topicString[CONFIG_MQTT_TOPIC_MAXLEN];
+    char *pSavedPtr = NULL;
     if (NULL == topicName || '/' != topicName[0]) {
         return FAIL_RETURN;
     }
@@ -2286,7 +2287,7 @@ static int iotx_mc_check_topic(const char *topicName, iotx_mc_topic_type_t type)
     memset(topicString, 0x0, CONFIG_MQTT_TOPIC_MAXLEN);
     strncpy(topicString, topicName, CONFIG_MQTT_TOPIC_MAXLEN - 1);
 
-    iterm = infra_strtok(topicString, delim);
+    iterm = infra_strtok_r(topicString, delim, &pSavedPtr);
 
     if (SUCCESS_RETURN != iotx_mc_check_rule(iterm, type)) {
         mqtt_err("run iotx_check_rule error");
@@ -2294,7 +2295,7 @@ static int iotx_mc_check_topic(const char *topicName, iotx_mc_topic_type_t type)
     }
 
     for (;;) {
-        iterm = infra_strtok(NULL, delim);
+        iterm = infra_strtok_r(NULL, delim, &pSavedPtr);
 
         if (iterm == NULL) {
             break;

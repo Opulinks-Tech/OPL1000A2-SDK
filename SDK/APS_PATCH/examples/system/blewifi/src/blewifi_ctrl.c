@@ -75,6 +75,8 @@ static void BleWifi_Ctrl_TaskEvtHandler_OtherOtaOn(uint32_t evt_type, void *data
 static void BleWifi_Ctrl_TaskEvtHandler_OtherOtaOff(uint32_t evt_type, void *data, int len);
 static void BleWifi_Ctrl_TaskEvtHandler_OtherOtaOffFail(uint32_t evt_type, void *data, int len);
 static void BleWifi_Ctrl_TaskEvtHandler_OtherSysTimer(uint32_t evt_type, void *data, int len);
+static void BleWifi_Ctrl_TaskEvtHandler_NetworkingStart(uint32_t evt_type, void *data, int len);
+static void BleWifi_Ctrl_TaskEvtHandler_NetworkingStop(uint32_t evt_type, void *data, int len);
 static T_BleWifi_Ctrl_EvtHandlerTbl g_tCtrlEvtHandlerTbl[] =
 {
     {BLEWIFI_CTRL_MSG_BLE_INIT_COMPLETE,                BleWifi_Ctrl_TaskEvtHandler_BleInitComplete},
@@ -96,9 +98,9 @@ static T_BleWifi_Ctrl_EvtHandlerTbl g_tCtrlEvtHandlerTbl[] =
     {BLEWIFI_CTRL_MSG_OTHER_OTA_ON,                     BleWifi_Ctrl_TaskEvtHandler_OtherOtaOn},
     {BLEWIFI_CTRL_MSG_OTHER_OTA_OFF,                    BleWifi_Ctrl_TaskEvtHandler_OtherOtaOff},
     {BLEWIFI_CTRL_MSG_OTHER_OTA_OFF_FAIL,               BleWifi_Ctrl_TaskEvtHandler_OtherOtaOffFail},
-    
     {BLEWIFI_CTRL_MSG_OTHER_SYS_TIMER,                  BleWifi_Ctrl_TaskEvtHandler_OtherSysTimer},
-
+    {BLEWIFI_CTRL_MSG_NETWORKING_START,                 BleWifi_Ctrl_TaskEvtHandler_NetworkingStart},
+    {BLEWIFI_CTRL_MSG_NETWORKING_STOP,                  BleWifi_Ctrl_TaskEvtHandler_NetworkingStop},
     {0xFFFFFFFF,                                        NULL}
 };
 
@@ -246,7 +248,7 @@ void BleWifi_Ctrl_SysStatusChange(void)
         g_ubAppCtrlSysStatus = BLEWIFI_CTRL_SYS_NORMAL;
 
         /* Power saving settings */
-        if (tSysMode.ubSysMode == MW_FIM_SYS_MODE_USER)
+        if (tSysMode.ubSysMode == MW_FIM_SYS_MODE_USER) 
             ps_smart_sleep(tPowerSaving.ubPowerSaving);
 				
 //        // start the sys timer
@@ -469,6 +471,44 @@ static void BleWifi_Ctrl_TaskEvtHandler_OtherSysTimer(uint32_t evt_type, void *d
 {
     BLEWIFI_INFO("BLEWIFI: MSG BLEWIFI_CTRL_MSG_OTHER_SYS_TIMER \r\n");
     BleWifi_Ctrl_SysStatusChange();
+}
+
+void BleWifi_Ctrl_NetworkingStart(void)
+{
+    if (false == BleWifi_Ctrl_EventStatusGet(BLEWIFI_CTRL_EVENT_BIT_NETWORK))
+    {
+        BLEWIFI_INFO("[%s %d] start\n", __func__, __LINE__);
+
+        BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_NETWORK, true);
+    }
+    else
+    {
+        BLEWIFI_WARN("[%s %d] BLEWIFI_CTRL_EVENT_BIT_NETWORK already true\n", __func__, __LINE__);
+    }
+}
+
+void BleWifi_Ctrl_NetworkingStop(void)
+{
+    if (true == BleWifi_Ctrl_EventStatusGet(BLEWIFI_CTRL_EVENT_BIT_NETWORK))
+    {
+        BLEWIFI_INFO("[%s %d] start\n", __func__, __LINE__);
+
+        BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_NETWORK, false);
+    }
+    else
+    {
+        BLEWIFI_WARN("[%s %d] BLEWIFI_CTRL_EVENT_BIT_NETWORK already false\n", __func__, __LINE__);
+    }
+}
+
+static void BleWifi_Ctrl_TaskEvtHandler_NetworkingStart(uint32_t evt_type, void *data, int len)
+{
+    BleWifi_Ctrl_NetworkingStart();
+}
+
+static void BleWifi_Ctrl_TaskEvtHandler_NetworkingStop(uint32_t evt_type, void *data, int len)
+{
+    BleWifi_Ctrl_NetworkingStop();
 }
 
 void BleWifi_Ctrl_TaskEvtHandler(uint32_t evt_type, void *data, int len)

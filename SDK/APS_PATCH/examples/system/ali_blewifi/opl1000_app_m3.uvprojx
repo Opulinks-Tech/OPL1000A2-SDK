@@ -7,15 +7,16 @@
 
   <Targets>
     <Target>
-      <TargetName>OPL1000_APP_Transparent</TargetName>
+      <TargetName>OPL1000_APP</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060183::V5.06 update 2 (build 183)::ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>ARMCM3</Device>
           <Vendor>ARM</Vendor>
-          <PackID>ARM.CMSIS.5.1.1</PackID>
+          <PackID>ARM.CMSIS.5.3.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x20000) IROM(0x00000000,0x40000) CPUTYPE("Cortex-M3") CLOCK(12000000) ESEL ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -48,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Output\Objects\</OutputDirectory>
-          <OutputName>opl1000_app_m3_transparent</OutputName>
+          <OutputName>opl1000_app_m3</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -81,7 +82,7 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>.\opl1000_tt_m3.bat $L !L @L</UserProg1Name>
+            <UserProg1Name>.\opl1000_app_m3.bat $L !L @L</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>1</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -323,6 +324,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>1</uSurpInc>
             <uC99>1</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -330,11 +332,12 @@
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
+            <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--preinclude=sys_common.h</MiscControls>
-              <Define>__noSIMULATOR__ __BLE__ __LE_HOST_USE_CMD__ __LWIP_TASK__ __WPA_SUPPLICANT__ __noHW_CRYPTO_ENGINE__ __WIFI_MAC_TASK__ __NL1000_An__ __PMP_ENABLE__ __PMP_REGION__ __HEAP_REGION__ noLWIP_DYNAMIC_DEBUG_ENABLE __AT_CMD_TASK__ __noRTL_SIMULATION__ __WIFI_AUTO_CONNECT__ __BLEWIFI_TRANSPARENT__ OPL1000_APS</Define>
+              <Define>__noSIMULATOR__ __BLE__ __LE_HOST_USE_CMD__ __LWIP_TASK__ __WPA_SUPPLICANT__ __noHW_CRYPTO_ENGINE__ __WIFI_MAC_TASK__ __NL1000_An__ __PMP_ENABLE__ __PMP_REGION__ __HEAP_REGION__ noLWIP_DYNAMIC_DEBUG_ENABLE __AT_CMD_TASK__ __noRTL_SIMULATION__ __WIFI_AUTO_CONNECT__ OPL1000_APS ALI_BLE_WIFI_PROVISION</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\APS\FreeRtos\Source\include;..\..\..\..\APS\FreeRtos\Source\portable\Keil\ARM_CM3;..\..\..\..\APS\driver\CMSIS\Include;..\..\..\..\APS\driver\CMSIS\Device\opl1000\Include;..\..\..\..\APS\driver\chip;..\..\..\..\APS\driver\chip\opl1000\securityipdriver;..\..\..\..\APS\driver\chip\opl1000\hal_auxadc;..\..\..\..\APS\driver\chip\opl1000\hal_system;..\..\..\..\APS\driver\chip\opl1000\hal_patch;..\..\..\..\APS\driver\chip\opl1000\hal_uart;..\..\..\..\APS\driver\chip\opl1000\hal_spi;..\..\..\..\APS\driver\chip\opl1000\hal_vic;..\..\..\..\APS\driver\chip\opl1000\hal_dbg_uart;..\..\..\..\APS\driver\chip\opl1000\hal_wdt;..\..\..\..\APS\driver\chip\opl1000\hal_dma;..\..\..\..\APS\driver\chip\opl1000\hal_tmr;..\..\..\..\APS\driver\chip\opl1000\hal_tick;..\..\..\..\APS\driver\chip\opl1000\hal_pwm;..\..\..\..\APS\driver\chip\opl1000\hal_i2c;..\..\..\..\APS\project\opl1000\include;..\..\..\..\APS\project\common;..\..\..\..\APS\middleware\netlink;..\..\..\..\APS\middleware\netlink\cli;..\..\..\..\APS\middleware\netlink\msg;..\..\..\..\APS\middleware\netlink\mw_fim;..\..\..\..\APS\middleware\netlink\mw_ota;..\..\..\..\APS\middleware\netlink\data_flow;..\..\..\..\APS\middleware\netlink\wifi_controller_layer;..\..\..\..\APS\middleware\netlink\ble_controller_layer\inc;..\..\..\..\APS\middleware\netlink\le_stack;..\..\..\..\APS\middleware\netlink\at;..\..\..\..\APS\middleware\netlink\iperf\inc;..\..\..\..\APS\middleware\netlink\controller_task;..\..\..\..\APS\middleware\netlink\ps_task;..\..\..\..\APS\middleware\netlink\diag_task;..\..\..\..\APS\middleware\netlink\wifi_controller_layer\rom_if;..\..\..\..\APS\middleware\netlink\wifi_mac;..\..\..\..\APS\middleware\netlink\common\sys_api;..\..\..\..\APS\middleware\netlink\common\sys_ctrl;..\..\..\..\APS\apps\le_app\pts_app;..\..\..\..\APS\apps\le_app\mtc_app;..\..\..\..\APS\apps\le_app\cmd_app;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\utils;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\common;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\wpa_supplicant;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\eap_common;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\eap_peer;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\eapol_supp;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\eapol_auth;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\radius;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\crypto;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\drivers;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\rsn_supp;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\l2_packet;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\ap;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\wps;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\wpa_supplicant\dbus;..\..\..\..\APS\middleware\third_party\lwip-2.0.3\lwip\src\include;..\..\..\..\APS\middleware\third_party\lwip-2.0.3\ports\freertos\include;..\..\..\..\APS\middleware\third_party\lwip-2.0.3\ports\freertos\netif;..\..\..\..\APS\middleware\third_party\lwip-2.0.3\ports\rom_if;..\..\..\..\APS\middleware\third_party\lwip-2.0.3\;..\..\..\..\APS\middleware\third_party\tinycrypt\include;..\..\..\..\APS\middleware\third_party\mbedtls\include;..\..\..\..\APS\project\opl1000\boot_sequence;..\..\..\..\APS\project\opl1000\startup;..\..\..\apps\le_app\include;..\..\..\driver\chip\opl1000;..\..\..\driver\chip\opl1000\hal_auxadc;..\..\..\driver\chip\opl1000\hal_spi;..\..\..\driver\chip\opl1000\hal_system;..\..\..\driver\chip\opl1000\securityipdriver;..\..\..\project\opl1000\startup;..\..\..\project\opl1000\include;..\..\..\middleware\netlink\data_flow;..\..\..\middleware\netlink\msg;..\..\..\middleware\netlink\mw_fim;..\..\..\middleware\netlink\mw_ota;..\..\..\middleware\netlink\ble_controller_layer\inc;..\..\..\middleware\netlink\le_stack\patch;..\..\..\middleware\netlink\le_stack\cmd_app;..\..\..\middleware\netlink\le_stack\pts_app;..\..\..\middleware\netlink\le_stack\mtc_app;..\..\..\middleware\netlink\at;..\..\..\middleware\netlink\diag_task;..\..\..\middleware\netlink\wifi_controller_layer;..\..\..\middleware\third_party\wpa_supplicant-0.7.3\wpa_supplicant;..\..\..\middleware\third_party\wpa_supplicant-0.7.3\src\utils;..\..\..\middleware\third_party\wpa_supplicant-0.7.3\src\rsn_supp;..\..\..\middleware\netlink\wifi_mac;..\..\..\middleware\third_party\wpa_supplicant-0.7.3\src\drivers;..\..\..\middleware\netlink\wifi_controller_layer\rom_if;..\..\..\middleware\third_party\lwip-2.0.3\ports\rom_if;..\..\..\middleware\third_party\httpclient;..\..\..\middleware\netlink\common\sys_api;..\..\..\middleware\netlink\common\sys_ctrl;..\..\..\middleware\netlink\ps_task;..\..\..\middleware\third_party\lwip-2.0.3\lwip\src\include;.\src;.\src\iot_data</IncludePath>
+              <IncludePath>..\..\..\..\APS\FreeRtos\Source\include;..\..\..\..\APS\FreeRtos\Source\portable\Keil\ARM_CM3;..\..\..\..\APS\driver\CMSIS\Include;..\..\..\..\APS\driver\CMSIS\Device\opl1000\Include;..\..\..\..\APS\driver\chip;..\..\..\..\APS\driver\chip\opl1000\securityipdriver;..\..\..\..\APS\driver\chip\opl1000\hal_auxadc;..\..\..\..\APS\driver\chip\opl1000\hal_system;..\..\..\..\APS\driver\chip\opl1000\hal_patch;..\..\..\..\APS\driver\chip\opl1000\hal_uart;..\..\..\..\APS\driver\chip\opl1000\hal_spi;..\..\..\..\APS\driver\chip\opl1000\hal_vic;..\..\..\..\APS\driver\chip\opl1000\hal_dbg_uart;..\..\..\..\APS\driver\chip\opl1000\hal_wdt;..\..\..\..\APS\driver\chip\opl1000\hal_dma;..\..\..\..\APS\driver\chip\opl1000\hal_tmr;..\..\..\..\APS\driver\chip\opl1000\hal_tick;..\..\..\..\APS\driver\chip\opl1000\hal_pwm;..\..\..\..\APS\driver\chip\opl1000\hal_i2c;..\..\..\..\APS\project\opl1000\include;..\..\..\..\APS\project\common;..\..\..\..\APS\middleware\netlink;..\..\..\..\APS\middleware\netlink\cli;..\..\..\..\APS\middleware\netlink\msg;..\..\..\..\APS\middleware\netlink\mw_fim;..\..\..\..\APS\middleware\netlink\mw_ota;..\..\..\..\APS\middleware\netlink\data_flow;..\..\..\..\APS\middleware\netlink\wifi_controller_layer;..\..\..\..\APS\middleware\netlink\ble_controller_layer\inc;..\..\..\..\APS\middleware\netlink\le_stack;..\..\..\..\APS\middleware\netlink\at;..\..\..\..\APS\middleware\netlink\iperf\inc;..\..\..\..\APS\middleware\netlink\controller_task;..\..\..\..\APS\middleware\netlink\ps_task;..\..\..\..\APS\middleware\netlink\diag_task;..\..\..\..\APS\middleware\netlink\wifi_controller_layer\rom_if;..\..\..\..\APS\middleware\netlink\wifi_mac;..\..\..\..\APS\middleware\netlink\common\sys_api;..\..\..\..\APS\middleware\netlink\common\sys_ctrl;..\..\..\..\APS\apps\le_app\pts_app;..\..\..\..\APS\apps\le_app\mtc_app;..\..\..\..\APS\apps\le_app\cmd_app;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\utils;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\common;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\wpa_supplicant;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\eap_common;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\eap_peer;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\eapol_supp;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\eapol_auth;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\radius;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\crypto;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\drivers;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\rsn_supp;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\l2_packet;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\ap;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\src\wps;..\..\..\..\APS\middleware\third_party\wpa_supplicant-0.7.3\wpa_supplicant\dbus;..\..\..\..\APS\middleware\third_party\lwip-2.0.3\lwip\src\include;..\..\..\..\APS\middleware\third_party\lwip-2.0.3\ports\freertos\include;..\..\..\..\APS\middleware\third_party\lwip-2.0.3\ports\freertos\netif;..\..\..\..\APS\middleware\third_party\lwip-2.0.3\ports\rom_if;..\..\..\..\APS\middleware\third_party\lwip-2.0.3\;..\..\..\..\APS\middleware\third_party\tinycrypt\include;..\..\..\..\APS\middleware\third_party\mbedtls\include;..\..\..\..\APS\project\opl1000\boot_sequence;..\..\..\..\APS\project\opl1000\startup;..\..\..\apps\le_app\include;..\..\..\driver\chip\opl1000;..\..\..\driver\chip\opl1000\hal_auxadc;..\..\..\driver\chip\opl1000\hal_spi;..\..\..\driver\chip\opl1000\hal_system;..\..\..\driver\chip\opl1000\securityipdriver;..\..\..\project\opl1000\startup;..\..\..\project\opl1000\include;..\..\..\middleware\netlink\data_flow;..\..\..\middleware\netlink\msg;..\..\..\middleware\netlink\mw_fim;..\..\..\middleware\netlink\mw_ota;..\..\..\middleware\netlink\ble_controller_layer\inc;..\..\..\middleware\netlink\le_stack\patch;..\..\..\middleware\netlink\le_stack\cmd_app;..\..\..\middleware\netlink\le_stack\pts_app;..\..\..\middleware\netlink\le_stack\mtc_app;..\..\..\middleware\netlink\at;..\..\..\middleware\netlink\diag_task;..\..\..\middleware\netlink\wifi_controller_layer;..\..\..\middleware\third_party\wpa_supplicant-0.7.3\wpa_supplicant;..\..\..\middleware\third_party\wpa_supplicant-0.7.3\src\utils;..\..\..\middleware\third_party\wpa_supplicant-0.7.3\src\rsn_supp;..\..\..\middleware\netlink\wifi_mac;..\..\..\middleware\third_party\wpa_supplicant-0.7.3\src\drivers;..\..\..\middleware\netlink\wifi_controller_layer\rom_if;..\..\..\middleware\third_party\lwip-2.0.3\ports\rom_if;..\..\..\middleware\third_party\httpclient;..\..\..\middleware\netlink\ps_task;..\..\..\middleware\third_party\lwip-2.0.3\lwip\src\include;.\src;.\src\iot_data;.\src\iot_data;.\src\breeze\api;.\src\breeze\hal\ble\include\mbedtls;.\src\breeze\hal\include;.\src\breeze\include;..\..\..\middleware\third_party\aliyun_3.0.1\src\coap\server;..\..\..\middleware\third_party\aliyun_3.0.1\src\coap\CoAPPacket;..\..\..\middleware\third_party\aliyun_3.0.1\src\dev_bind;..\..\..\middleware\third_party\aliyun_3.0.1\src\dev_bind\impl;..\..\..\middleware\third_party\aliyun_3.0.1\src\dev_bind\impl\awss_reset;..\..\..\middleware\third_party\aliyun_3.0.1\src\dev_bind\impl\os;..\..\..\middleware\third_party\aliyun_3.0.1\src\dev_model;..\..\..\middleware\third_party\aliyun_3.0.1\src\dev_model\client;..\..\..\middleware\third_party\aliyun_3.0.1\src\dev_model\deprecated;..\..\..\middleware\third_party\aliyun_3.0.1\src\dev_model\server;..\..\..\middleware\third_party\aliyun_3.0.1\src\dev_sign;..\..\..\middleware\third_party\aliyun_3.0.1\src\infra;..\..\..\middleware\third_party\aliyun_3.0.1\src\kv\include;..\..\..\middleware\third_party\aliyun_3.0.1\src\kv\include\aos;..\..\..\middleware\third_party\aliyun_3.0.1\src\mqtt;..\..\..\middleware\third_party\aliyun_3.0.1\src\mqtt\impl;..\..\..\middleware\third_party\aliyun_3.0.1\src\wifi_provision;..\..\..\middleware\third_party\aliyun_3.0.1\src\wifi_provision\zero_config;..\..\..\middleware\third_party\aliyun_3.0.1\src\wifi_provision\frameworks;..\..\..\middleware\third_party\aliyun_3.0.1\src\wifi_provision\frameworks\aplist;..\..\..\middleware\third_party\aliyun_3.0.1\src\wifi_provision\frameworks\ieee80211;..\..\..\middleware\third_party\aliyun_3.0.1\src\wifi_provision\frameworks\statics;..\..\..\middleware\third_party\aliyun_3.0.1\src\wifi_provision\frameworks\utils;..\..\..\middleware\third_party\aliyun_3.0.1\wrappers;..\..\..\middleware\third_party\aliyun_3.0.1\src\dev_model\examples;..\..\..\middleware\third_party\aliyun_3.0.1\src\coap</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -347,6 +350,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>1</uSurpInc>
             <useXO>0</useXO>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -364,7 +368,7 @@
             <TextAddressRange></TextAddressRange>
             <DataAddressRange></DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>.\opl1000_tt_m3.sct</ScatterFile>
+            <ScatterFile>.\opl1000_app_m3.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc>--datacompressor off --entry=__Patch_EntryPoint</Misc>
@@ -433,14 +437,19 @@
               <FilePath>.\src\blewifi_wifi_api.c</FilePath>
             </File>
             <File>
-              <FileName>mw_fim_default_group08_project.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\mw_fim_default_group08_project.c</FilePath>
-            </File>
-            <File>
               <FileName>app_at_cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\app_at_cmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>mw_fim_default_group11_project.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\mw_fim_default_group11_project.c</FilePath>
+            </File>
+            <File>
+              <FileName>mw_fim_default_group12_project.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\mw_fim_default_group12_project.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -451,6 +460,16 @@
               <FileName>iot_data.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\iot_data\iot_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>iot_rb_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\iot_data\iot_rb_data.c</FilePath>
+            </File>
+            <File>
+              <FileName>ali_linkkitsdk_impl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\iot_data\ali_linkkitsdk_impl.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -472,10 +491,86 @@
               <FileType>4</FileType>
               <FilePath>..\..\..\..\APS\targets\opl1000\Output\Objects\opl1000_sdk_m3.lib</FilePath>
             </File>
+            <File>
+              <FileName>opl1000_aliyun.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\..\..\..\APS\targets\opl1000\Output\Objects\opl1000_aliyun.lib</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ali_breeze_core</GroupName>
+          <Files>
+            <File>
+              <FileName>auth.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\core\auth.c</FilePath>
+            </File>
+            <File>
+              <FileName>core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\core\core.c</FilePath>
+            </File>
+            <File>
+              <FileName>extcmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\core\extcmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>sha256.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\core\sha256.c</FilePath>
+            </File>
+            <File>
+              <FileName>transport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\core\transport.c</FilePath>
+            </File>
+            <File>
+              <FileName>utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\core\utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>ali_hal_impl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\core\ali_hal_impl.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ali_breeze_ble</GroupName>
+          <Files>
+            <File>
+              <FileName>aes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\hal\ble\aes.c</FilePath>
+            </File>
+            <File>
+              <FileName>aes_mbed.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\hal\ble\aes_mbed.c</FilePath>
+            </File>
+            <File>
+              <FileName>breeze_hal_os.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\hal\ble\breeze_hal_os.c</FilePath>
+            </File>
+            <File>
+              <FileName>breeze_hal_sec.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\breeze\hal\ble\breeze_hal_sec.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
     </Target>
   </Targets>
+
+  <RTE>
+    <apis/>
+    <components/>
+    <files/>
+  </RTE>
 
 </Project>
