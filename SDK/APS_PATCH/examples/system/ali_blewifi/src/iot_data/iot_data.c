@@ -199,7 +199,7 @@ void Iot_Data_RxTask(void *args)
             printf("BLEWIFI_CTRL_EVENT_BIT_UNBIND------------------\r\n");
             if (user_example_ctx->master_devid >= 0)
             {
-                IOT_MQTT_Destroy(NULL);
+                printf("user_example_ctx->master_devid == 0\r\n");
                 IOT_Linkkit_Close(user_example_ctx->master_devid);
                 HAL_ResetAliBindflag();
             }
@@ -211,6 +211,8 @@ void Iot_Data_RxTask(void *args)
         else if (false == BleWifi_Ctrl_EventStatusGet(BLEWIFI_CTRL_EVENT_BIT_IOT_INIT))
         {
             printf("BLEWIFI_CTRL_EVENT_BIT_IOT_INIT------------------\r\n");
+            if (true == BleWifi_Ctrl_EventStatusWait(BLEWIFI_CTRL_EVENT_BIT_LINK_CONN, 0xFFFFFFFF))
+            {
             // Create Master Device Resources
             res = ali_linkkit_init(user_example_ctx);
             if (res < 0)
@@ -219,8 +221,7 @@ void Iot_Data_RxTask(void *args)
                 osDelay(ALI_YUN_LINKKIT_DELAY);
                 continue;
             }
-            else if (true == BleWifi_Ctrl_EventStatusWait(BLEWIFI_CTRL_EVENT_BIT_LINK_CONN, 0xFFFFFFFF))
-            {
+                
                 // init behavior
                 printf("BLEWIFI_CTRL_EVENT_BIT_LINK_CONN------------------\r\n");           
                 //Start Connect Aliyun Server

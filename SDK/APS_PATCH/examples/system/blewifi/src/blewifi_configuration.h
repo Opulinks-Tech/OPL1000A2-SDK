@@ -21,7 +21,7 @@ FIM version
 /*
 Smart sleep
 */
-#define BLEWIFI_COM_POWER_SAVE_EN       (0)     // 1: enable    0: disable
+#define BLEWIFI_COM_POWER_SAVE_EN       (1)     // 1: enable    0: disable
 
 /*
 RF Power

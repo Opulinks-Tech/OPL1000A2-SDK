@@ -696,6 +696,7 @@ static void BleWifi_Ble_CmMsgHandler_ConnectionCompleteInd(TASK task, MESSAGEID 
     
         BleWifi_Ble_GattIndicateServiceChange(ind->conn_hdl);
 #ifdef ALI_BLE_WIFI_PROVISION
+        BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_LINK_CONN, false);
         transport_reset();
         ali_auth_init(&init_ali, tx_func_indicate);
         extcmd_init(&init_ali, tx_func_indicate);
@@ -945,7 +946,7 @@ static void BleWifi_Ble_AppMsgHandler_AliSendDeviceName(TASK task, MESSAGEID id,
         reset_tx();
 //        printf("send Device key: %s\r\n", g_auth.key);
         transport_tx(TX_NOTIFICATION, BZ_CMD_AUTH_KEY, g_auth.key, strlen((const char*)g_auth.key), LeGattCharValNotify, gTheBle.conn_hdl, gTheBle.ali_notihdl);
-        auth_tx_done();
+//        auth_tx_done();
     }
 }
 static void BleWifi_Ble_AppMsgHandler_AliSendDeviceSecret(TASK task, MESSAGEID id, MESSAGE message)
@@ -954,8 +955,8 @@ static void BleWifi_Ble_AppMsgHandler_AliSendDeviceSecret(TASK task, MESSAGEID i
     {
         reset_tx();            	
 //        printf("send Device secret: %s\r\n", g_auth.ikm + g_auth.ikm_len);
-        transport_tx(TX_INDICATION, BZ_CMD_AUTH_RAND,  g_auth.ikm + g_auth.ikm_len, RANDOM_SEQ_LEN, LeGattCharValIndicate, gTheBle.conn_hdl, gTheBle.ali_indhdl);
-        auth_tx_done();
+//        transport_tx(TX_INDICATION, BZ_CMD_AUTH_RAND,  g_auth.ikm + g_auth.ikm_len, RANDOM_SEQ_LEN, LeGattCharValIndicate, gTheBle.conn_hdl, gTheBle.ali_indhdl);
+//        auth_tx_done();
     }
 }
 static void BleWifi_Ble_AppMsgHandler_AliSendHiClient(TASK task, MESSAGEID id, MESSAGE message)

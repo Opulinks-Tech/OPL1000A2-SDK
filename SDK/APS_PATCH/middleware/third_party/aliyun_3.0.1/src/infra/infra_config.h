@@ -1,8 +1,10 @@
 #ifndef _INFRA_CONFIG_H_
 #define _INFRA_CONFIG_H_
 
+#ifndef GCC
 typedef unsigned int uint32_t;
 typedef unsigned char uint8_t;
+#endif
 
 #define PLATFORM_HAS_STDINT
 #define PLATFORM_HAS_DYNMEM

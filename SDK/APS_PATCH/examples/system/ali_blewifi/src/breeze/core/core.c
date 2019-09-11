@@ -12,8 +12,13 @@
 #include "ble_service.h"
 #include "breeze_hal_ble.h"
 #include "bzopt.h"
-
+#ifndef GCC
 #include "utils.h"
+#else
+#include "os/os.h"
+#include "breeze/include/utils.h"
+#endif
+
 #ifdef CONFIG_AIS_SECURE_ADV
 #include "sha256.h"
 #endif

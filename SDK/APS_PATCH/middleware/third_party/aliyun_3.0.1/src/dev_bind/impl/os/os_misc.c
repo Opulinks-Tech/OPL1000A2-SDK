@@ -2,6 +2,9 @@
  * Copyright (C) 2015-2018 Alibaba Group Holding Limited
  */
 #include "dev_bind_internal.h"
+#ifdef GCC
+#include "os/os.h"
+#endif
 
 /****** Convert values between host and big-/little-endian byte order ******/
 

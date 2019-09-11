@@ -9,7 +9,11 @@
 #include "auth.h"
 #include "common.h"
 #include "core.h"
+#ifndef GCC
 #include "utils.h"
+#else
+#include "..\src\breeze\include\utils.h"
+#endif
 #include "..\src\breeze\include\sha256.h"
 #include "breeze_export.h"
 //#include "chip_code.h"

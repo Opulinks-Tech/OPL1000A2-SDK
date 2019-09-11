@@ -2,8 +2,11 @@
  * Copyright (C) 2015-2018 Alibaba Group Holding Limited
  */
 #include "dev_bind_internal.h"
+#ifndef GCC
 #include "os.h"
-
+#else
+#include "os/os.h"
+#endif
 #if defined(__cplusplus)  /* If this is a C++ compiler, use C linkage */
 extern "C" {
 #endif

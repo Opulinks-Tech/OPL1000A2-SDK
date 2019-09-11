@@ -21,6 +21,7 @@ enum {
     TX_INDICATION,
 };
 
+#ifndef GCC
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned char uint8_t;
@@ -28,7 +29,7 @@ typedef unsigned char uint8_t;
 typedef uint8_t		UINT8;
 typedef uint16_t	UINT16;
 typedef uint32_t	UINT32;
-
+#endif
 
 typedef LE_ERR_STATE (*transport_tx_func_t)(UINT16 conn_hdl, UINT16 hdl, UINT16 len, UINT8 *pval);
 

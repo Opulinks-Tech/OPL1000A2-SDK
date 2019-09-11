@@ -23,6 +23,8 @@
 #ifdef ALI_BLE_WIFI_PROVISION
 #include "transport.h"
 extern UINT8 g_icnt;
+bool g_noti_flag=false;
+bool g_Indi_flag=false;
 #endif 
 // This is used for GATT service
 static UINT16 gGattSvcUuid = ATT_SVC_GENERIC_ATTRIBUTE;
@@ -360,8 +362,6 @@ static void BleWifi_Ble_AppHandleBwpServiceWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T 
 }
 
 #ifdef ALI_BLE_WIFI_PROVISION
-bool g_noti_flag=false;
-bool g_Indi_flag=false;
 static void BleWifi_Ble_AppHandleAliServiceWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T *ind)
 {
     UINT8 attErr = 0;
@@ -394,8 +394,7 @@ static void BleWifi_Ble_AppHandleAliServiceWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T 
 #endif					
             LeGattChangeAttrVal(gAliSvc, ALI_IDX_DATA_INDICATE_CFG, 2, &enable);
             g_Indi_flag=true;
-            if(g_Indi_flag && g_noti_flag)
-                BleWifi_Ble_SendAppMsgToBle(BLEWIFI_APP_MSG_ALI_SEND_RANDOM, 0, 0);
+            BleWifi_Ble_SendAppMsgToBle(BLEWIFI_APP_MSG_ALI_SEND_RANDOM, 0, 0);
         }
 		break;
         case ALI_IDX_DATA_NOTIFY_CFG:
@@ -406,10 +405,7 @@ static void BleWifi_Ble_AppHandleAliServiceWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T 
 #endif            
             LeGattChangeAttrVal(gAliSvc, ALI_IDX_DATA_NOTIFY_CFG, 2, &enable);
             g_noti_flag=true;
-            if(g_Indi_flag && g_noti_flag)
-                BleWifi_Ble_SendAppMsgToBle(BLEWIFI_APP_MSG_ALI_SEND_RANDOM, 0, 0);
-            
-
+            BleWifi_Ble_SendAppMsgToBle(BLEWIFI_APP_MSG_ALI_SEND_DEVICE_NAME, 0, 0);
         }
         break;
         case ALI_IDX_DATA_WWNRC_VAL:
@@ -602,7 +598,6 @@ static void BleWifi_Ble_ServerAppGattMsgHandler_ConfirmationCfm(TASK task, MESSA
 #endif
 #ifdef ALI_BLE_WIFI_PROVISION
     if(g_icnt==0){
-        BleWifi_Ble_SendAppMsgToBle(BLEWIFI_APP_MSG_ALI_SEND_DEVICE_NAME, 0, 0);
         g_icnt+=1;
     }else{
         transport_txdone(TX_INDICATION, 1);

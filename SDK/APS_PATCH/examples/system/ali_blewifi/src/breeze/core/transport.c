@@ -8,7 +8,11 @@
 #include "transport.h"
 #include "core.h"
 #include "common.h"
+#ifndef GCC
 #include "utils.h"
+#else
+#include "..\src\breeze\include\utils.h"
+#endif
 #include "ble_service.h"
 
 #include "breeze_hal_sec.h"

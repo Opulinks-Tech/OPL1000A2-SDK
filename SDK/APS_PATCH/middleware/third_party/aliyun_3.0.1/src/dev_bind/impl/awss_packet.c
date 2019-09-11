@@ -2,8 +2,12 @@
  * Copyright (C) 2015-2018 Alibaba Group Holding Limited
  */
 #include "dev_bind_internal.h"
-#include "os.h"
 #include "infra_sha1.h"
+#ifndef GCC
+#include "os.h"
+#else
+#include "os/os.h"
+#endif
 
 #define AWSS_DEV_RAND_SIGN_FMT  ",\"random\":\"%s\",\"signMethod\":%d,\"sign\":\"%s\""
 #define AWSS_DEV_BIND_TOKEN_FMT ",\"token\":\"%s\",\"remainTime\":%d,\"type\":%d"

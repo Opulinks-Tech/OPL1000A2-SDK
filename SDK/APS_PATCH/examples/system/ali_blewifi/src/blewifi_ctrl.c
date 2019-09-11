@@ -52,6 +52,9 @@
 
 breeze_apinfo_t g_apInfo;
 extern uint32_t tx_func_indicate(uint8_t cmd, uint8_t *p_data, uint16_t length);
+
+extern bool g_noti_flag;
+extern bool g_Indi_flag;
 #endif
 #define BLEWIFI_CTRL_RESET_DELAY    (3000)  // ms
 
@@ -395,7 +398,8 @@ void Ali_WiFi_Connect(uint8_t ssid_len, uint8_t bssid_len, uint8_t pwd_len)
 static void BleWifi_Ctrl_TaskEvtHandler_BleInitComplete(uint32_t evt_type, void *data, int len)
 {
     BLEWIFI_INFO("BLEWIFI: MSG BLEWIFI_CTRL_MSG_BLE_INIT_COMPLETE \r\n");
-    
+    g_noti_flag=false;
+    g_Indi_flag=false;
     /* BLE Init Step 2: Do BLE Advertising*/
     BleWifi_Ble_StartAdvertising();
 }
@@ -628,7 +632,7 @@ static void BleWifi_Ctrl_TaskEvtHandler_AliWifiConnect(uint32_t evt_type, void *
 
     
 #ifdef ALI_OPL_DBG
-    printf("Send apptoken data(%d):", apptoken_len);
+    printf("AliWifiConnect::Send apptoken data(%d):", apptoken_len);
     for(int i=0;i<apptoken_len;i++){						
         printf("0x%02x ", g_apInfo.apptoken[i]);				
     }
