@@ -50,7 +50,6 @@ Head Block of The File
 #include "hal_dbg_uart.h"
 #include "hal_vic.h"
 #include "boot_sequence.h"
-#include "at_cmd_common_patch.h"
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
 // the number of elements in the message queue
