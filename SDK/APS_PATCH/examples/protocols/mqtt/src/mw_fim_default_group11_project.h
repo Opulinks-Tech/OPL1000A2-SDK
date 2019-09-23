@@ -109,8 +109,8 @@ typedef struct
     uint8_t ubaReserved[3];
 } T_MwFim_GP11_WifiConnectSettings;
 
-#define MW_FIM_GP11_WIFI_CONNECT_SETTINGS_NUM    sizeof(T_MwFim_GP11_WifiConnectSettings)
-#define MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE   1
+#define MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE  sizeof(T_MwFim_GP11_WifiConnectSettings)
+#define MW_FIM_GP11_WIFI_CONNECT_SETTINGS_NUM   1
 
 
 /********************************************
