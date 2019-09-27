@@ -12,7 +12,6 @@
 #ifndef __BLEWIFI_CONFIGURATION_H__
 #define __BLEWIFI_CONFIGURATION_H__
 
-
 // Common part
 /*
 FIM version

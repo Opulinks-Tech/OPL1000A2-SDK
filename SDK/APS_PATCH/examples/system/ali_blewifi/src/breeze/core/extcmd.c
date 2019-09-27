@@ -301,15 +301,15 @@ end:
 			memcpy(pos, comboinfo.pw, strlen(comboinfo.pw));
 			pos += strlen(comboinfo.pw);
             
-            *pos++ = strlen((const char*)(comboinfo.apptoken));
-            memcpy(pos, (const char*)(comboinfo.apptoken), strlen((const char*)(comboinfo.apptoken)));
-            pos += strlen((const char*)(comboinfo.apptoken));
+            *pos++ = comboinfo.apptoken_len;
+            memcpy(pos, (const char*)(comboinfo.apptoken), comboinfo.apptoken_len);
+            pos += comboinfo.apptoken_len;
 			data_len = (pos - data);
             
            
 #ifdef ALI_OPL_DBG
-            printf("Get apptoken data(%d):", strlen((const char*)(comboinfo.apptoken)));
-            for(int i=0;i<strlen((const char*)(comboinfo.apptoken));i++){						
+            printf("Get apptoken data(%d):", comboinfo.apptoken_len);
+            for(int i=0;i<comboinfo.apptoken_len;i++){						
                 printf("0x%02x ", comboinfo.apptoken[i]);				
             }
             printf("\r\n");

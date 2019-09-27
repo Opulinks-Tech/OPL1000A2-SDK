@@ -38,14 +38,14 @@
 //static const char clientcredentialMQTT_BROKER_ENDPOINT[] = "";
 
 
-static const char clientcredentialMQTT_BROKER_ENDPOINT[] = "a3o1s7x9zin5b3-ats.iot.ap-northeast-1.amazonaws.com";
+static const char clientcredentialMQTT_BROKER_ENDPOINT[] = "atlw9nan2ewu3-ats.iot.us-west-2.amazonaws.com";
 
 
 /* Use of a "define" and not a "static const" here to be able to
  * use pre-compile concatenation on the string. */
 //#define clientcredentialIOT_THING_NAME               "Paste AWS IoT Thing name here."
 
-#define clientcredentialIOT_THING_NAME "OPL1000_Lighting"
+#define clientcredentialIOT_THING_NAME "OPL1000_AWSIOT_TST"
 
 
 /*

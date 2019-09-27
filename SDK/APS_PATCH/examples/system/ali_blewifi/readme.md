@@ -1,23 +1,31 @@
 # Function
-This example shows the procedure of OPL1000 using BLE to configure WIFI AP and then connect to specified AP
+This example shows how to use OPL1000 connect to Ali Cloud via MQTT protocol. 
 
-- It needs to co-work with Opulinks dedicate mobile APP "OPL1000 netstrip" 
-- Use this feature OPL1000 can log in network and connected to internet easily 
+- For "BLE config WIFI" we can either use opulinks_iot_app (Android APP), OBW APP (IOS APP) that placed under "Demo\BLE_Config_AP" or Ali 云智能 APP to complete this function. 
+- This example shows how to establish MQTT connection between OPL1000 and Ali cloud.  
 
 # Work Flow
 
-1. OPL1000 broadcast advertising message sostenuto 
-2. open "OPL1000 netstrip" APP on mobile , it will scan OPL1000 device automatically. 
-3. Once OPL1000 device (MAC address shall be default value 11:22:33:44:55:66) is found, app will ask OPL1000 to do scan operation.
-4. OPL1000 send scan result to APP program and disply them on mobile. 
-5. User choose one AP and enter password on mobile. 
-6. OPL1000 will connect to specified AP accordingly.     
+1. After firmware is downloaded, OPL1000 device will broadcast advertising message sostenuto 
+2. Use mobile APP to scan OPL1000 device and complete BLE connection, WIFI  AP connection. 
+3. Firmware will connect to Ali cloud automatically.
 
 
 
 # Notes
 
-1. Refer Demo\BLE_Config_AP\OPL1000-Demo-BLE-setup-network-guide.pdf to know detailed processing flow.
-2. Refer Doc\OPL1000-BLEWIFI-Application-Dev-Guide.pdf  to know BLEWIFI example working principle. 
+1. In order to ensure Ali cloud connection, "Ali quintile" shall be applied and filled in below macro-definition that defined in blewifi_configuration.h 
+
+   #define ALI_PRODUCT_ID              (0000000)
+   #define ALI_PRODUCT_KEY             "xxxxxxxxxxx"
+   #define ALI_PRODUCT_SECRET          "xxxxxxxxxxx" 
+   #define ALI_DEVICE_NAME             "xxxxxxxxxxx"
+   #define ALI_DEVICE_SECRET           "xxxxxxxxxxx"
+
+2. After "Ali quintile" is updated,  FIM version "MW_FIM_VER12_PROJECT" number shall be increased 1 to enable above parameter change effective. 
+
+   #define MW_FIM_VER12_PROJECT        0x02   // 0x00 ~ 0xFF
+
+3. Refer Demo\BLE_Config_AP\OPL1000-Demo-BLE-setup-network-guide.pdf to know how to use Android App opulinks_iot_app or IOS OBW application to complete WIFI connection. 
 
 

@@ -30,6 +30,8 @@
 * http://www.freertos.org/FreeRTOS-Plus/FreeRTOS_Plus_TCP/TCP_IP_Configuration.html
 *
 *****************************************************************************/
+#include "cmsis_os.h"
+
 
 #ifndef FREERTOS_IP_CONFIG_H
 #define FREERTOS_IP_CONFIG_H
@@ -105,7 +107,7 @@ extern void vLoggingPrintf( const char * pcFormatString,
  * number generation is performed via this macro to allow applications to use their
  * own random number generation method.  For example, it might be possible to
  * generate a random number by sampling noise on an analogue input. */
-extern uint32_t ulRand();
+//extern uint32_t ulRand();
 #define ipconfigRAND32()    ulRand()
 
 /* If ipconfigUSE_NETWORK_EVENT_HOOK is set to 1 then FreeRTOS+TCP will call the

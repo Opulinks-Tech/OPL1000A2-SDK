@@ -156,10 +156,13 @@ static BaseType_t prvStringPublishSubscribe( MQTTAgentConnectParams_t * pxConnec
  *
  * @return pdPASS if test passes, pdFAIL otherwise.
  */
+#ifdef PUB_SUB_FUNCTION
 static BaseType_t prvUint32PublishSubscribe( MQTTAgentConnectParams_t * pxConnectParams,
                                              MQTTQoS_t xQOS,
                                              MQTTAgentHandle_t xMQTTClientHandle,
                                              SubpubUserData_t * pxUserData );
+
+#endif
 
 /**
  * @brief The callback function registered with the MQTT client to get notified
@@ -205,9 +208,12 @@ static MQTTBool_t prvMQTTStringPublishCallback( void * pvCallbackContext,
  * @return We always return eMQTTFalse to indicate that we are not taking the
  * ownership of the provided buffer.
  */
+
+#ifdef PUB_SUB_FUNCTION
 static MQTTBool_t prvMQTTUint32PublishCallback( void * pvCallbackContext,
                                                 const MQTTPublishData_t * const pxPublishData );
 
+#endif
 /**
  * @brief The task that implements simple MQTT subscribe/publish example.
  *
@@ -322,7 +328,7 @@ static MQTTBool_t prvMQTTStringPublishCallback( void * pvCallbackContext,
     return xTakeOwnership;
 }
 /*-----------------------------------------------------------*/
-
+#ifdef PUB_SUB_FUNCTION
 static MQTTBool_t prvMQTTUint32PublishCallback( void * pvCallbackContext,
                                                 const MQTTPublishData_t * const pxPublishData )
 {
@@ -491,6 +497,7 @@ static BaseType_t prvUint32PublishSubscribe( MQTTAgentConnectParams_t * pxConnec
 
     return xResult;
 }
+#endif
 /*-----------------------------------------------------------*/
 
 static BaseType_t prvStringPublishSubscribe( MQTTAgentConnectParams_t * pxConnectParams,

@@ -34,7 +34,11 @@ extern "C" {
 //                     ^^^^ ^^^^ ^^^^ ^^^^ File ID, start from 0
 typedef enum
 {
+#ifdef __BLEWIFI_TRANSPARENT__
+    MW_FIM_IDX_GP11_PROJECT_START = 0x00080000,             // the start IDX of group 08
+#else
     MW_FIM_IDX_GP11_PROJECT_START = 0x01010000,             // the start IDX of group 11
+#endif
 
     MW_FIM_IDX_GP11_PROJECT_POWER_SAVING,
     

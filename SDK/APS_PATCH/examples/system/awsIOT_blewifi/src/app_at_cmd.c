@@ -396,8 +396,10 @@ at_command_t g_taAppAtCmd[] =
     { NULL,             NULL,                       NULL},
 };
 
+
 void app_at_cmd_add(void)
-{
+{		
     at_cmd_ext_tbl_reg(g_taAppAtCmd);
-    return;
+		
+    return ;
 }

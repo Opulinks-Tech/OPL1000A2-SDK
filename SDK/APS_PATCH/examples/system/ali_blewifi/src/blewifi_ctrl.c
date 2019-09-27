@@ -299,7 +299,7 @@ void BleWifi_Ctrl_SysStatusChange(void)
         g_ubAppCtrlSysStatus = BLEWIFI_CTRL_SYS_NORMAL;
 
         /* Power saving settings */
-        if (tSysMode.ubSysMode == MW_FIM_SYS_MODE_USER)
+        if (tSysMode.ubSysMode == MW_FIM_SYS_MODE_USER) 
             ps_smart_sleep(tPowerSaving.ubPowerSaving);
 				
 //        // start the sys timer

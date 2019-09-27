@@ -56,6 +56,12 @@ CFLAGS += -Wno-int-conversion
 LFLAGS  = -T $(LD_SCRIPT)
 LFLAGS += -Wl,--gc-sections
 LFLAGS += -Wl,--entry=__Patch_EntryPoint
+LFLAGS += -Wl,-Map=$(FOLDER)/$(OUTPUT).map
+
+LFLAGS_TRANSPARNET  = -T $(LD_SCRIPT)
+LFLAGS_TRANSPARNET += -Wl,--gc-sections
+LFLAGS_TRANSPARNET += -Wl,--entry=__Patch_EntryPoint
+LFLAGS_TRANSPARNET += -Wl,-Map=$(FOLDER)/$(OUTPUT_TRANSPARNET).map
 
 #############   include    ##############
 INCDIR  = -I ../../../../APS/apps/le_app/cmd_app
@@ -134,6 +140,7 @@ INCDIR += -I ../../../../APS/project/common
 INCDIR += -I ../../../../APS/project/opl1000/boot_sequence
 INCDIR += -I ../../../../APS/project/opl1000/include
 INCDIR += -I ../../../../APS/project/opl1000/startup
+INCDIR += -I ../../../../APS_PATCH/apps/le_app/include
 INCDIR += -I ../../../../APS_PATCH/apps/le_app/cmd_app
 INCDIR += -I ../../../../APS_PATCH/apps/le_app/mtc_app
 INCDIR += -I ../../../../APS_PATCH/apps/le_app/pts_app
@@ -230,11 +237,11 @@ M_SRC += ./src/blewifi_common.c
 M_SRC += ./src/blewifi_http_ota.c
 M_SRC += ./src/mw_fim_default_group11_project.c
 #############   build   ##############
-all:
+all: 
 	@mkdir $(FOLDER)
 	@$(CC) -o $(FOLDER)/$(OUTPUT).elf $(LFLAGS) $(CFLAGS) $(INCDIR) $(M_SRC) $(PATCH_LIB)
 	$(OBJCOPY) -O binary $(FOLDER)/$(OUTPUT).elf $(FOLDER)/$(OUTPUT).bin
-	@$(CC) -o $(FOLDER)/$(OUTPUT_TRANSPARNET).elf $(LFLAGS) $(DEFS_TRANSPARENT) $(CFLAGS) $(INCDIR) $(M_SRC) $(PATCH_LIB)
+	@$(CC) -o $(FOLDER)/$(OUTPUT_TRANSPARNET).elf $(LFLAGS_TRANSPARNET) $(DEFS_TRANSPARENT) $(CFLAGS) $(INCDIR) $(M_SRC) $(PATCH_LIB)
 	$(OBJCOPY) -O binary $(FOLDER)/$(OUTPUT_TRANSPARNET).elf $(FOLDER)/$(OUTPUT_TRANSPARNET).bin
     
 #############   clean   ##############  

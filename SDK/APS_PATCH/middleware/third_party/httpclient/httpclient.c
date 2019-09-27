@@ -906,6 +906,7 @@ int httpclient_response_parse(httpclient_t *client, char *data, int len, httpcli
                 sscanf(value_ptr, "%d[^\r]", &(client_data->response_content_len));
                 client_data->retrieve_len = client_data->response_content_len;
             } else if (0 == strncasecmp(key_ptr, "Transfer-Encoding", key_len)) {
+                value_len = strlen("Chunked");
                 if (0 == strncasecmp(value_ptr, "Chunked", value_len)) {
                     client_data->is_chunked = true;
                     client_data->response_content_len = 0;

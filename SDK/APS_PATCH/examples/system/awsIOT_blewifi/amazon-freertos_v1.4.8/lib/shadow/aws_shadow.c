@@ -78,7 +78,7 @@
 * longest topic. All Shadow MQTT topics should be shorter than this value. */
 #define configMAX_THING_NAME_LENGTH    128
 #define shadowTOPIC_BUFFER_LENGTH      ( configMAX_THING_NAME_LENGTH + ( int16_t ) sizeof( shadowTOPIC_UPDATE_DOCUMENTS ) )
-#define xSemaphoreTake( xSemaphore, xBlockTime )		xQueueGenericReceive( ( QueueHandle_t ) ( xSemaphore ), NULL, ( xBlockTime ), pdFALSE )
+//#define xSemaphoreTake( xSemaphore, xBlockTime )		xQueueGenericReceive( ( QueueHandle_t ) ( xSemaphore ), NULL, ( xBlockTime ), pdFALSE )
 
 #if shadowconfigENABLE_DEBUG_LOGS == 1
     #define Shadow_debug_printf( X )    configPRINTF( X )

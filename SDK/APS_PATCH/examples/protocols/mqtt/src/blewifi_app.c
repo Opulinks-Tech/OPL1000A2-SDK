@@ -112,6 +112,7 @@ void BleWifiAppInit(void)
         Iot_Data_Init();
         #endif
 
+        // move the settings to blewifi_ctrl, when the sys status is changed from Init to Normal
         /* Power saving settings */
         //if (tSysMode.ubSysMode == MW_FIM_SYS_MODE_USER)
         //    ps_smart_sleep(tPowerSaving.ubPowerSaving);

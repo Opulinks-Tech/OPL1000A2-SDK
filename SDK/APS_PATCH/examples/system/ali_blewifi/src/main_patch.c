@@ -91,7 +91,6 @@ void __Patch_EntryPoint(void) __attribute__((section("ENTRY_POINT")));
 void __Patch_EntryPoint(void) __attribute__((used));
 static void Main_PinMuxUpdate(void);
 static void Main_FlashLayoutUpdate(void);
-static void Main_MiscModulesInit(void);
 static void Main_MiscDriverConfigSetup(void);
 static void Main_AtUartDbgUartSwitch(void);
 static void Main_AppInit_patch(void);
@@ -132,19 +131,16 @@ void __Patch_EntryPoint(void)
     MwFim_FlashLayoutUpdate = Main_FlashLayoutUpdate;
 
     // the initial of driver part for cold and warm boot
-    Sys_MiscModulesInit = Main_MiscModulesInit;
-	    
-    // the initial of driver part for cold and warm boot
     Sys_MiscDriverConfigSetup = Main_MiscDriverConfigSetup;
 
     // update the switch AT UART / dbg UART function
     at_cmd_switch_uart1_dbguart = Main_AtUartDbgUartSwitch;
     
     // modify the heap size, from 0x43C000 to 0x44F000
-    g_ucaMemPartAddr = (uint8_t*) 0x43F000;
-    g_ulMemPartTotalSize = 0x10000;
+    g_ucaMemPartAddr = (uint8_t*) 0x43C000;
+    g_ulMemPartTotalSize = 0x13000;
     
-    Sys_SetUnsuedSramEndBound(0x43F000);
+    Sys_SetUnsuedSramEndBound(0x43C000);
 	    
     // application init
     Sys_AppInit = Main_AppInit_patch;
@@ -221,25 +217,6 @@ static void Main_FlashLayoutUpdate(void)
 
     MwFim_GroupInfoUpdate(1, 2, (T_MwFimFileInfo *)g_taMwFimGroupTable12_project);
     MwFim_GroupVersionUpdate(1, 2, MW_FIM_VER12_PROJECT);
-}
-
-/*************************************************************************
-* FUNCTION:
-*   Main_MiscModulesInit
-*
-* DESCRIPTION:
-*   the initial of driver part for cold and warm boot
-*
-* PARAMETERS
-*   none
-*
-* RETURNS
-*   none
-*
-*************************************************************************/
-static void Main_MiscModulesInit(void)
-{
-      
 }
 
 /*************************************************************************

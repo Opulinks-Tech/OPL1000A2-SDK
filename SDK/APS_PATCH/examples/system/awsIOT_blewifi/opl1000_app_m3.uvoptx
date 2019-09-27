@@ -216,7 +216,7 @@
 
   <Group>
     <GroupName>src</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -371,8 +371,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\src\mw_fim_default_group06_project.c</PathWithFileName>
-      <FilenameWithoutPath>mw_fim_default_group06_project.c</FilenameWithoutPath>
+      <PathWithFileName>.\src\mw_fim_default_group11_project.c</PathWithFileName>
+      <FilenameWithoutPath>mw_fim_default_group11_project.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -383,8 +383,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\src\mw_fim_default_group11_project.c</PathWithFileName>
-      <FilenameWithoutPath>mw_fim_default_group11_project.c</FilenameWithoutPath>
+      <PathWithFileName>.\src\mw_fim_default_group08_project.c</PathWithFileName>
+      <FilenameWithoutPath>mw_fim_default_group08_project.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -464,7 +464,7 @@
       <GroupNumber>4</GroupNumber>
       <FileNumber>19</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\amazon-freertos_v1.4.8\demos\common\devmode_key_provisioning\aws_dev_mode_key_provisioning.c</PathWithFileName>
@@ -536,7 +536,7 @@
 
   <Group>
     <GroupName>lib/FreeRTOS</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -608,7 +608,7 @@
 
   <Group>
     <GroupName>lib/shadow</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -760,6 +760,14 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+  </Group>
+
+  <Group>
+    <GroupName>New Group</GroupName>
+    <tvExp>0</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>0</RteFlg>
   </Group>
 
 </ProjectOpt>

@@ -28,8 +28,8 @@
 #include "ps_public.h"
 #include "mw_fim_default_group03.h"
 #include "mw_fim_default_group03_patch.h"
-#include "mw_fim_default_group06.h"
-#include "mw_fim_default_group06_project.h"
+#include "mw_fim_default_group08.h"
+#include "mw_fim_default_group08_project.h"
 #include "mw_fim_default_group11_project.h"
 #include "app_at_cmd.h"
 #include "hal_dbg_uart.h"
@@ -40,7 +40,7 @@
 
 
 blewifi_ota_t *gTheOta = 0;
-T_MwFim_GP06_AWS_PKCS11_KEYS tAWSPKCSKeys;
+T_MwFim_GP08_AWS_PKCS11_KEYS tAWSPKCSKeys;
 
 
 /* Demo declarations. */
@@ -81,13 +81,6 @@ void BleWifiAppInit(void)
         memcpy(&tPowerSaving, &g_tMwFimDefaultGp11PowerSaving, MW_FIM_GP11_POWER_SAVING_SIZE);
     }
     
-    // get the AWS PKCS11 Keys 
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP06_PROJECT_AWS_PKCS11_KEY, 0, MW_FIM_GP06_AWS_PKCS11_KEY_SIZE, (uint8_t*)&tAWSPKCSKeys))
-    {
-        // if fail, get the default value
-        memcpy(&tAWSPKCSKeys, &g_tMwFimDefaultGp06AWSPKCS11Keys, MW_FIM_GP06_AWS_PKCS11_KEY_SIZE);
-    }
-
     // only for the user mode
     if ((tSysMode.ubSysMode == MW_FIM_SYS_MODE_INIT) || (tSysMode.ubSysMode == MW_FIM_SYS_MODE_USER))
     {
@@ -123,7 +116,15 @@ void BleWifiAppInit(void)
     BleWifi_Ctrl_SysModeSet(tSysMode.ubSysMode);
 
     // add app cmd
-    app_at_cmd_add();
+		app_at_cmd_add();
+			
+	
+		 // get the AWS PKCS11 Keys 
+	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP08_PROJECT_AWS_PKCS11_KEY, 0, MW_FIM_GP08_AWS_PKCS11_KEY_SIZE, (uint8_t*)&tAWSPKCSKeys))
+    {
+        // if fail, get the default value
+        memcpy(&tAWSPKCSKeys, &g_tMwFimDefaultGp08AWSPKCS11Keys, MW_FIM_GP08_AWS_PKCS11_KEY_SIZE);
+    }
     
     // Initial AWS task
     if( AWS_SYSTEM_Init() == pdPASS )
@@ -135,4 +136,5 @@ void BleWifiAppInit(void)
        // vStartShadowDemoTasks();
 
     }
+	
 }

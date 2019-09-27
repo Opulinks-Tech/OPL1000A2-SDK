@@ -30,6 +30,7 @@
 #include "hal_spi_patch.h"
 #include "hal_uart_patch.h"
 #include "hal_dbg_uart_patch.h"
+#include "hal_auxadc_patch.h"
 #include "hal_flash.h"
 #include "hal_wdt.h"
 #include "boot_sequence.h"
@@ -109,8 +110,8 @@ __forceinline static void Sys_NotifyReadyToMsq(uint32_t indicator);
  *************************************************************************
  */
 #if defined(GCC)
-    extern uint32_t __zi_start__;
-    extern uint32_t __zi_end__;
+    extern uint32_t __bss_start__;
+    extern uint32_t __bss_end__;
 #else
     extern unsigned int Image$$RW_IRAM1$$ZI$$Length;
     extern char Image$$RW_IRAM1$$ZI$$Base[];
@@ -302,7 +303,7 @@ void Sys_DriverInit_patch(void)
     if (!Boot_CheckWarmBoot())
     {
       #if defined(GCC)
-        Sys_SwitchOffUnusedSram((uint32_t) &__zi_end__);
+        Sys_SwitchOffUnusedSram((uint32_t) &__bss_end__);
       #else
         Sys_SwitchOffUnusedSram((uint32_t) Image$$RW_IRAM1$$ZI$$Base + (uint32_t) &Image$$RW_IRAM1$$ZI$$Length);
       #endif
@@ -395,7 +396,7 @@ void SysInit_EntryPoint(void)
 
     // init bss section
   #if defined(GCC)
-    memset(&__zi_start__, 0, ((uint32_t) &__zi_end__ - (uint32_t) &__zi_start__));
+    memset(&__bss_start__, 0, ((uint32_t) &__bss_end__ - (uint32_t) &__bss_start__));
   #else
     memset(Image$$RW_IRAM1$$ZI$$Base, 0, (unsigned int)&Image$$RW_IRAM1$$ZI$$Length);
   #endif
@@ -449,7 +450,7 @@ void SysInit_EntryPoint(void)
     Hal_Spi_PatchInit();
     Hal_Uart_PatchInit();
     Hal_DbgUart_PatchInit();
-    
+    Hal_Aux_PatchInit();
     // 14. os
 
     // 15. util api

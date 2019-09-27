@@ -1,7 +1,7 @@
 ## Demo includes:
 
-1. BLE_Config_AP:  Demonstrate how to use (Android) mobile APP to control OPL1000 complete WIFI AP connection via BLE path. 
-2. Iperf: Demonstrate how to use opl100 internal iperf  function to evaluate WIFI communication bandwidth.
+1. BLE_Config_AP:  Demonstrate how to use (both Android and ios) mobile APP to control OPL1000 complete WIFI AP connection via BLE path. 
+2. Iperf: Demonstrate how to use opl1000 internal iperf  function to evaluate WIFI communication bandwidth.
 3. OTA_WIFI: Demonstrate how to setup a TCP server on PC and complete OTA through WIFI path.
 4. TCP_Client: Demonstrate TCP data communication between OPL1000 (TCP client) and TCP server while enable OPL1000 smart sleep work mode. 
 5. current_measure: Provide a tool for user to measure OPL1000 power consumption while keep connection with an AP.  

@@ -56,7 +56,8 @@ extern "C" {
  *                          Public Functions
  *************************************************************************
  */
-
+void Hal_Aux_PatchInit(void);
+void Hal_Aux_AdcUpdateCtrlReg(uint32_t u32Enable);
 
 #ifdef __cplusplus
 }

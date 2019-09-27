@@ -25,7 +25,7 @@
 #include MBEDTLS_CONFIG_FILE
 #endif
 
-#define MBEDTLS_PEM_WRITE_C 1
+//#define MBEDTLS_PEM_WRITE_C 1
 
 
 #if defined(MBEDTLS_PEM_PARSE_C) || defined(MBEDTLS_PEM_WRITE_C)
@@ -56,7 +56,6 @@ void mbedtls_pem_init( mbedtls_pem_context *ctx )
     memset( ctx, 0, sizeof( mbedtls_pem_context ) );
 }
 
-#endif
 
 #if defined(MBEDTLS_MD5_C) && defined(MBEDTLS_CIPHER_MODE_CBC) &&         \
     ( defined(MBEDTLS_DES_C) || defined(MBEDTLS_AES_C) )
@@ -143,9 +142,10 @@ exit:
     return( ret );
 }
 
+#endif
 #if defined(MBEDTLS_DES_C)
 /*
- * Decrypt with DES-CBC, using PBKDF1 for key derivation
+  Decrypt with DES-CBC, using PBKDF1 for key derivation
  */
 static int pem_des_decrypt( unsigned char des_iv[8],
                             unsigned char *buf, size_t buflen,
@@ -172,9 +172,9 @@ exit:
     return( ret );
 }
 
-/*
- * Decrypt with 3DES-CBC, using PBKDF1 for key derivation
- */
+	/*
+	 * Decrypt with 3DES-CBC, using PBKDF1 for key derivation
+	 */
 static int pem_des3_decrypt( unsigned char des3_iv[8],
                              unsigned char *buf, size_t buflen,
                              const unsigned char *pwd, size_t pwdlen )

@@ -78,8 +78,8 @@ int BleWifi_SntpInit(void)
 {
     int lRet = false;
     sntp_header_t sntp_h;
-    
-    struct sockaddr_in server; 
+
+    struct sockaddr_in server;
     struct addrinfo *res = NULL;
     struct in_addr *addr = NULL;
     struct timeval receiving_timeout;
@@ -92,19 +92,19 @@ int BleWifi_SntpInit(void)
     int sockfd = 0;
     int retry = 0;
     int sntp_port = 0;
-    
+
     time_t rawtime;
     struct tm *pSntpTime = NULL;
-    
+
     /* get sntp server ip */
     err = getaddrinfo(SNTP_SERVER, SNTP_PORT_NUM, &hints, &res);
-    if (err != 0 || res == NULL) 
+    if (err != 0 || res == NULL)
     {
         goto fail;
     }
 
     addr = &((struct sockaddr_in *)res->ai_addr)->sin_addr;
-    printf("DNS lookup succeeded. IP=%s \r\n", inet_ntoa(*addr));
+    printf("[SNTP] DNS lookup succeeded.\r\n[SNTP] Server IP=%s \r\n", inet_ntoa(*addr));
 
     memset((char*) &server, 0, sizeof(server));
 
@@ -112,45 +112,48 @@ int BleWifi_SntpInit(void)
     server.sin_family = AF_INET;
     server.sin_port = htons(sntp_port);
     server.sin_addr.s_addr = addr->s_addr;
-    
-    sockfd = socket(AF_INET,SOCK_DGRAM,0);
-    if (sockfd < 0) {
-        printf("create socket failed.\n");
-        goto fail;
-    }
 
-    if (connect(sockfd, (struct sockaddr *) &server, sizeof(server)) < 0)
-    {
-        printf("connecting failed.\n");
-        goto fail;
-    }
-
-    receiving_timeout.tv_sec = 5;
-    receiving_timeout.tv_usec = 0;
-
-    if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &receiving_timeout, sizeof(receiving_timeout)) < 0) 
-    {
-        printf("failed to set socket receiving timeout\r\n");
-        goto fail;
-    }
-
-    /* init sntp header */
-    sntp_h.li_vn_mode = 0x1b; /* li = 0, no warning, vn = 3, ntp version, mode = 3, client */
-
+    // When sntp get data fail, then reconnect the connection.
     while (retry < 5)
     {
-       if (write(sockfd, (char*) &sntp_h, sizeof(sntp_h)) < 0) 
-       {
-           printf("sendto failed.\n");
-       } 
-       else 
-       {
-           if (read(sockfd, (char*) &sntp_h, sizeof(sntp_h)) < 0) 
+        sockfd = socket(AF_INET,SOCK_DGRAM,0);
+        if (sockfd < 0) {
+            printf("[SNTP] create socket failed.\n");
+            goto CloseSocket;
+        }
+
+        if (connect(sockfd, (struct sockaddr *) &server, sizeof(server)) < 0)
+        {
+            printf("[SNTP] connecting failed.\n");
+            goto CloseSocket;
+        }
+
+        receiving_timeout.tv_sec = 5;
+        receiving_timeout.tv_usec = 0;
+
+        if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &receiving_timeout, sizeof(receiving_timeout)) < 0)
+        {
+            printf("[SNTP] failed to set socket receiving timeout\r\n");
+            goto CloseSocket;
+        }
+
+        /* init sntp header */
+        sntp_h.li_vn_mode = 0x1b; /* li = 0, no warning, vn = 3, ntp version, mode = 3, client */
+
+        if (write(sockfd, (char*) &sntp_h, sizeof(sntp_h)) < 0)
+        {
+           printf("[SNTP] sendto failed.\n");
+            goto CloseSocket;
+        }
+        else
+        {
+           if (read(sockfd, (char*) &sntp_h, sizeof(sntp_h)) < 0)
            {
-               printf("recvfrom failed.\n");
-           } 
-           else 
-           {   
+               printf("[SNTP] recvfrom failed.\n");
+               goto CloseSocket;
+           }
+           else
+           {
                g_ulSystemSecondInit = BleWifi_CurrentSystemTimeGet();
                g_ulSntpSecondInit = ntohl(sntp_h.trantimeint);
                rawtime = SNTP_CONVERT_TIME(g_ulSntpSecondInit);
@@ -159,15 +162,17 @@ int BleWifi_SntpInit(void)
                lRet = true;
                break;
            }
-       }
+        }
+
+CloseSocket:
        retry++;
+        if (sockfd >= 0)
+            close(sockfd);
    }
-   
+
 fail:
     if (res != NULL)
         freeaddrinfo(res);
-    if (sockfd >= 0)
-        close(sockfd);
 
     return lRet;
 }

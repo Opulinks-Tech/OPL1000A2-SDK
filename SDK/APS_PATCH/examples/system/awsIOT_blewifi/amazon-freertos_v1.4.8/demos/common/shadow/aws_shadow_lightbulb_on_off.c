@@ -286,7 +286,7 @@ static BaseType_t prvDeltaCallback( void * pvUserData,
 
 /*-----------------------------------------------------------*/
 
-#define xQueueReceive( xQueue, pvBuffer, xTicksToWait ) xQueueGenericReceive( ( xQueue ), ( pvBuffer ), ( xTicksToWait ), pdFALSE )
+//#define xQueueReceive( xQueue, pvBuffer, xTicksToWait ) xQueueGenericReceive( ( xQueue ), ( pvBuffer ), ( xTicksToWait ), pdFALSE )
 
 static void prvUpdateQueueTask( void * pvParameters )
 {

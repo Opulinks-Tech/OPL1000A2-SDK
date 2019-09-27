@@ -33,8 +33,8 @@
 #include "aws_secure_sockets.h"
 
 
-#include "sockets.h"
-#include "netdb.h"
+#include "lwip/sockets.h"
+#include "lwip/netdb.h"
 
 //#include "aws_wifi.h"
 
@@ -91,12 +91,13 @@ typedef struct _ss_ctx_t
     uint32_t ulAlpnProtocolsCount;
 
 } ss_ctx_t;
-
+#if 0
 struct timeval {
     int64_t    tv_sec;         /* seconds */
     int64_t    tv_usec;        /* and microseconds */
 };
 
+#endif
 /*-----------------------------------------------------------*/
 
 //#define SUPPORTED_DESCRIPTORS  (2)
@@ -256,7 +257,7 @@ static void prvRxSelectSet( ss_ctx_t * ctx, const void * pvOptionValue )
 
     configASSERT( xReturned == pdPASS );
     configASSERT( xHandle != NULL );
-
+		printf ("%d",xReturned);
     ctx->rx_handle   = xHandle;
 }
 

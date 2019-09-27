@@ -22,6 +22,7 @@
 
 #include "at_cmd_ext_patch.h"
 #include "at_cmd_task_patch.h"
+#include "le_ctrl_patch.h"
 
 
 int at_cmd_ext_crlf_term(char *buf, int len, int mode)
@@ -74,9 +75,40 @@ done:
     return iRet;
 }
 
+int at_cmd_ext_le_info(char *buf, int len, int mode)
+{
+    int iRet = 0;
+    int argc = 0;
+    char *argv[AT_MAX_CMD_ARGS] = {0};
+
+    at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS);
+
+    if (mode == AT_CMD_MODE_SET)
+    {
+        if (argc >= 2)
+        {
+            int interval = 0;
+
+            if (argc == 3)
+                interval = atoi(argv[2]);
+
+            if (!le_ctrl_packet_info_display(atoi(argv[1]), interval))
+                iRet = 1;
+        }
+    }
+
+    if(iRet)
+        msg_print_uart1("OK\r\n");
+    else
+        msg_print_uart1("ERROR\r\n");
+
+    return iRet;
+}
+
 at_command_t gAtCmdTbl_Ext[] =
 {
     { "at+crlfterm",            at_cmd_ext_crlf_term,     "Enable/disable CRLF termination"},
+    { "at+leinfo",              at_cmd_ext_le_info,       "Dump BLE packet info statistics"},
     { NULL,                     NULL,                     NULL},
 };
 

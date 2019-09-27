@@ -17,7 +17,12 @@ This example shows the procedure of OPL1000 using BLE to configure WIFI AP and t
 
 # Notes
 
-1. Refer Demo\BLE_Config_AP\OPL1000-Demo-BLE-setup-network-guide.pdf to know detailed processing flow.
-2. Refer Doc\OPL1000-BLEWIFI-Application-Dev-Guide.pdf  to know BLEWIFI example working principle. 
+1. When user change any parameters in blewifi_configuration.h,  FIM version "MW_FIM_VER11_PROJECT" shall be increased with 1 to ensure the change is effective. 
+
+   #define MW_FIM_VER11_PROJECT            0x03    // 0x00 ~ 0xFF
+
+2. Refer Demo\BLE_Config_AP\OPL1000-Demo-BLE-setup-network-guide.pdf to know detailed processing flow.
+
+3. Refer Doc\OPL1000-BLEWIFI-Application-Dev-Guide.pdf  to know BLEWIFI example working principle. 
 
 

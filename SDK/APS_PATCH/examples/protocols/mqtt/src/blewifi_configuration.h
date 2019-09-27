@@ -70,7 +70,7 @@ IoT device
 after the time, change the system state
 */
 #define BLEWIFI_COM_SYS_TIME_INIT       (5000)      // ms from init to normal
-#define BLEWIFI_COM_SYS_TIME_NORMAL     (1200000)    // ms from normal to ble off
+#define BLEWIFI_COM_SYS_TIME_NORMAL     (120000)    // ms from normal to ble off
 
 
 // BLE part
@@ -93,7 +93,7 @@ method 2: full name
 */
 #define BLEWIFI_BLE_DEVICE_NAME_METHOD      1           // 1 or 2
 #define BLEWIFI_BLE_DEVICE_NAME_POST_COUNT  4           // for method 1 "OPL_33:44:55:66"
-#define BLEWIFI_BLE_DEVICE_NAME_PREFIX      "mqtS_"      // for method 1 "OPL_33:44:55:66"
+#define BLEWIFI_BLE_DEVICE_NAME_PREFIX      "mqt_"      // for method 1 "OPL_33:44:55:66"
 #define BLEWIFI_BLE_DEVICE_NAME_FULL        "OPL1000"   // for method 2
 
 /* Advertisement Interval Calculation Method:

@@ -1,6 +1,42 @@
 ## Release Version:
+SDK Package: MP_2.11
+Patch_Lib : 4048
+
+## Release Date: 2019/9/27
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 OPL1000-multiple-dev-download-tool-user-guide,R01-v06, add pc binding, flash write protection. 
+   1.2 add OPL1000-Demo-MQTT-guide_ENG,R01-v01.
+   1.3 add OPL1000-Demo-tcp-client-guide_ENG,R01-v04.
+   1.4 add OPL1000-Demo-ota-wifi-guide_ENG,R01-v03.
+   1.5 add OPL1000-Demo-BLE-setup-network-and-BLE-OTA-guide_ENG,R01-v07.
+   1.6 update OPL1000-Power-Consumption-Measurement-Guide_ENG and OPL1000-Power-Consumption-Measurement-Guide,update figure 10,R01-v04.
+2. Tool version information and update:
+   2.1 download tool: v0.27. no update.
+   2.2 pin-mux tool: v0.8. No update.
+   2.3 MP RF test tool: v2.3. no update
+   2.4 MP multi-dev download tool: v2.6, add pc binding, flash write protection.
+3. LWIP:optimize tcp pcb allocation algorithm.
+4. Improve offset channel performance.
+5. opulinks_iot_app.apk update to v1.51.
+
+## Bug Fix List 
+1. fix "when customer post data,sometimes there may be unable to go to sleep condition for 5s" issue.
+2. fix" httpclient  get file failed in cumstomer's Server" issue
+3. fix "mqtt example GCC bin: OPL1000 may be hung when connecting wifi" issue
+4. fix "RSSI vary with different scan mode" issue
+5. fix "awsIOT_blewifi example wifi mac addr fail to update" issue
+
+
+
+## Notes List 
+
+*****
+
+## Release Version:
 SDK Package: MP_2.10
-Patch_Lib : 4004
+Patch_Lib : 4024
 
 ## Release Date: 2019/9/7
 

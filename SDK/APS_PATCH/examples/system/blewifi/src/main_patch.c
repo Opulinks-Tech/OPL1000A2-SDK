@@ -91,7 +91,6 @@ void __Patch_EntryPoint(void) __attribute__((section("ENTRY_POINT")));
 void __Patch_EntryPoint(void) __attribute__((used));
 static void Main_PinMuxUpdate(void);
 static void Main_FlashLayoutUpdate(void);
-static void Main_MiscModulesInit(void);
 static void Main_MiscDriverConfigSetup(void);
 static void Main_AtUartDbgUartSwitch(void);
 static void Main_AppInit_patch(void);
@@ -132,8 +131,6 @@ void __Patch_EntryPoint(void)
     MwFim_FlashLayoutUpdate = Main_FlashLayoutUpdate;
 
     // the initial of driver part for cold and warm boot
-    Sys_MiscModulesInit = Main_MiscModulesInit;
-
     Sys_MiscDriverConfigSetup = Main_MiscDriverConfigSetup;
 
     // update the switch AT UART / dbg UART function
@@ -212,30 +209,16 @@ static void Main_PinMuxUpdate(void)
 *************************************************************************/
 static void Main_FlashLayoutUpdate(void)
 {
+#ifdef __BLEWIFI_TRANSPARENT__
+    MwFim_GroupInfoUpdate(0, 8, (T_MwFimFileInfo *)g_taMwFimGroupTable11_project);
+    MwFim_GroupVersionUpdate(0, 8, MW_FIM_VER11_PROJECT);
+#else
     g_taMwFimZoneInfoTable[1].ulBaseAddr = 0x00090000;
     g_taMwFimZoneInfoTable[1].ulBlockNum = 9;
 
     MwFim_GroupInfoUpdate(1, 1, (T_MwFimFileInfo *)g_taMwFimGroupTable11_project);
     MwFim_GroupVersionUpdate(1, 1, MW_FIM_VER11_PROJECT);
-}
-
-/*************************************************************************
-* FUNCTION:
-*   Main_MiscModulesInit
-*
-* DESCRIPTION:
-*   the initial of driver part for cold and warm boot
-*
-* PARAMETERS
-*   none
-*
-* RETURNS
-*   none
-*
-*************************************************************************/
-static void Main_MiscModulesInit(void)
-{
-    
+#endif
 }
 
 /*************************************************************************

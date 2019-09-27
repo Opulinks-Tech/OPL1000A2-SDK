@@ -56,8 +56,8 @@ Head Block of The File
 
 #include "blewifi_app.h"
 #include "blewifi_configuration.h"
-#include "mw_fim_default_group06.h"
-#include "mw_fim_default_group06_project.h"
+#include "mw_fim_default_group08.h"
+#include "mw_fim_default_group08_project.h"
 #include "mw_fim_default_group11_project.h"
 
 #include "hal_wdt.h"
@@ -227,8 +227,8 @@ static void Main_PinMuxUpdate(void)
 *************************************************************************/
 static void Main_FlashLayoutUpdate(void)
 {
-    MwFim_GroupInfoUpdate(0, 6, (T_MwFimFileInfo *)g_taMwFimGroupTable06_project);
-    MwFim_GroupVersionUpdate(0, 6, MW_FIM_VER06_PROJECT);
+    MwFim_GroupInfoUpdate(0, 6, (T_MwFimFileInfo *)g_taMwFimGroupTable08_project);
+    MwFim_GroupVersionUpdate(0, 6, MW_FIM_VER08_PROJECT);
 
     g_taMwFimZoneInfoTable[1].ulBaseAddr = 0x00090000;
     g_taMwFimZoneInfoTable[1].ulBlockNum = 9;
@@ -352,6 +352,7 @@ static void Main_AppInit_patch(void)
     //Hal_Wdt_Stop();   //disable watchdog, this is a temp solution for SSL handshake time 
     BleWifiAppInit();
 #endif
+	
 }
 
 /*************************************************************************

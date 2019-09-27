@@ -63,6 +63,7 @@ CFLAGS += -Wno-int-conversion
 LFLAGS  = -T link.ld
 LFLAGS += -Wl,--gc-sections
 LFLAGS += -Wl,--entry=__Patch_EntryPoint
+LFLAGS += -Wl,-Map=$(FOLDER)/$(OUTPUT).map
 
 #############   include    ##############
 INCDIR  = -I ../../apps/le_app/cmd_app

@@ -26,12 +26,14 @@
 
 /*
  */
+ 
 
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "cmsis_os.h"
+
 
 /* Logging includes. */
 #include "aws_logging_task.h"
@@ -108,7 +110,7 @@ BaseType_t xLoggingTaskInitialize( uint16_t usStackSize,
 }
 /*-----------------------------------------------------------*/
 
-#define xQueueReceive( xQueue, pvBuffer, xTicksToWait ) xQueueGenericReceive( ( xQueue ), ( pvBuffer ), ( xTicksToWait ), pdFALSE )
+//#define xQueueReceive( xQueue, pvBuffer, xTicksToWait ) xQueueGenericReceive( ( xQueue ), ( pvBuffer ), ( xTicksToWait ), pdFALSE )
 
 static void prvLoggingTask( void * pvParameters )
 {

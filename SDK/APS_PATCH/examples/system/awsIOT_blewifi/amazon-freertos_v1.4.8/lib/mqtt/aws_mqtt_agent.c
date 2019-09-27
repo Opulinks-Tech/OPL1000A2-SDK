@@ -28,6 +28,8 @@
  * @file aws_mqtt_agent.c
  * @brief MQTT Agent implementation.
  */
+#include "FreeRTOS.h"
+#include "cmsis_os.h"
 
 /* MQTT agent includes. */
 #include "aws_mqtt_agent.h"
@@ -1821,7 +1823,7 @@ static MQTTAgentReturnCode_t prvSendCommandToMQTTTask( MQTTEventData_t * pxEvent
 }
 /*-----------------------------------------------------------*/
 
-#define xQueueReceive( xQueue, pvBuffer, xTicksToWait ) xQueueGenericReceive( ( xQueue ), ( pvBuffer ), ( xTicksToWait ), pdFALSE )
+//#define xQueueReceive( xQueue, pvBuffer, xTicksToWait ) xQueueGenericReceive( ( xQueue ), ( pvBuffer ), ( xTicksToWait ), pdFALSE )
 
 static void prvMQTTTask( void * pvParameters )
 {

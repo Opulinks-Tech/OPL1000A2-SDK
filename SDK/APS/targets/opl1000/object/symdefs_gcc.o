@@ -7169,3 +7169,4 @@ at_cmd_info = 0x00416450;
 __heap_base = 0x00416480;
 __heap_limit = 0x004164a0;
 __initial_sp = 0x00450000;
+g_u32aMsqRfModeTable = 0X20604150;
