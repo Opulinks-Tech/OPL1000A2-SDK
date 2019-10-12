@@ -46,7 +46,17 @@ Head Block of The File
 #include "cJSON.h"
 #include "blewifi_ctrl.h"
 #include "event_groups.h"
+#include "wifi_api.h"
+#include "mw_fim_default_group12_project.h"
 
+/* OPL1000 PWM for lighting*/
+#include "hal_pwm.h"
+#define MAX_LIGHT_BRIGHTNESS   95
+#define MIN_LIGHT_BRIGHTNESS   0
+#define DEAFAULT_PWM_FREQ      500
+
+
+uint8_t LightStatus = 0;
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
 
@@ -62,7 +72,7 @@ Declaration of Global Variables & Functions
 ********************************************/
 // Sec 4: declaration of global variable
 uint8_t MQTT_RevBuf[256] = {0};
-
+T_MwFim_GP12_Mqtt_Data g_tGP12MqttData = {0};
 // Sec 5: declaration of global function prototype
 
 /***************************************************
@@ -70,7 +80,8 @@ Declaration of static Global Variables & Functions
 ***************************************************/
 // Sec 6: declaration of static global variable
 static char MQTT_PubData[] = MQTT_PUB_MSG; // system level publish data; fixed data
-static char OPL1_PubData[OPL1_PUB_MSG_MAX_LEN] = {0}; // OPL1000 publish data for testing; variable data
+static char MQTT_PubLightData[32] = {0};
+static char OPL1_PubData[OPL1_PUB_MSG_MAX_LEN] = {0};
 
 // Sec 7: declaration of static function prototype
 
@@ -93,6 +104,42 @@ C Functions
 *   none
 *
 *************************************************************************/
+
+void ConfigLightStatus( char* PayloadForControlLight)
+{
+    if( strncmp( PayloadForControlLight, "light:ON", strlen( "light:ON" ) ) == 0 )
+    {
+        Hal_Pwm_SimpleConfigSet(HAL_PWM_IDX_1,MAX_LIGHT_BRIGHTNESS,DEAFAULT_PWM_FREQ); // default bringtness level
+        Hal_Pwm_Enable(HAL_PWM_IDX_1);
+        LightStatus = 1 ;
+
+        printf("\033[42;31;4m [%s , %d]  light:ON  \033[0m\n\n", __FUNCTION__,__LINE__);
+
+    }
+    
+    if( strncmp( PayloadForControlLight, "light:OFF", strlen( "light:OFF" ) ) == 0 )
+    {
+        Hal_Pwm_SimpleConfigSet(HAL_PWM_IDX_1,MIN_LIGHT_BRIGHTNESS,DEAFAULT_PWM_FREQ);
+        Hal_Pwm_Enable(HAL_PWM_IDX_1);
+        Hal_Pwm_Disable(HAL_PWM_IDX_1);
+        LightStatus = 0 ;
+
+        printf("\033[42;31;4m [%s , %d]  light:OFF  \033[0m\n\n", __FUNCTION__,__LINE__);
+
+    }
+    
+}
+
+void ConfigDeviceSettingParser ( char* PayloadFromTopicPublish)
+{
+    if(strstr(PayloadFromTopicPublish,"light") != NULL)
+    {
+        ConfigLightStatus(PayloadFromTopicPublish);
+    }
+
+}
+
+
 void mqtt_client(void )
 {
     uint16_t i = 0;
@@ -103,6 +150,8 @@ void mqtt_client(void )
     uint16_t last_ping_time = 10;
 		uint8_t wifi_alive_count = 0;
 		uint8_t mqtt_pub_data_len = 0;
+    char full_topic_name[256] = {0};
+    uint8_t macaddr[6] = {0};
     
     unsigned char dup;
     int qos = 0;
@@ -119,18 +168,17 @@ void mqtt_client(void )
     int buflen = sizeof(MQTT_RevBuf);  
         
     struct timeval receiving_timeout;
+
+    wifi_config_get_mac_address(WIFI_MODE_STA, macaddr);
+    sprintf(full_topic_name, MQTT_SUB_TOPIC_BODY, macaddr[0], macaddr[1], macaddr[2], macaddr[3], macaddr[4], macaddr[5]);
     
-    osDelay(1000);
+    
     MQTT_Connect();
-    osDelay(1000);
-    MQTT_Publish(MQTT_PUB_TOPIC, MQTT_PubData);
-    osDelay(1000);
-    MQTT_Subscribe(MQTT_SUB_TOPIC);
-    osDelay(1000);
+    MQTT_Subscribe(full_topic_name);
+    MQTT_Publish(full_topic_name, MQTT_PubData);
     MQTT_Subscribe(OPL1000_SUB_TOPIC);
     
-    osDelay(1000);
-    receiving_timeout.tv_sec = 1;
+    receiving_timeout.tv_sec = 5;
     receiving_timeout.tv_usec = 0;
     
     if(setsockopt(MQTT_Socket, SOL_SOCKET, SO_RCVTIMEO, &receiving_timeout, sizeof(receiving_timeout)) < 0) 
@@ -149,7 +197,7 @@ void mqtt_client(void )
 		
     while(1)
     {
-				if(MQTT_SocketStatus == 1) //20190628-Update.
+        if(MQTT_SocketStatus == 1) 
         {
             last_ping_time++;
 					  wifi_alive_count = 0; // clear the wifi connection count.
@@ -158,6 +206,8 @@ void mqtt_client(void )
                 last_ping_time = 0;// = millis();
                 rc = tcp_write_data(ping_buf, ping_len);
 							  printf("send ping\r\n");
+                sprintf(MQTT_PubLightData,MQTT_PUB_Light_MSG,LightStatus);
+                MQTT_Publish(full_topic_name, MQTT_PubLightData);
 							  if(rc == 2)
 								{
 									  miss_ping_ack_count++;
@@ -168,7 +218,6 @@ void mqtt_client(void )
 										    close(MQTT_Socket);
 									  }
 								}
-                osDelay(20);
             }
             // update publish data by adding index count.
 						i++;
@@ -178,7 +227,6 @@ void mqtt_client(void )
 						
 						// publish OPL1000 data for testing.
 						MQTT_Publish(OPL1000_PUB_TOPIC, OPL1_PubData);
-						osDelay(1000);
 						
 						do
 						{
@@ -189,7 +237,11 @@ void mqtt_client(void )
 									rc = MQTTDeserialize_publish(&dup, &qos, &retained, &msgid, &receivedTopic, &payload_in, &payloadlen_in, MQTT_RevBuf, buflen);
 									if(rc == 1)
 									{
-											printf("topic:%s; message:\" %.*s\"   qos:%d  msgid:%d\n", receivedTopic.lenstring.data, payloadlen_in, payload_in, qos, msgid);
+                        //printf("topic:%s; message:\" %.*s\"   qos:%d  msgid:%d\n", receivedTopic.lenstring.data, payloadlen_in, payload_in, qos, msgid);
+											  printf("topic:%s\n", receivedTopic.lenstring.data);
+											  printf("message:\" %.*s\"   qos:%d  msgid:%d\n", payloadlen_in, payload_in, qos, msgid);
+
+                        ConfigDeviceSettingParser((char *)payload_in);
 											if(qos)
 											{
 													ack_len = MQTTSerialize_puback(ack_buf, ack_buf_len, msgid);
@@ -209,7 +261,6 @@ void mqtt_client(void )
 							{
 									printf("recv ping\r\n");
 									miss_ping_ack_count--;
-									osDelay(20);
 							}
 			        else
 			        {
@@ -218,34 +269,28 @@ void mqtt_client(void )
 						}
 						while(tmp != -1);
         }
-        else //20190628-Update.  MQTT_SocketStatus == 0
+        else // MQTT_SocketStatus == 0
         {
             printf("Socket conn closed, retry connect\n");
 					  wifi_alive_count++;
 					  if(wifi_alive_count > 4) //if SocketStatus=0 for sometime, positively set g_connection_flag = false to indicate the wifi connection is broken.
 						{
-								//20190628-Update.
 								if(true == BleWifi_Ctrl_EventStatusWait(BLEWIFI_CTRL_EVENT_BIT_GOT_IP,0xFFFFFFFF))
 								{
 										printf("... Got IP again\n");
-										osDelay(100);
 										wifi_alive_count = 0;
 								}					
 						}
-            osDelay(600);
             rc = MQTT_Connect();
 			if( rc == -1 )
 			{
-			    osDelay(1000);
 				printf("[ERR]: MQTT_Connect return fail.\n");
 				continue;
 			}
-            osDelay(600);
-            MQTT_Publish(MQTT_PUB_TOPIC, MQTT_PUB_MSG);
-            osDelay(600);
-            MQTT_Subscribe(MQTT_SUB_TOPIC);
-						osDelay(1000);
-						MQTT_Subscribe(OPL1000_SUB_TOPIC);
+            MQTT_Subscribe(full_topic_name);
+            MQTT_Publish(full_topic_name, MQTT_PUB_MSG);
+			MQTT_Subscribe(OPL1000_SUB_TOPIC);
+			
             if(MQTT_SocketStatus)
             {
                 if(setsockopt(MQTT_Socket, SOL_SOCKET, SO_RCVTIMEO, &receiving_timeout, sizeof(receiving_timeout)) < 0) 

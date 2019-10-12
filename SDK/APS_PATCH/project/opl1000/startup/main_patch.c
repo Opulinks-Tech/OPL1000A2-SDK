@@ -20,6 +20,9 @@ void __Patch_EntryPoint(void)
     /* Don't remove SysInit_EntryPoint */
     SysInit_EntryPoint();
     
+    /* Uncomment this function when the device is without 32k XTAL */
+    //Sys_SwitchTo32kRC();
+    
     /* Application initialization */
     Sys_AppInit = Main_AppInit_patch;
 }

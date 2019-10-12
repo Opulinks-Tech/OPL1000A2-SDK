@@ -37,8 +37,11 @@
 #include "mw_fim_default_group03.h"
 #include "mw_fim_default_group03_patch.h"
 #include "mw_fim_default_group11_project.h"
+#include "mw_fim_default_group12_project.h"
 #include "app_at_cmd.h"
 #include "mqtt_client.h"
+#include "hal_pwm.h"
+
 
 blewifi_ota_t *gTheOta = 0;
 
@@ -58,7 +61,9 @@ void App_Entry(void *args)
     if(true == BleWifi_Ctrl_EventStatusWait(BLEWIFI_CTRL_EVENT_BIT_GOT_IP, 0xFFFFFFFF)) // start mqtt client after got IP.
     {
         printf("... Got IP\n");
-			  BleWifi_Wifi_SetDTIM(BleWifi_Ctrl_DtimTimeGet());
+        BleWifi_Wifi_SetDTIM(BleWifi_Ctrl_DtimTimeGet());
+        Hal_Pwm_Init();
+        Hal_Pwm_ClockSourceSet(HAL_PWM_CLK_22M);
         mqtt_client();
     }	
 }
@@ -88,6 +93,13 @@ void BleWifiAppInit(void)
     {
         // if fail, get the default value
         memcpy(&tPowerSaving, &g_tMwFimDefaultGp11PowerSaving, MW_FIM_GP11_POWER_SAVING_SIZE);
+    }
+
+    // get the mqtt data.
+	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP12_PROJECT_MQTT_DATA, 0, MW_FIM_GP12_MQTT_DATA_SIZE, (uint8_t*)&g_tGP12MqttData))
+    {
+        // if fail, get the default value
+        memcpy(&g_tGP12MqttData, &g_tMwFimDefaultGp12MqttData, MW_FIM_GP12_MQTT_DATA_SIZE);
     }
 
     // only for the user mode

@@ -1,4 +1,38 @@
 ## Release Version:
+SDK Package: MP_2.12
+Patch_Lib : 4061
+
+## Release Date: 2019/10/12
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 OPL1000-multiple-dev-download-tool-user-guide,R01-v07,updated according to MP download tool v2.8 new functions.
+   1.2 OPL1000-SDK-Development-guide,R01-v17, Add a chapter to introduce how to adjust heap size.
+
+   1.3 OPL1000-AT-instruction-set-and-examples,R05-v38,Add Add AT+RFHP = 32 ,Wi-Fi LPA boost 2db and BLE LPA
+
+2. Tool version information and update:
+   2.1 download tool: v0.27. no update.
+   2.2 pin-mux tool: v0.8. No update.
+   2.3 MP RF test tool: v2.3. no update.
+   2.4 MP multi-dev download tool: v2.8, resource FW download;mac address gets from csv file.
+
+3. Add 32k Real Clock support API 
+
+4. AT instruction support Low-Power WiFi TX setting
+
+
+## Bug Fix List 
+1. fix "Dropping packets frequently by heavy interference" issue
+2. fix "OPL1000A2 TX registers adjustment (+2db)"issue
+3. fix "Sleep wakeup CPOR_N release time" issue
+
+
+## Notes List 
+
+*****
+
+## Release Version:
 SDK Package: MP_2.11
 Patch_Lib : 4048
 

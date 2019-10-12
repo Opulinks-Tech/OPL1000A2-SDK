@@ -89,6 +89,15 @@ const T_MwFim_GP11_WifiConnectSettings g_tMwFimDefaultGp11WifiConnectSettings =
 // the address buffer of Wifi connect settings
 uint32_t g_ulaMwFimAddrBufferGp11WifiConnectSettings[MW_FIM_GP11_WIFI_CONNECT_SETTINGS_NUM];
 
+// the default value of AWS PKCS11 Keys 
+const T_MwFim_GP11_AWS_PKCS11_KEYS g_tMwFimDefaultGp11AwsPkcs11Keys =
+{
+    .P11_Certificate            = "default_P11_Certificate",
+    .P11_CodeSignKey            = "default_P11_CodeSignKey"	
+};
+// the address buffer of Wifi connect settings
+uint32_t g_ulaMwFimAddrBufferGp11AwsPkcs11Keys[MW_FIM_GP11_AWS_PKCS11_KEYS_NUM];
+
 // the information table of group 11
 const T_MwFimFileInfo g_taMwFimGroupTable11_project[] =
 {
@@ -97,7 +106,7 @@ const T_MwFimFileInfo g_taMwFimGroupTable11_project[] =
     {MW_FIM_IDX_GP11_PROJECT_BLE_DEVICE_NAME,       MW_FIM_GP11_BLE_DEVICE_NAME_NUM,        MW_FIM_GP11_BLE_DEVICE_NAME_SIZE,       (uint8_t*)&g_tMwFimDefaultGp11BleDeviceName,        g_ulaMwFimAddrBufferGp11BleDeviceName},
     {MW_FIM_IDX_GP11_PROJECT_BLE_ADV_INTERVAL,      MW_FIM_GP11_BLE_ADV_INTERVAL_NUM,       MW_FIM_GP11_BLE_ADV_INTERVAL_SIZE,      (uint8_t*)&g_tMwFimDefaultGp11BleAdvInterval,       g_ulaMwFimAddrBufferGp11BleAdvInterval},
     {MW_FIM_IDX_GP11_PROJECT_WIFI_CONNECT_SETTINGS, MW_FIM_GP11_WIFI_CONNECT_SETTINGS_NUM,  MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE, (uint8_t*)&g_tMwFimDefaultGp11WifiConnectSettings,  g_ulaMwFimAddrBufferGp11WifiConnectSettings},
-
+    {MW_FIM_IDX_GP11_PROJECT_AWS_PKCS11_KEYS,       MW_FIM_GP11_AWS_PKCS11_KEYS_NUM,        MW_FIM_GP11_AWS_PKCS11_KEYS_SIZE,       (uint8_t*)&g_tMwFimDefaultGp11AwsPkcs11Keys,        g_ulaMwFimAddrBufferGp11AwsPkcs11Keys},
     // the end, don't modify and remove it
     {0xFFFFFFFF,            0x00,              0x00,               NULL,                            NULL}
 };

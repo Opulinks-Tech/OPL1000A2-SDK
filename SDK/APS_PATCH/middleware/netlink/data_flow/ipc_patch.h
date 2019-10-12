@@ -34,7 +34,12 @@ extern "C" {
  *                          Definitions and Macros
  *************************************************************************
  */
-
+#define IPC_SPARE0_LOAD_PATCH_READY  (1 << 3)
+#define IPC_SPARE0_MSQ_CLOCK_READY   (1 << 4)
+#define IPC_SPARE0_DEEP_SLEEP_EN     (1 << 5)
+#define IPC_SPARE0_MSQ_FLASH_READY   (1 << 6)
+#define IPC_SPARE0_APS_CLOCK_READY   (1 << 7)
+#define IPC_SPARE0_SEQ_32K_SRC_SEL   (1 << 24)
 
 /*
  *************************************************************************

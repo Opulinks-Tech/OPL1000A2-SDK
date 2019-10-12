@@ -57,6 +57,7 @@ Head Block of The File
 #include "blewifi_app.h"
 #include "blewifi_configuration.h"
 #include "mw_fim_default_group11_project.h"
+#include "mw_fim_default_group12_project.h"
 
 //#include "hal_wdt.h"
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
@@ -214,6 +215,9 @@ static void Main_FlashLayoutUpdate(void)
 
     MwFim_GroupInfoUpdate(1, 1, (T_MwFimFileInfo *)g_taMwFimGroupTable11_project);
     MwFim_GroupVersionUpdate(1, 1, MW_FIM_VER11_PROJECT);
+
+    MwFim_GroupInfoUpdate(1, 2, (T_MwFimFileInfo *)g_taMwFimGroupTable12_project);
+    MwFim_GroupVersionUpdate(1, 2, MW_FIM_VER12_PROJECT);
 }
 
 /*************************************************************************

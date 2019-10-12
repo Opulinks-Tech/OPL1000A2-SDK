@@ -75,7 +75,7 @@ int MQTT_Begin(int p_s,uint16_t p_port)
 */
 int  MQTT_Connect(void)
 {
-    uint8_t  buf[128] = {0};
+    uint8_t  buf[256] = {0};
     int32_t len=0;
     int rc = 0;
     int tmp;
@@ -83,6 +83,8 @@ int  MQTT_Connect(void)
     uint8_t retryNum = 0;
     uint32_t tmp_time;
     int buflen = sizeof(buf);
+    uint8_t  macaddr[WIFI_MAC_ADDRESS_LENGTH];                /**< Stores the predefined device ID (MAC). */
+    char  full_topic_name[128]={0};
 
     MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
 
@@ -148,14 +150,19 @@ int  MQTT_Connect(void)
         printf("tcp connect server is failed:%d\r\n",rc);
         return -1;
     }
+
+    wifi_config_get_mac_address(WIFI_MODE_STA, macaddr);
+    sprintf(full_topic_name, MQTT_SUB_TOPIC_BODY, macaddr[0], macaddr[1], macaddr[2], macaddr[3], macaddr[4], macaddr[5]);
    
-    data.clientID.cstring = MQTT_SUB_TOPIC;
+    data.clientID.cstring = DEVICE_ID;
+    data.username.cstring = USERNAME;
+    data.password.cstring = PASSWORD;
     data.keepAliveInterval = 120;
     data.cleansession = 1;
     data.MQTTVersion = 3;
-	data.will.qos=1;//
-	data.will.message.cstring = "ReportNetworkStatus V1.0 \n{\"online\":false}";
-	data.will.topicName.cstring = MQTT_SUB_TOPIC;
+    data.will.qos=1;
+    data.will.message.cstring = "ReportNetworkStatus V1.0 \n{\"online\":false}";
+    data.will.topicName.cstring = full_topic_name;
     data.willFlag = 1;
     
     len = MQTTSerialize_connect(buf, buflen, &data); /* 1 */
@@ -208,7 +215,7 @@ int MQTT_Disconnect()
 */
 int MQTT_Publish(char *topick, char *message)
 {
-    uint16_t i = 0;
+//    uint16_t i = 0;
     uint8_t  buf[256] = {0};
     int32_t len=0;
     int rc = 0;
@@ -220,24 +227,24 @@ int MQTT_Publish(char *topick, char *message)
     topicString.cstring = topick;
 
 
-    printf("----------start:publish-----------------\n");
+    printf("----start:publish---\n");
 
 
     //build publish data.
     len = MQTTSerialize_publish(buf, buflen, 0, 1, 0, 0, topicString, (unsigned char*)message, msglen); /* 2 */
-    printf("message : %s\n",message);
+    //printf("message : %s\n",message);
     rc = tcp_write_data(buf, len);
-    printf("mqtt pub topic:%s; len:%d\n", topick, rc);
-    for(i=0; i<rc; i++)
+    //printf("mqtt pub topic:%s; len:%d\n", topick, rc);
+    /*for(i=0; i<rc; i++)
     {
         printf("%02X ", buf[i]);
     }
-    printf("\n");
+    printf("\n");*/
     if(rc > 0)
     {
-        printf("topick  : %s\n",topick);
-        printf("message : %s\n",message);
-        printf("trans is ok,len = %d\n",rc);
+        printf("topick  : %s\r\n",topick);
+        printf("message : %s\r\n",message);
+        printf("trans is ok,len = %d\r\n",rc);
     }
     else
     {

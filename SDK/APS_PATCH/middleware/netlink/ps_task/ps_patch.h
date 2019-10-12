@@ -83,6 +83,7 @@ typedef struct
 
 void ps_patch_init(void);
 
+int ps_sleep_patch(void);
 void ps_enable_timer_sleep_patch(uint32_t sleep_duration_ms);
 
 

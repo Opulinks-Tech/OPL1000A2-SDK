@@ -217,7 +217,7 @@ INCDIR += -I ./MQTT/src
 INCDIR += -I ./MQTT/interface
 INCDIR += -I ./JSON
 INCDIR += -I ./src
-
+INCDIR += -I ./src/iot_data
 
 #############   source    ##############
 M_SRC  = ./src/main_patch.c
@@ -246,6 +246,9 @@ M_SRC += ./src/blewifi_server_app.c
 M_SRC += ./src/blewifi_server_app_gatt.c
 M_SRC += ./src/blewifi_wifi_api.c
 M_SRC += ./src/mw_fim_default_group11_project.c
+M_SRC += ./src/mw_fim_default_group12_project.c
+M_SRC += ./src/iot_data/iot_data.c
+M_SRC += ./src/iot_data/iot_rb_data.c
 M_SRC += ./tcpip/tcp_client.c
 
 #############   build   ##############

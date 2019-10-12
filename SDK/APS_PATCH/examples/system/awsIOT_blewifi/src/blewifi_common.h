@@ -14,6 +14,8 @@
 
 #include "msg.h"
 #include "blewifi_configuration.h"
+
+
 #if (SNTP_FUNCTION_EN == 1)
 #include <time.h>
 #endif
@@ -94,5 +96,15 @@ extern uint32_t g_ulSntpSecondInit;      // GMT Time
 #endif
 
 void BleWifi_RFPowerSetting(uint8_t level);
+
+#define P11_CERTIFICATE_SIZE 1024
+#define P11_KEY_SIZE         2048
+#define P11_CODESIGNKEY      768
+typedef struct
+{
+    char P11_Certificate[P11_CERTIFICATE_SIZE];
+    char P11_Key[P11_KEY_SIZE];
+    char P11_CodeSignKey[P11_CODESIGNKEY];
+} T_AWS_PKCS11_KEYS;
 
 #endif  // end of __BLEWIFI_COMMON_H__

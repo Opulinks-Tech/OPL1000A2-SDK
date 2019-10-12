@@ -36,16 +36,13 @@ Declaration of Global Variables & Functions
 // Aliyun device
 const T_MwFim_GP08_AWS_PKCS11_KEYS g_tMwFimDefaultGp08AWSPKCS11Keys =
 {
-    .P11_Certificate            = "default_P11_Certificate",
-    .P11_Key                    = "default_P11_Key",
-    .P11_CodeSignKey            = "default_P11_CodeSignKey"
-
+    .P11_Key                    = "default_P11_Key"
 };
 // the address buffer of aws device
 uint32_t g_ulaMwFimAddrBufferGP08AWSPKCS11Keys[MW_FIM_GP08_AWS_PKCS11_KEY_NUM];
 
 
-// the information table of group 06
+// the information table of group 08
 const T_MwFimFileInfo g_taMwFimGroupTable08_project[] =
 {
     {MW_FIM_IDX_GP08_PROJECT_AWS_PKCS11_KEY,     MW_FIM_GP08_AWS_PKCS11_KEY_NUM,      MW_FIM_GP08_AWS_PKCS11_KEY_SIZE,     (uint8_t*)&g_tMwFimDefaultGp08AWSPKCS11Keys,     g_ulaMwFimAddrBufferGP08AWSPKCS11Keys},

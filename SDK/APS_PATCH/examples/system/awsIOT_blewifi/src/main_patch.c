@@ -155,10 +155,10 @@ void __Patch_EntryPoint(void)
     at_cmd_switch_uart1_dbguart = Main_AtUartDbgUartSwitch;
     
     // modify the heap size, from 0x43C000 to 0x44F000
-    g_ucaMemPartAddr = (uint8_t*) 0x432000;
-    g_ulMemPartTotalSize = 0x1D000;
+    g_ucaMemPartAddr = (uint8_t*) 0x434000;
+    g_ulMemPartTotalSize = 0x1B000;
     
-    Sys_SetUnsuedSramEndBound(0x432000);
+    Sys_SetUnsuedSramEndBound(0x434000);
     
     // application init
     Sys_AppInit = Main_AppInit_patch;
@@ -227,8 +227,8 @@ static void Main_PinMuxUpdate(void)
 *************************************************************************/
 static void Main_FlashLayoutUpdate(void)
 {
-    MwFim_GroupInfoUpdate(0, 6, (T_MwFimFileInfo *)g_taMwFimGroupTable08_project);
-    MwFim_GroupVersionUpdate(0, 6, MW_FIM_VER08_PROJECT);
+    MwFim_GroupInfoUpdate(0, 8, (T_MwFimFileInfo *)g_taMwFimGroupTable08_project);
+    MwFim_GroupVersionUpdate(0, 8, MW_FIM_VER08_PROJECT);
 
     g_taMwFimZoneInfoTable[1].ulBaseAddr = 0x00090000;
     g_taMwFimZoneInfoTable[1].ulBlockNum = 9;

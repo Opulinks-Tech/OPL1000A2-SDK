@@ -40,20 +40,11 @@
 
 
 blewifi_ota_t *gTheOta = 0;
-T_MwFim_GP08_AWS_PKCS11_KEYS tAWSPKCSKeys;
+T_MwFim_GP08_AWS_PKCS11_KEYS tGP08_AWSPKCSKeys;
+T_MwFim_GP11_AWS_PKCS11_KEYS tGP11_AWSPKCSKeys;
+T_AWS_PKCS11_KEYS tAWSPKCSKeys;
 
-
-/* Demo declarations. */
-/* extern void vStartDeviceDefenderDemo( void ); */
-/* extern void vStartGreenGrassDiscoveryTask( void ); */
-//extern void vStartMQTTEchoDemo( void );
-/* extern void vStartOTAUpdateDemoTask( void ); */
-//extern void vStartShadowDemoTasks( void ); 
-/* extern void vStartSimpleTCPServerTasks( void ); */
 extern void vStartSubpubDemoTasks( void ); 
-/* extern void vStartTCPEchoClientTasks_SeparateTasks( void ); */
-/* extern void vStartTCPEchoClientTasks_SingleTasks( void ); */
-
 
 void BleWifiAppInit(void)
 {
@@ -119,11 +110,17 @@ void BleWifiAppInit(void)
 		app_at_cmd_add();
 			
 	
-		 // get the AWS PKCS11 Keys 
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP08_PROJECT_AWS_PKCS11_KEY, 0, MW_FIM_GP08_AWS_PKCS11_KEY_SIZE, (uint8_t*)&tAWSPKCSKeys))
+		// get the AWS PKCS11 Keys from FIM group8 and group11 
+	  if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP08_PROJECT_AWS_PKCS11_KEY, 0, MW_FIM_GP08_AWS_PKCS11_KEY_SIZE, (uint8_t*)&tGP08_AWSPKCSKeys))
     {
-        // if fail, get the default value
-        memcpy(&tAWSPKCSKeys, &g_tMwFimDefaultGp08AWSPKCS11Keys, MW_FIM_GP08_AWS_PKCS11_KEY_SIZE);
+        // if fail, get the default value, copy tGP08_AWSPKCSKeys content to tAWSPKCSKeys element {P11_Key}
+        memcpy(&tAWSPKCSKeys.P11_Key, &g_tMwFimDefaultGp08AWSPKCS11Keys.P11_Key, P11_KEY_SIZE);
+    }
+	  if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_AWS_PKCS11_KEYS, 0, MW_FIM_GP11_AWS_PKCS11_KEYS_SIZE, (uint8_t*)&tGP11_AWSPKCSKeys))
+    {
+        // if fail,  get the default value, copy tGP11_AWSPKCSKeys content to tAWSPKCSKeys elements {P11_Certificate,P11_CodeSignKey}
+        memcpy(&tAWSPKCSKeys.P11_Certificate, &g_tMwFimDefaultGp11AwsPkcs11Keys.P11_Certificate, P11_CERTIFICATE_SIZE);
+			  memcpy(&tAWSPKCSKeys.P11_CodeSignKey, &g_tMwFimDefaultGp11AwsPkcs11Keys.P11_CodeSignKey, P11_CODESIGNKEY);			
     }
     
     // Initial AWS task
