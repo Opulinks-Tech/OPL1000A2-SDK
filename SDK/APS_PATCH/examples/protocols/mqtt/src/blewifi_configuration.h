@@ -16,8 +16,8 @@
 /*
 FIM version
 */
-#define MW_FIM_VER11_PROJECT            0x17   // 0x00 ~ 0xFF
-
+#define MW_FIM_VER11_PROJECT            0x02   // 0x00 ~ 0xFF
+#define MW_FIM_VER12_PROJECT            0x02   // 0x00 ~ 0xFF
 /*
 Smart sleep
 */
@@ -60,7 +60,7 @@ IoT device
     1. if want to send data to server, set the Tx path to enable
     2. if want to receive data from server, set the Rx path to enable
 */
-#define IOT_DEVICE_DATA_TX_EN               (0)     // 1: enable / 0: disable
+#define IOT_DEVICE_DATA_TX_EN               (1)     // 1: enable / 0: disable
 #define IOT_DEVICE_DATA_RX_EN               (0)     // 1: enable / 0: disable
 #define IOT_DEVICE_DATA_TASK_STACK_SIZE_TX  (1024)
 #define IOT_DEVICE_DATA_TASK_STACK_SIZE_RX  (1024)

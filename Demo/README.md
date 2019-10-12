@@ -6,6 +6,7 @@
 4. TCP_Client: Demonstrate TCP data communication between OPL1000 (TCP client) and TCP server while enable OPL1000 smart sleep work mode. 
 5. current_measure: Provide a tool for user to measure OPL1000 power consumption while keep connection with an AP.  
 6. MQTT: Demonstrate how to establish a private MQTT service in local area network (LAN). 
+7. ali_lighting: Demonstrate how to establish a MQTT connection with Ali cloud and use cloud intelligence APK to control lighting device.
 
 ## BLE_Config_AP
 
@@ -67,3 +68,11 @@ This demo shows how to establish MQTT service (publish and subscribe) in a local
 
 Please refer "OPL1000-Demo-MQTT-guide.pdf" document  in MQTT folder for more information of how to use it. 
 
+## ali_lighting
+
+This demo shows how to establish a MQTT connection with Ali cloud and use cloud intelligence APK to control lighting device. By this demonstration user can
+
+1. Use  ali_blewifi example (under SDK\APS_PATCH\examples\system\ali_blewifi folder) to build an firmware image to support private Ali 5-element set(device).
+2. Setup a MQTT connection with Ali cloud, use cloud intelligence APK to turn on / off the lighting(via GPIO pin 23 by default). 
+
+Please refer "OPL1000-Demo-ali-lighting-guide.pdf" document  in ali_lighting folder for more information of how to use it. 

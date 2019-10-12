@@ -63,12 +63,9 @@
 
 #define WDT_TIMEOUT_SECS    10
 
-#define SYS_SPARE_LOAD_PATCH_READY  (1 << 3)
-#define SYS_SPARE_MSQ_CLOCK_READY   (1 << 4)
-#define SYS_SPARE_DEEP_SLEEP_EN     (1 << 5)
-#define SYS_SPARE_MSQ_FLASH_READY   (1 << 6)
-#define SYS_SPARE_APS_CLOCK_READY   (1 << 7)
 
+#define DEV_32K_SRC_SEL_32K_XTAL    0   /* Default */
+#define DEV_32K_SRC_SEL_32K_RC      IPC_SPARE0_SEQ_32K_SRC_SEL
 /*
  *************************************************************************
  *                          Typedefs and Structures
@@ -203,6 +200,40 @@ void Sys_SwitchOffUnusedSram(uint32_t memFootPrint)
 
 /*************************************************************************
 * FUNCTION:
+*   Sys_SwitchTo32kRC
+*
+* DESCRIPTION:
+*   Must called at __Patch_EntryPoint
+*   Select 32k RC as RTC timer/SEQ clock source
+*
+* PARAMETERS
+*   none
+*
+* RETURNS
+*   none
+*
+*************************************************************************/
+void Sys_SwitchTo32kRC(void)
+{
+    uint32_t u32SpareReg;
+
+    if (Boot_CheckWarmBoot())
+        return;
+    
+    while (1) {
+        Hal_Sys_SpareRegRead(SPARE_0, &u32SpareReg);
+        
+        /* Wait MSQ get load patch done finished, avoid data corruption */
+        if ((u32SpareReg & IPC_SPARE0_LOAD_PATCH_READY) == 0)
+            break;
+    } 
+    
+    u32SpareReg |= DEV_32K_SRC_SEL_32K_RC;
+    Hal_Sys_SpareRegWrite(SPARE_0, u32SpareReg);
+}
+
+/*************************************************************************
+* FUNCTION:
 *   Sys_DriverInit
 *
 * DESCRIPTION:
@@ -224,7 +255,7 @@ void Sys_DriverInit_patch(void)
     if (Boot_CheckWarmBoot())
     {
 		Hal_Sys_ApsClkResume();
-        Sys_NotifyReadyToMsq(SYS_SPARE_APS_CLOCK_READY);
+        Sys_NotifyReadyToMsq(IPC_SPARE0_APS_CLOCK_READY);
     }
 
     // Set power

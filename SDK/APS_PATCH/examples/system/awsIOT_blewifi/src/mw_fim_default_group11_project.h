@@ -24,7 +24,7 @@ extern "C" {
 
 // Sec 1: Include File
 #include "mw_fim.h"
-
+#include "blewifi_common.h"
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
 // the file ID
@@ -43,7 +43,9 @@ typedef enum
     MW_FIM_IDX_GP11_PROJECT_BLE_ADV_INTERVAL,
 
     MW_FIM_IDX_GP11_PROJECT_WIFI_CONNECT_SETTINGS,
-    
+
+    MW_FIM_IDX_GP11_PROJECT_AWS_PKCS11_KEYS,
+	
     MW_FIM_IDX_GP11_PROJECT_MAX
 } E_MwFimIdxGroup11_Project;
 
@@ -109,9 +111,19 @@ typedef struct
     uint8_t ubaReserved[3];
 } T_MwFim_GP11_WifiConnectSettings;
 
-#define MW_FIM_GP11_WIFI_CONNECT_SETTINGS_NUM    sizeof(T_MwFim_GP11_WifiConnectSettings)
-#define MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE   1
+#define MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE    sizeof(T_MwFim_GP11_WifiConnectSettings)
+#define MW_FIM_GP11_WIFI_CONNECT_SETTINGS_NUM     1
 
+//#define P11_CERTIFICATE_SIZE 1024
+//#define P11_CODESIGNKEY      768
+typedef struct
+{
+    char P11_Certificate[P11_CERTIFICATE_SIZE];
+    char P11_CodeSignKey[P11_CODESIGNKEY];	
+} T_MwFim_GP11_AWS_PKCS11_KEYS;
+
+#define MW_FIM_GP11_AWS_PKCS11_KEYS_SIZE    sizeof(T_MwFim_GP11_AWS_PKCS11_KEYS)
+#define MW_FIM_GP11_AWS_PKCS11_KEYS_NUM     1
 
 /********************************************
 Declaration of Global Variables & Functions
@@ -124,7 +136,7 @@ extern const T_MwFim_GP11_BleServiceUUID g_tMwFimDefaultGp11BleServiceUUID;
 extern const T_MwFim_GP11_BleDeviceName g_tMwFimDefaultGp11BleDeviceName;
 extern const T_MwFim_GP11_BleAdvInterval g_tMwFimDefaultGp11BleAdvInterval;
 extern const T_MwFim_GP11_WifiConnectSettings g_tMwFimDefaultGp11WifiConnectSettings;
-
+extern const T_MwFim_GP11_AWS_PKCS11_KEYS g_tMwFimDefaultGp11AwsPkcs11Keys;
 // Sec 5: declaration of global function prototype
 
 

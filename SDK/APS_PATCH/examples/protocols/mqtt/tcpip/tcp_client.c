@@ -30,7 +30,7 @@ Head Block of The File
 #include "lwip/netdb.h"
 #include "lwip/dns.h"
 #include "lwip/netif.h"
-#include "errno.h"
+//#include "errno.h"
 
 /*
 @return  sended data size for success else 0.

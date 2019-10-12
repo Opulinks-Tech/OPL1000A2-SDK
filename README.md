@@ -3,20 +3,21 @@
 - Provide 33 documents under "Doc" folder, includes Chinese and English version. Content covers DEVKIT use, SDK getting start and development, Chip boot mode, Flash use, Adaptive DTIM solution, API use introduction etc. 
 - Provide three sets of tools for Pin multiplexing Settings, firmware download and mass production. 
 - Provide 31 examples include WIFI, BLE, Peripheral, protocols and OTA examples. 
-- Provide 6 dedicate Demo for user to evaluate OPL1000 functions/features.    
+- Provide 7 dedicate Demo for user to evaluate OPL1000 functions/features.    
 
 # Developing With the OPL1000A2-SDK
 OPL1000A2-SDK provides complete guide documents, download and pin-mux tool, driver, SDK source code and example projects.
 User can develop application based on OPL1000 HW reference and SW example projects easily.  
 
 # Folder introduction  
-- Demo: Contains 6 demos, they are:  
+- Demo: Contains 7 demos, they are:  
   - BLE_Config_AP:  Demonstrate how to use (Android) mobile APP to control OPL1000 complete WIFI AP connection via BLE path.  Please refer to [BLE_Config_AP readme](https://github.com/Opulinks-Tech/OPL1000A1-SDK/blob/master/Demo/BLE_Config_AP/README.md)
   - Iperf: Demonstrate how to use opl100 internal iperf  function to evaluate WIFI communication bandwidth. Please refer to [Iperf readme](https://github.com/Opulinks-Tech/OPL1000A1-SDK/blob/master/Demo/iperf/README.md)
   - OTA_WIFI: Demonstrate how to setup a TCP server on PC and complete OTA through WIFI path. Please refer to [OTA_WIFI readme](https://github.com/Opulinks-Tech/OPL1000A1-SDK/blob/master/Demo/OTA_WIFI/README.md)
   - TCP_Client: Demonstrate TCP data communication between OPL1000 (TCP client) and TCP server while enable OPL1000 smart sleep work mode. Please refer to [TCP_Client readme](https://github.com/Opulinks-Tech/OPL1000A1-SDK/blob/master/Demo/TCP_Client/README.md)
   - current_measure: Provide a tool for user to measure OPL1000 power consumption while keep connection with an AP. Please refer to [current_measure readme](https://github.com/Opulinks-Tech/OPL1000A1-SDK/blob/master/Demo/current_measure/readme.md)  
   - MQTT: Demonstrate how to establish a private MQTT service in local area network (LAN). Please refer to [MQTT readme](https://github.com/Opulinks-Tech/OPL1000A1-SDK/blob/master/Demo/MQTT/readme.md)  
+  - ali_lighting: Demonstrate how to establish a MQTT connection with Ali cloud and use cloud intelligence APK to control lighting device. Please refer to [ali_lighting readme](https://github.com/Opulinks-Tech/OPL1000A1-SDK/blob/master/Demo/ali_lighting/readme.md)
 - Doc: Contains 33 documents, include getting start, guide and application notes type documents. Have Chinese and English two languages version. 
 - FW_Binary: Contains integrated OPL1000 firmwares. User can download it into OPL1000 device and evaluate functions directly.
 - FW_Pack: Contains intermediate files that used for build integrated OPL1000 firmware.

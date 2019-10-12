@@ -25,7 +25,7 @@ extern "C" {
 // Sec 1: Include File
 #include "mw_fim.h"
 #include "mw_fim_default_group08.h"
-
+#include "blewifi_common.h"
 
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
@@ -51,21 +51,23 @@ Declaration of data structure
 // AWS PKCS11 Keys
 
 
-#define P11_CERTIFICATE_SIZE 1024
-#define P11_KEY_SIZE         2048
-#define P11_CODESIGNKEY      768
+//#define P11_CERTIFICATE_SIZE 1024
+//#define P11_KEY_SIZE         2048
+//#define P11_CODESIGNKEY      768
 
-
-
-
+/*
 typedef struct
 {
     char P11_Certificate[P11_CERTIFICATE_SIZE];
     char P11_Key[P11_KEY_SIZE];
     char P11_CodeSignKey[P11_CODESIGNKEY];
 } T_MwFim_GP08_AWS_PKCS11_KEYS;
+*/
 
-
+typedef struct
+{
+    char P11_Key[P11_KEY_SIZE];
+} T_MwFim_GP08_AWS_PKCS11_KEYS;
 
 #define MW_FIM_GP08_AWS_PKCS11_KEY_SIZE  sizeof(T_MwFim_GP08_AWS_PKCS11_KEYS)
 #define MW_FIM_GP08_AWS_PKCS11_KEY_NUM   1

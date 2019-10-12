@@ -58,6 +58,7 @@ extern "C" {
  */
 void SysInit_EntryPoint(void);
 void Sys_SetUnsuedSramEndBound(uint32_t endAddr);
+void Sys_SwitchTo32kRC(void);
 
 #ifdef __cplusplus
 }

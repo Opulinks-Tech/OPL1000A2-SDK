@@ -36,8 +36,10 @@
 #include "aws_pkcs11_config.h"
 #include "cmsis_os.h"
 
+
 #include "mw_fim_default_group08.h"
 #include "mw_fim_default_group08_project.h"
+#include "mw_fim_default_group11_project.h"
 
 /* C runtime includes. */
 #include <stdio.h>
@@ -56,8 +58,10 @@
 
 /*-----------------------------------------------------------*/
 
-extern T_MwFim_GP08_AWS_PKCS11_KEYS tAWSPKCSKeys;
-
+//extern T_MwFim_GP08_AWS_PKCS11_KEYS tAWSPKCSKeys;
+extern T_MwFim_GP08_AWS_PKCS11_KEYS tGP08_AWSPKCSKeys;
+extern T_MwFim_GP11_AWS_PKCS11_KEYS tGP11_AWSPKCSKeys;
+extern T_AWS_PKCS11_KEYS tAWSPKCSKeys;
 
 struct pkcs11_Key_size
 {
@@ -251,10 +255,15 @@ CK_OBJECT_HANDLE PKCS11_PAL_SaveObject( CK_ATTRIBUTE_PTR pxLabel,
 
     if(needUpdateFIM == true)
     {
-        if (MW_FIM_OK != MwFim_FileWrite(MW_FIM_IDX_GP08_PROJECT_AWS_PKCS11_KEY, 0, MW_FIM_GP08_AWS_PKCS11_KEY_SIZE, (uint8_t*)&tAWSPKCSKeys))
+			  // write AWS_PKCS11_KEY into FIM group8 and FIM group8
+        if (MW_FIM_OK != MwFim_FileWrite(MW_FIM_IDX_GP08_PROJECT_AWS_PKCS11_KEY, 0, MW_FIM_GP08_AWS_PKCS11_KEY_SIZE, (uint8_t*)&tGP08_AWSPKCSKeys))
         {
-            printf("===========   PKCS update FIM fail   =========\n");
+            printf("===========   PKCS Key update FIM fail   =========\n");
         }
+        if (MW_FIM_OK != MwFim_FileWrite(MW_FIM_IDX_GP11_PROJECT_AWS_PKCS11_KEYS, 0, MW_FIM_GP11_AWS_PKCS11_KEYS_SIZE, (uint8_t*)&tGP11_AWSPKCSKeys))
+        {
+            printf("===========   PKCS Certificate & CodeSignKey update FIM fail   =========\n");
+        }				
     }
 
     
