@@ -56,8 +56,8 @@ Head Block of The File
 
 #include "blewifi_app.h"
 #include "blewifi_configuration.h"
-#include "mw_fim_default_group08.h"
-#include "mw_fim_default_group08_project.h"
+
+#include "mw_fim_default_group12_project.h"
 #include "mw_fim_default_group11_project.h"
 
 #include "hal_wdt.h"
@@ -227,14 +227,18 @@ static void Main_PinMuxUpdate(void)
 *************************************************************************/
 static void Main_FlashLayoutUpdate(void)
 {
+	/*
     MwFim_GroupInfoUpdate(0, 8, (T_MwFimFileInfo *)g_taMwFimGroupTable08_project);
     MwFim_GroupVersionUpdate(0, 8, MW_FIM_VER08_PROJECT);
-
+    */
     g_taMwFimZoneInfoTable[1].ulBaseAddr = 0x00090000;
     g_taMwFimZoneInfoTable[1].ulBlockNum = 9;
 
     MwFim_GroupInfoUpdate(1, 1, (T_MwFimFileInfo *)g_taMwFimGroupTable11_project);
     MwFim_GroupVersionUpdate(1, 1, MW_FIM_VER11_PROJECT);
+    MwFim_GroupInfoUpdate(1, 2, (T_MwFimFileInfo *)g_taMwFimGroupTable12_project);
+    MwFim_GroupVersionUpdate(1, 2, MW_FIM_VER12_PROJECT);
+
 }
 
 /*************************************************************************

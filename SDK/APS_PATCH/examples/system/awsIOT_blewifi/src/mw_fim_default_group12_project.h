@@ -12,8 +12,8 @@
 /***********************
 Head Block of The File
 ***********************/
-#ifndef _MW_FIM_DEFAULT_GROUP08_PROJECT_H_
-#define _MW_FIM_DEFAULT_GROUP08_PROJECT_H_
+#ifndef _MW_FIM_DEFAULT_GROUP12_PROJECT_H_
+#define _MW_FIM_DEFAULT_GROUP12_PROJECT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,7 +24,7 @@ extern "C" {
 
 // Sec 1: Include File
 #include "mw_fim.h"
-#include "mw_fim_default_group08.h"
+//#include "mw_fim_default_group12.h"
 #include "blewifi_common.h"
 
 
@@ -36,12 +36,12 @@ extern "C" {
 //                     ^^^^ ^^^^ ^^^^ ^^^^ File ID, start from 0
 typedef enum
 {
-    MW_FIM_IDX_GP08_PROJECT_START = 0x00080000,             // the start IDX of group 08
+    MW_FIM_IDX_GP12_PROJECT_START = 0x01020000,             // the start IDX of group 12
     
-    MW_FIM_IDX_GP08_PROJECT_AWS_PKCS11_KEY,
+    MW_FIM_IDX_GP12_PROJECT_AWS_PKCS11_KEY,
     
-    MW_FIM_IDX_GP08_PROJECT_MAX
-} E_MwFimIdxGroup08_Project;
+    MW_FIM_IDX_GP12_PROJECT_MAX
+} E_MwFimIdxGroup12_Project;
 
 
 /******************************
@@ -50,35 +50,21 @@ Declaration of data structure
 // Sec 3: structure, uniou, enum, linked list
 // AWS PKCS11 Keys
 
-
-//#define P11_CERTIFICATE_SIZE 1024
-//#define P11_KEY_SIZE         2048
-//#define P11_CODESIGNKEY      768
-
-/*
-typedef struct
-{
-    char P11_Certificate[P11_CERTIFICATE_SIZE];
-    char P11_Key[P11_KEY_SIZE];
-    char P11_CodeSignKey[P11_CODESIGNKEY];
-} T_MwFim_GP08_AWS_PKCS11_KEYS;
-*/
-
 typedef struct
 {
     char P11_Key[P11_KEY_SIZE];
-} T_MwFim_GP08_AWS_PKCS11_KEYS;
+} T_MwFim_GP12_AWS_PKCS11_KEYS;
 
-#define MW_FIM_GP08_AWS_PKCS11_KEY_SIZE  sizeof(T_MwFim_GP08_AWS_PKCS11_KEYS)
-#define MW_FIM_GP08_AWS_PKCS11_KEY_NUM   1
+#define MW_FIM_GP12_AWS_PKCS11_KEY_SIZE  sizeof(T_MwFim_GP12_AWS_PKCS11_KEYS)
+#define MW_FIM_GP12_AWS_PKCS11_KEY_NUM   1
 
 /********************************************
 Declaration of Global Variables & Functions
 ********************************************/
 // Sec 4: declaration of global variable
-extern const T_MwFimFileInfo g_taMwFimGroupTable08_project[];
+extern const T_MwFimFileInfo g_taMwFimGroupTable12_project[];
 
-extern const T_MwFim_GP08_AWS_PKCS11_KEYS g_tMwFimDefaultGp08AWSPKCS11Keys;
+extern const T_MwFim_GP12_AWS_PKCS11_KEYS g_tMwFimDefaultGp12AWSPKCS11Keys;
 
 
 // Sec 5: declaration of global function prototype
@@ -97,4 +83,4 @@ Declaration of static Global Variables & Functions
 }
 #endif
 
-#endif // _MW_FIM_DEFAULT_GROUP06_PROJECT_H_
+#endif // _MW_FIM_DEFAULT_GROUP12_PROJECT_H_

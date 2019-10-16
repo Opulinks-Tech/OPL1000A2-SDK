@@ -16,7 +16,7 @@ Head Block of The File
 
 
 // Sec 1: Include File
-#include "mw_fim_default_group08_project.h"
+#include "mw_fim_default_group12_project.h"
 #include "blewifi_configuration.h"
 
 
@@ -34,18 +34,18 @@ Declaration of Global Variables & Functions
 ********************************************/
 // Sec 4: declaration of global variable
 // Aliyun device
-const T_MwFim_GP08_AWS_PKCS11_KEYS g_tMwFimDefaultGp08AWSPKCS11Keys =
+const T_MwFim_GP12_AWS_PKCS11_KEYS g_tMwFimDefaultGp12AWSPKCS11Keys =
 {
     .P11_Key                    = "default_P11_Key"
 };
 // the address buffer of aws device
-uint32_t g_ulaMwFimAddrBufferGP08AWSPKCS11Keys[MW_FIM_GP08_AWS_PKCS11_KEY_NUM];
+uint32_t g_ulaMwFimAddrBufferGP12AWSPKCS11Keys[MW_FIM_GP12_AWS_PKCS11_KEY_NUM];
 
 
-// the information table of group 08
-const T_MwFimFileInfo g_taMwFimGroupTable08_project[] =
+// the information table of group 12
+const T_MwFimFileInfo g_taMwFimGroupTable12_project[] =
 {
-    {MW_FIM_IDX_GP08_PROJECT_AWS_PKCS11_KEY,     MW_FIM_GP08_AWS_PKCS11_KEY_NUM,      MW_FIM_GP08_AWS_PKCS11_KEY_SIZE,     (uint8_t*)&g_tMwFimDefaultGp08AWSPKCS11Keys,     g_ulaMwFimAddrBufferGP08AWSPKCS11Keys},
+    {MW_FIM_IDX_GP12_PROJECT_AWS_PKCS11_KEY,     MW_FIM_GP12_AWS_PKCS11_KEY_NUM,      MW_FIM_GP12_AWS_PKCS11_KEY_SIZE,     (uint8_t*)&g_tMwFimDefaultGp12AWSPKCS11Keys,     g_ulaMwFimAddrBufferGP12AWSPKCS11Keys},
 
     // the end, don't modify and remove it
     {0xFFFFFFFF,        0x00,       0x00,       NULL,       NULL}

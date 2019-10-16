@@ -28,8 +28,8 @@
 #include "ps_public.h"
 #include "mw_fim_default_group03.h"
 #include "mw_fim_default_group03_patch.h"
-#include "mw_fim_default_group08.h"
-#include "mw_fim_default_group08_project.h"
+//#include "mw_fim_default_group08.h"
+#include "mw_fim_default_group12_project.h"
 #include "mw_fim_default_group11_project.h"
 #include "app_at_cmd.h"
 #include "hal_dbg_uart.h"
@@ -40,7 +40,7 @@
 
 
 blewifi_ota_t *gTheOta = 0;
-T_MwFim_GP08_AWS_PKCS11_KEYS tGP08_AWSPKCSKeys;
+T_MwFim_GP12_AWS_PKCS11_KEYS tGP12_AWSPKCSKeys;
 T_MwFim_GP11_AWS_PKCS11_KEYS tGP11_AWSPKCSKeys;
 T_AWS_PKCS11_KEYS tAWSPKCSKeys;
 
@@ -111,10 +111,11 @@ void BleWifiAppInit(void)
 			
 	
 		// get the AWS PKCS11 Keys from FIM group8 and group11 
-	  if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP08_PROJECT_AWS_PKCS11_KEY, 0, MW_FIM_GP08_AWS_PKCS11_KEY_SIZE, (uint8_t*)&tGP08_AWSPKCSKeys))
-    {
-        // if fail, get the default value, copy tGP08_AWSPKCSKeys content to tAWSPKCSKeys element {P11_Key}
-        memcpy(&tAWSPKCSKeys.P11_Key, &g_tMwFimDefaultGp08AWSPKCS11Keys.P11_Key, P11_KEY_SIZE);
+	  //if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP08_PROJECT_AWS_PKCS11_KEY, 0, MW_FIM_GP08_AWS_PKCS11_KEY_SIZE, (uint8_t*)&tGP08_AWSPKCSKeys))
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP12_PROJECT_AWS_PKCS11_KEY, 0, MW_FIM_GP12_AWS_PKCS11_KEY_SIZE, (uint8_t*)&tGP12_AWSPKCSKeys))
+		{
+        // if fail, get the default value, copy tGP12_AWSPKCSKeys content to tAWSPKCSKeys element {P11_Key}
+        memcpy(&tAWSPKCSKeys.P11_Key, &g_tMwFimDefaultGp12AWSPKCS11Keys.P11_Key, P11_KEY_SIZE);
     }
 	  if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_AWS_PKCS11_KEYS, 0, MW_FIM_GP11_AWS_PKCS11_KEYS_SIZE, (uint8_t*)&tGP11_AWSPKCSKeys))
     {
