@@ -140,6 +140,27 @@ int at_cmd_sys_gslp_patch(char *buf, int len, int mode)
 }
 
 /*
+ * @brief Command at+restore
+ *
+ * @param [in] argc count of parameters
+ *
+ * @param [in] argv parameters array
+ *
+ * @return 0 fail 1 success
+ *
+ */
+int at_cmd_sys_restore_patch(char *buf, int len, int mode)
+{
+    if (AT_CMD_MODE_EXECUTION == mode)
+    {
+        MwFim_FileWriteDefault(MW_FIM_IDX_GP03_LE_CFG, 0);
+    }
+
+    extern int at_cmd_sys_restore(char *buf, int len, int mode);
+    return at_cmd_sys_restore(buf, len, mode);
+}
+
+/*
  * @brief Command at+sleep
  *
  * @param [in] argc count of parameters
@@ -280,6 +301,7 @@ void at_cmd_sys_func_init_patch(void)
 
     gAtCmdTbl_Sys[1].cmd_handle = at_cmd_sys_gmr_patch;
     gAtCmdTbl_Sys[2].cmd_handle = at_cmd_sys_gslp_patch;
+    gAtCmdTbl_Sys[3].cmd_handle = at_cmd_sys_restore_patch;
     gAtCmdTbl_Sys[7].cmd_handle = at_cmd_sys_sleep_patch;
     gAtCmdTbl_Sys[15].cmd_handle = at_cmd_sys_fwver_patch;
 

@@ -16,7 +16,7 @@
 /*
 FIM version
 */
-#define MW_FIM_VER11_PROJECT            0x02    // 0x00 ~ 0xFF
+#define MW_FIM_VER11_PROJECT            0x03    // 0x00 ~ 0xFF
 
 /*
 Smart sleep

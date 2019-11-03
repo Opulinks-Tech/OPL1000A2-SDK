@@ -177,7 +177,8 @@ void Sys_SwitchOffUnusedSram(uint32_t memFootPrint)
         (1 << 8), 0x00438000, 0x00440000,  // block 8 off
     };
 
-    uint32_t offMsk = (1 << 11);           // block 11 off (shared memory 0)
+    //uint32_t offMsk = (1 << 11);           // block 11 off (shared memory 0)
+    uint32_t offMsk = 0;                   // block 11 on (shared memory 0)
     int i;
 
     if (!sramEndBound)

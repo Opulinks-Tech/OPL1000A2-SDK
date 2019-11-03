@@ -82,14 +82,14 @@ int at_cmd_mp_ble_addr_patch(char *buf, int len, int mode)
     uint8_t bd_addr[6] = {0};
 
     // copy the original command before it got modified
-    memcpy(orig_cmd, buf, len);
+    at_strcpy(orig_cmd, buf);
     
     if (!at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS))
     {
         goto done;
     }
     
-    if (!strncmp("?", &(argv[0][12]), 13))
+    if (!at_strncmp("?", &(argv[0][12]), 13))
     {
         get_ble_bd_addr(bd_addr);
         at_output("+MPBLEADDR:\"");
@@ -103,7 +103,7 @@ int at_cmd_mp_ble_addr_patch(char *buf, int len, int mode)
     }
     else 
     {
-        extern int at_cmd_mp_ble_addr_patch(char *buf, int len, int mode);
+        extern int at_cmd_mp_ble_addr(char *buf, int len, int mode);
         return at_cmd_mp_ble_addr(orig_cmd, len, mode);
     }
     

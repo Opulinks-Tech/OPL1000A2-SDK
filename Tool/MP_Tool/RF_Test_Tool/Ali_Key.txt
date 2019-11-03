@@ -1,0 +1,5 @@
+Ali_Device_Name_File = D:\RF_Test_tool\ORG_Package\RF_Test_Tool\deviceNames.xlsx
+Ali_Product_Key = a1SuH9dPv9j
+Ali_Product_Secret = wCMmtuh9FHSlOAkP
+Ali_Product_Id = 2253168
+Ali_Key_CURRENT_idx=5

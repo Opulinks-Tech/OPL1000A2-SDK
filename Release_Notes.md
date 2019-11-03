@@ -1,4 +1,41 @@
 ## Release Version:
+SDK Package: MP_2.13
+Patch_Lib : 4073
+
+## Release Date: 2019/11/3
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 OPL1000-AT-instruction-set-and-examples,R05-v0.39,Add SMPS_RF tuning for AT+RFTM.
+   1.2 OPL1000-WIFI聯通性測試報告,new document about  WIFI IOP result that done in TestIn.
+   1.3 OPL1000-BLE聯通性測試報告R2,new document about BLE IOP result that done in TestIn.
+2.  Tool version information and update:
+   2.1 download tool: v0.27, No update.
+   2.2 pin-mux tool: v0.8. No update.
+   2.3 MP RF test tool: update to v3.2, add a  new "RF test tool" that support iTest instrument.
+   2.4 MP multi-dev download tool: update to v2.9, support Ali 5 unit writing fuction.
+3. Demo update:
+   3.1 Expand_M3_RAM，new demo that shows how to use M3 shared memory to enlarge M3 MCU avaliable RAM size for application.
+4. Examples update:
+   4.1 https_request:  add preference ciphersuites setup operation to speed up SSL handshake procedure.
+5. Open block 0 of shared-memory to let user use this part of memory in application.
+6. Add function of convert little/big endian for OTP mac address.
+7. Add an API and command for boost VDD_RF(SMPS_RF) from 1.2(default) to 1.4.
+
+
+
+## Bug Fix List 
+1. clean up the Ethernet ARP table after WiFi disconnect
+2. fix "writing a FIM record whose size is more than 2048 bytes will overwrite other FIM group" issue
+3. fix "sometimes fail to write BLE bd_addr to flash using "at+mpbleaddr" command" issue
+4. fix "RSSI always show -104 in BLE RX mode" issue
+
+
+## Notes List 
+
+*****
+
+## Release Version:
 SDK Package: MP_2.12
 Patch_Lib : 4061
 

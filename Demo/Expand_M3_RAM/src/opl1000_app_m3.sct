@@ -1,0 +1,30 @@
+#! armcc -E
+        
+#define SCT_PATCH_START 0x004164a0
+#define SCT_PATCH_LEN   0x00029B60
+
+LR_IROM1 SCT_PATCH_START SCT_PATCH_LEN
+{
+    RW_IRAM1_EntryPoint +0
+    {
+        .ANY (ENTRY_POINT)
+    }
+    RW_IRAM1 +0 
+    {
+       .ANY (+RO)
+       .ANY (+RW +ZI)
+    }
+}
+ScatterAssert(ImageLength(LR_IROM1) <= SCT_PATCH_LEN)
+
+#define SCT_SHM_START 0x80000000
+#define SCT_SHM_LEN   0x00004000
+
+LR_IROM2 SCT_SHM_START SCT_SHM_LEN
+{
+    RW_IRAM2 +0 
+    {
+       .ANY (SHM_REGION)
+    }
+}
+ScatterAssert(ImageLength(LR_IROM2) <= SCT_SHM_LEN)

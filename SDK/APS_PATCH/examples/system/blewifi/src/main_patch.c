@@ -123,6 +123,11 @@ void __Patch_EntryPoint(void)
 {
     // don't remove this code
     SysInit_EntryPoint();
+
+#ifdef SWITCH_TO_32K_RC
+    // Uncomment this function when the device is without 32k XTAL.
+    Sys_SwitchTo32kRC();
+#endif 
     
     // update the pin mux
     Hal_SysPinMuxAppInit = Main_PinMuxUpdate;

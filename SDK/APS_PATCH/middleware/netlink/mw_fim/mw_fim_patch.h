@@ -41,7 +41,14 @@ extern "C" {
  *                          Typedefs and Structures
  *************************************************************************
  */
-
+// file data (12 bytes)
+typedef struct
+{
+    uint32_t ulFileId;
+    uint16_t uwRecIdx;
+    uint16_t uwFileSize;
+    uint8_t *pubFileData;
+} T_MwFimFileData;
 
 
 /*

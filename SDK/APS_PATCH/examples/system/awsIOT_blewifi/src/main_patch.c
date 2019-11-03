@@ -61,6 +61,8 @@ Head Block of The File
 #include "mw_fim_default_group11_project.h"
 
 #include "hal_wdt.h"
+#include "sys_cfg.h"
+
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
 
 
@@ -138,6 +140,11 @@ void __Patch_EntryPoint(void)
 {
     // don't remove this code
     SysInit_EntryPoint();
+
+#ifdef SWITCH_TO_32K_RC
+    // Uncomment this function when the device is without 32k XTAL.
+    Sys_SwitchTo32kRC();
+#endif 
     
     // update the pin mux
     Hal_SysPinMuxAppInit = Main_PinMuxUpdate;
@@ -155,10 +162,10 @@ void __Patch_EntryPoint(void)
     at_cmd_switch_uart1_dbguart = Main_AtUartDbgUartSwitch;
     
     // modify the heap size, from 0x43C000 to 0x44F000
-    g_ucaMemPartAddr = (uint8_t*) 0x434000;
-    g_ulMemPartTotalSize = 0x1B000;
+    g_ucaMemPartAddr = (uint8_t*) 0x435000;
+    g_ulMemPartTotalSize = 0x1A000;
     
-    Sys_SetUnsuedSramEndBound(0x434000);
+    Sys_SetUnsuedSramEndBound(0x435000);
     
     // application init
     Sys_AppInit = Main_AppInit_patch;
@@ -230,15 +237,18 @@ static void Main_FlashLayoutUpdate(void)
 	/*
     MwFim_GroupInfoUpdate(0, 8, (T_MwFimFileInfo *)g_taMwFimGroupTable08_project);
     MwFim_GroupVersionUpdate(0, 8, MW_FIM_VER08_PROJECT);
-    */
+
     g_taMwFimZoneInfoTable[1].ulBaseAddr = 0x00090000;
     g_taMwFimZoneInfoTable[1].ulBlockNum = 9;
-
-    MwFim_GroupInfoUpdate(1, 1, (T_MwFimFileInfo *)g_taMwFimGroupTable11_project);
-    MwFim_GroupVersionUpdate(1, 1, MW_FIM_VER11_PROJECT);
+  */
     MwFim_GroupInfoUpdate(1, 2, (T_MwFimFileInfo *)g_taMwFimGroupTable12_project);
     MwFim_GroupVersionUpdate(1, 2, MW_FIM_VER12_PROJECT);
 
+    g_taMwFimZoneInfoTable[1].ulBaseAddr = 0x00090000;
+    g_taMwFimZoneInfoTable[1].ulBlockNum = 9;
+	
+    MwFim_GroupInfoUpdate(1, 1, (T_MwFimFileInfo *)g_taMwFimGroupTable11_project);
+    MwFim_GroupVersionUpdate(1, 1, MW_FIM_VER11_PROJECT);
 }
 
 /*************************************************************************
@@ -346,7 +356,11 @@ static void Main_AtUartDbgUartSwitch(void)
 *
 *************************************************************************/
 static void Main_AppInit_patch(void)
-{
+{		
+	#ifdef SPEED_TLS_HANDSHAKE
+	sys_cfg_clk_set(SYS_CFG_CLK_143_MHZ);
+	#endif
+	
     // add the application initialization from here
     printf("AppInit\n");
 

@@ -1,0 +1,170 @@
+//******************************************************************************
+//                          WT-Tester Setup file
+//******************************************************************************
+
+
+WT_IP_ADDRESS   		= 192.168.10.254   	// tester IP
+
+WT_TESTER_CONNECT_MODE	= 1		  	// tester connection mode
+									// 1:normol mode, DUT will have tester resource in round-robin(default)
+									// 2:ping-pong mode, DUT will release tester resource after doing resource.
+							
+WT_DUT_PARALLEL_NUM		= 1			// number of DUTs, range (1 ~ 4), default = 1
+							
+WT_DUT_START_NUM		= 1			// RF conncted port, range(1 ~ 4),default = 1
+
+WT_CALIBRATION_RETRY	= 15		// calibration retry times, range(1 ~ 100)
+WT_TX_VERIFY_RETRY		= 3			// Max txVerify retry times, range (1 ~ 100)
+WT_RX_VERIFY_RETRY		= 1			// Max RxVerify retry times, range (1 ~ 100)
+
+WT_PRINT_RETRY_PROCESS	= 0			// print process while retry
+									// 0:Hide process log, print out last time(default)
+									// 1:print out every retry
+
+WT_RUN_ALL_TEST_FLOW	= 1			// stop verification while verification is fail.
+									// 0:stop(default)
+									// 1:keep testing
+
+WT_POWER_CAL_OPTIMIZE_2G        = 0        	// 2.4G power calibration optimization option
+WT_POWER_CAL_OPTIMIZE_5G        = 0			// 5G 	power calibration optimization option
+	                               			// 0, Do not optimize(default)
+                               			    // 1, fine tune mode, for the DUT`s step is +-0.5, make it fall into +-.3dB.  
+                                			// 2, if EVM is not good , decrease the power within the allowable range
+                                			// 3, if EVM is good(better than criteria 3 db) , increase the power within the allowable range
+                                			// 4, no matter how the EVM is, decrease the power within the allowable range
+                                			// 5, no matter how the EVM is, increase the power within the allowable range
+                                			// 6, make option 2, 3 work at the same time.
+
+							
+//------------------------------------------------------------------------------
+// In Calibration,TxVerification,RxVerification, the delay time to capture data after DUT receives TX command(ms), range (0 ~ 10000),default = 0
+//------------------------------------------------------------------------------
+//                          OFDM	11B    HT-20    HT-40    BT    ZIGBEE	
+WT_FREQ_CAL_DELAY_MS_2_4G	500     500    500      500      1000  0
+WT_POW_CAL_DELAY_MS_2_4G	500     500    500      500      1000  0
+WT_TX_VERIFY_DELAY_MS_2_4G	500     1000    500      500      500   1000
+WT_RX_VERIFY_DELAY_MS_2_4G	2000    500    2000     0        500   0
+
+				OFDM	11B	HT-20	HT-40	AC-20	AC-40	AC-80	AC-160   AC-80-80
+WT_FREQ_CAL_DELAY_MS_5G		500	500 500 500 500 500 500 500 500
+WT_POW_CAL_DELAY_MS_5G		500	500 500 500 500 500 500 500 500
+WT_TX_VERIFY_DELAY_MS_5G	500	500 500 500 500 500 500 500 500
+WT_RX_VERIFY_DELAY_MS_5G	500	500 500 500 500 500 500 500 500
+
+
+// RX PER verification - Transmitting frame number, range (1 ~ 1000000)----------------------------------------------------------------------------------------
+//				            54M	    48M	    36M	    24M	    18M	    12M	    9M	    6M	    11M	    5.5M	2M	    1M
+WT_PER_PACKETS_NUM_LEGACY	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000
+
+//				54M	48M	36M	24M	18M	12M	9M	6M	11M	5.5M	2M	1M
+WT_PER_PACKETS_NUM_5G_11A	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000
+
+//				MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_PACKETS_NUM_HT20_1S	1000	1000	1000	1000	1000	1000	1000	1000
+
+//				MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_PACKETS_NUM_5G_HT20_1S	1000	1000	1000	1000	1000	1000	1000	1000	
+
+//				MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_PACKETS_NUM_HT40_1S	1000	1000	1000	1000	1000	1000	1000	1000
+
+//				MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_PACKETS_NUM_5G_HT40_1S	1000	1000	1000	1000	1000	1000	1000	1000
+
+//				MCS8 	MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_PACKETS_NUM_AC20_1S	1000	1000	1000	1000	1000	1000	1000	1000	1000
+
+//				MCS9	MCS8 	MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_PACKETS_NUM_AC40_1S	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000
+
+//				MCS9	MCS8 	MCS7  	MCS6	MCS5	MCS4	MCS3	MCS2	MCS1	MCS0
+WT_PER_PACKETS_NUM_AC80_1S	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000
+
+//				                BLE	    1M	    2M	    3M
+WT_PER_PACKETS_NUM_BT           1000	1000    1000	1000
+
+WT_PER_PACKETS_NUM_ZIGBEE	1000
+
+WT_PER_FRAME_GAP		= 100	//Wifi gap time between frame and frame in us,range (1 ~ 1000000)
+WT_BT_PER_FRAME_GAP		= 20	//BT gap time between frame and frame in us,range (1 ~ 1000000)
+													
+                                              
+//******************************************************************************
+//                          Measurement Settings
+//******************************************************************************
+
+//------------------------------------------------------------------------------
+// Data Capture Parameters 
+//------------------------------------------------------------------------------
+WT_DATA_CAPTURE_MODE	= 0		//capture mode
+					//0: Free run(default)
+					//1: Trigger
+					
+WT_DATA_CAPTURE_TIME	= 10000		//capture time in us, range (1 ~ 1000000), default = 500
+
+WT_DATA_CAPTURE_AVERAGE	= 1		//capture average times, (1 ~ 50), default = 1
+
+WT_USE_USER_WAVE_FILE   = 1		//WT208 tester waveform source, only work for WIFI.
+					//0: WT-208 internal waveform (default)
+					//1: from outside waveform
+
+
+//------------------------------------------------------------------------------
+// Mode 11A&11G Parameters 
+//------------------------------------------------------------------------------
+
+WT_EVM_PH_CORR_MODE 	= 2      	// 1 - Phase correction off.
+                             		// 2 - Symbol-by-symbol correction (Default value).
+                             		// 3 - Moving avg. correction 10 symbols
+                             		
+
+WT_EVM_CH_ESTIMATE 	= 1      	// 1 - Raw Channel Estimate long train (Default value).
+                             		// 2 - 2nd Order Polyfit.
+                             		// 3 - Raw Channel Estimate full packet
+                             		
+
+WT_EVM_SYM_TIM_CORR 	= 2      	// 1 - Symbol Timing Correction Off.
+                             		// 2 - Symbol Timing Correction On (Default value).
+
+					
+WT_EVM_FREQ_SYNC 	= 2         	// 1 - Short Training Symbol.
+                             		// 2 - Long Training Symbol (Default value).
+                             		// 3 - Full Data Packet.
+
+WT_EVM_AMPL_TRACK 	= 1	     	// 1 - Amplitude tracking off(Default value).
+                             		// 2 - Amplitude tracking on.
+					
+					
+//------------------------------------------------------------------------------
+// Mode 11B Parameters 
+//------------------------------------------------------------------------------
+WT_EVM_11B_EQUALIZER	= 1    		// 1 - Equalizer Off(Default value).
+                             		// 5 - 5 taps equalizer
+                                        // 7 - 7 taps equalizer
+                                        // 9 - 9 taps equalizer
+
+WT_EVM_11B_DC_REMOVAL 	= 0    		// 0 - DC removal Off(Default value).
+                             		// 1 - DC removal On.
+					
+WT_EVM_11B_PH_CORR_MODE = 2      	// 1 - Phase correction off.
+                             		// 2 - Symbol-by-symbol correction (Default value).
+			
+					
+//------------------------------------------------------------------------------
+// Mode 11ac Parameters 
+//------------------------------------------------------------------------------
+WT_EVM_AC_CH_ESTIMATE 	= 3      	// 1 - Raw Channel Estimate long train.
+                             		// 2 - 2nd Order Polyfit.
+                             		// 3 - Raw Channel Estimate full packet(Default value).	
+
+//------------------------------------------------------------------------------
+// Tester VSA Sample Rate Mode Setting
+//------------------------------------------------------------------------------
+WT_VSG_SAMPLE_RATE_MODE	= 0		// 0 - Default 120M
+					// 1 - Auto Setting						
+							
+			
+					
+//******************************************************************************
+//                              END OF FILE
+//******************************************************************************
