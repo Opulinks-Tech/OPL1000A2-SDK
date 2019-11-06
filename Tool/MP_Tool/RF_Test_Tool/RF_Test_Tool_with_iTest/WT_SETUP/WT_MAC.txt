@@ -61,7 +61,7 @@ WT_MAC_VENDOR_ID        = 8C882B        // Customer ID.In hex, the first six num
 // DUT1
 WT_MAC_RANGE_BEGIN_1 	= 000000        // product ID, In hex, the last six number of whole MAC.
 WT_MAC_RANGE_END_1 	= 3FFFFF
-WT_MAC_CURRENT_1	= 000014			// current ID
+WT_MAC_CURRENT_1	= 000336			// current ID
 //******************************************************************************
 
 // DUT2

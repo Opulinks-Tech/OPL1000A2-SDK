@@ -38,22 +38,23 @@
 //	CHAIN0	CHAIN1
 //
 //******************************************************************************
-	WT_CONNECT_TESTER				//connect tester
+//	WT_CONNECT_TESTER				//connect tester
 
 //WT_DELAY  5000					//delay time in msec
 
 	WT_INSERT_DUT					//Insert DUT
-
-	WT_CHECK_XTAL
-
-	WT_CHECK_OTA
-
-
-
+	
+//	WT_CHECK_XTAL
+//
+//	WT_CHECK_OTA
+//
+//
+//
+//	WT_USER_COMMAND	[ate0] []
 	WT_USER_COMMAND	[at+sysmode=1] []
 	WT_DELAY  500
-	WT_USER_COMMAND	[at+mprst] []
-	WT_DELAY  2000					//delay time in msec
+//	WT_USER_COMMAND	[at+mprst] []
+//	WT_DELAY  2000					//delay time in msec
 	WT_USER_COMMAND	[at+mode=3] []
 	
 // BLE RX	
@@ -63,16 +64,16 @@
 	
 	WT_USER_COMMAND	[at+dtm=end] []
 	WT_DELAY  500					//delay time in msec
-	WT_USER_COMMAND	[at+mprst] []	
-	WT_DELAY  2000					//delay time in msec
+//	WT_USER_COMMAND	[at+mprst] []	
+//	WT_DELAY  2000					//delay time in msec
 	WT_USER_COMMAND	[at+mode=3] []
 	WT_DELAY  500					//delay time in msec
-	WT_USER_COMMAND	[at+vco] []
+//	WT_USER_COMMAND	[at+vco] []
 
 // WIFI RX	
-	WT_VERIFY_RX_PER    2412    11M    CHAIN0   
-	WT_VERIFY_RX_PER    2442    11M    CHAIN0   
-	WT_VERIFY_RX_PER    2484    11M    CHAIN0
+	WT_VERIFY_RX_PER     7    11M    CHAIN0   -80 -90 -1
+	WT_VERIFY_RX_PER     13    11M    CHAIN0   -80 -90 -1   
+	WT_VERIFY_RX_PER     1    11M    CHAIN0   -80 -90 -1
 
 	
 
@@ -97,9 +98,9 @@
 
 
 //------------------------------------------------------------------------------------
-// WIFI TX
-//	WT_USER_COMMAND	[at+mprst] []
-//	WT_DELAY  2000					//delay time in msec
+ WIFI TX
+	WT_USER_COMMAND	[at+mprst] []
+	WT_DELAY  2000					//delay time in msec
 	WT_USER_COMMAND	[at+rfhp=240] []
 	WT_USER_COMMAND	[at+mode=3] []		
     WT_DELAY  500

@@ -10,7 +10,7 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 WT_DUT_CONN_TYPE			= COM  			//DUT connection type
-WT_DUT_CONN_PORT_1			= 27		//port number
+WT_DUT_CONN_PORT_1			= 0		//port number
 WT_DUT_CONN_PORT_2			= 0
 WT_DUT_CONN_PORT_3			= 0
 WT_DUT_CONN_PORT_4			= 0
@@ -225,7 +225,7 @@ WT_SAVE_TEST_STATISTIC		= 1	// save test result while facility is turning off.
 						// 1:save
 						// 0:do not save
 WT_PASS_NUMBER			= 0
-WT_FAIL_NUMBER			= 0		
+WT_FAIL_NUMBER			= 0
 
 WT_PASS_NUMBER_1		= 0
 WT_FAIL_NUMBER_1		= 0
