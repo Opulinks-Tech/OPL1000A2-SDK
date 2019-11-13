@@ -142,16 +142,12 @@ void __Patch_EntryPoint(void)
     at_cmd_switch_uart1_dbguart = Main_AtUartDbgUartSwitch;
     
     // modify the heap size, from 0x43C000 to 0x44F000
-    g_ucaMemPartAddr = (uint8_t*) 0x43F800;
-    g_ulMemPartTotalSize = 0xF800;
+    g_ucaMemPartAddr = (uint8_t*) 0x43D800;
+    g_ulMemPartTotalSize = 0x11800;
     
-    Sys_SetUnsuedSramEndBound(0x43F800);
+    Sys_SetUnsuedSramEndBound(0x43D800);
 
-/*    g_ucaMemPartAddr = (uint8_t*) 0x43F000;
-    g_ulMemPartTotalSize = 0x10000;
     
-    Sys_SetUnsuedSramEndBound(0x43F000);
-*/	    
     // application init
     Sys_AppInit = Main_AppInit_patch;
 #ifdef __BLEWIFI_TRANSPARENT__

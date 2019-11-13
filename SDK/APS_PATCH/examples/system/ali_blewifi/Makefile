@@ -56,6 +56,7 @@ CFLAGS += -no-pie
 CFLAGS += -fdata-sections
 CFLAGS += -ffunction-sections
 CFLAGS += -specs=nosys.specs
+CFLAGS += -specs=nano.specs
 CFLAGS += -Xlinker "--just-symbols=../../../../APS/targets/opl1000/object/symdefs_gcc.o"
 CFLAGS += -Wno-implicit-function-declaration
 CFLAGS += -Wno-int-conversion
