@@ -222,7 +222,7 @@ tcp_slowtmr_start:
     }
 #if OPL_LWIP
     /* Check if this PCB has stayed too long in FIN-WAIT-1 or FIN-WAIT-2 */
-    if (pcb->state == FIN_WAIT_1 || FIN_WAIT_2) {
+    if ((pcb->state == FIN_WAIT_1) || (pcb->state == FIN_WAIT_2)) {
 #else
     /* Check if this PCB has stayed too long in FIN-WAIT-2 */
     if (pcb->state == FIN_WAIT_2) {
@@ -272,7 +272,6 @@ tcp_slowtmr_start:
       tcp_segs_free(pcb->ooseq);
       pcb->ooseq = NULL;
       LWIP_DEBUGF(TCP_CWND_DEBUG, ("tcp_slowtmr: dropping OOSEQ queued data\n"));
-      printf("tcp_slowtmr: dropping OOSEQ queued data\n");
     }
 #endif /* TCP_QUEUE_OOSEQ */
 

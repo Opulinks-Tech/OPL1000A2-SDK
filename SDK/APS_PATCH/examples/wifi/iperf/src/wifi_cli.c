@@ -20,6 +20,7 @@
 #include "opulinks_log.h"
 #include "wifi_api.h"
 #include "sys_common_api.h"
+#include "common_cli.h"
 
 extern EventGroupHandle_t wifi_event_group;
 extern const int CONNECTED_BIT0;
@@ -99,6 +100,31 @@ int wifi_cmd_data_rate(int argc, char **argv)
     
     LOGI_DRCT(TAG, "current setting : %d", data_rate);
     LOGI_DRCT(TAG, "  0:DTO, 1:1M, 2:2M, 3:5.5M, 4:11M");
+    
+    return 0;
+}
+
+int wifi_cmd_hl_power(int argc, char **argv)
+{
+    int ret;
+    uint8_t hl_level;
+    LOGI_DRCT(TAG, "set wifi transmit power level");
+    
+    if (argc == 2) {
+        hl_level = atoi(argv[1]);
+        ret = sys_set_config_rf_power_level(hl_level);
+        if (ret < 0) {
+            LOGE_DRCT(TAG, "set transmit power failed");
+            return -1;
+        }
+    }
+    
+    sys_get_config_rf_power_level(&hl_level);
+    LOGI_DRCT(TAG, "current setting : %d", hl_level);
+    
+    if (argc == 2) {
+        common_cmd_reset(0, NULL);
+    }
     
     return 0;
 }

@@ -6,7 +6,11 @@
 4. Mega2560_no_relay.pdf ： Arduino 控制板电路图，直接使用PWM输出复位信号。
 5. opl1000_ota.bin ：用于示例下载的固件文件，实际使用时用客户自己的固件Bin文件，并修改ini文件里面的file参数。
 6. mp_mega2560.pde： Arduino Mega2560 固件，需要烧录到Mega2560板子中。
-7. readme.md： 本说明文档
+7. tupian.bin：资源文件，在本例中为图片文件，用于存放在Flash中。用户可以自定义资源文件，然后在ini配置文件中定义下载到Flash中的起始地址。
+8. ali_key.csv：存放产品Ali云五元组码文件。随着设备成功烧录使用过的Ali云五元组码会从文件中删除。
+9. ble_mac.csv: 存放BLE MAC地址的文件。随着设备成功烧录使用过的BLE MAC地址会从文件中删除。
+10. wifi_mac.csv: 存放WIFI MAC地址的文件。随着设备成功烧录使用过的WIFI MAC地址会从文件中删除。
+11. readme.md： 本说明文档
 
 # 修改配置文件mp_multi_download.ini参数
 1. 修改 file 参数 给出固件文件所在路径和文件名。
@@ -14,7 +18,8 @@
 3. 根据实际连接定义 Arduino 控制板控制串口和监控串口编号。
    注意控制串口波特率 control_baudrate 固定为115200bps, 监控串口波特率monitor_baudrate固定为9600bps。
 4. 给出夹具上板子的串口编号和对应的控制通道。如何定义参考“使用说明文档”。
-5. 定义BLE_MAC 和WIFI_MAC 两个Section MAC 起始和终止地址。
+5. 定义BLE_MAC 和WIFI_MAC 两个Section MAC 起始和终止地址。或者给出存放 BLE/WIFI MAC地址的文件。
+6. 如果要烧录Ali云五元组，则需要在ini文件中给出存放Ali云五元组码文件名。
 
 # 平台所使用设备购买链接：
 1． USB 转UART 转接器。推荐使用 USB 转4 UART 板子。当夹具放置10个设备时需要4个这样的转接板。

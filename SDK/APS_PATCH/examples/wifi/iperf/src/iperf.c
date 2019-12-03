@@ -18,14 +18,17 @@
 #include "opulinks_log.h"
 #include "ftoa_util.h"
 #include "strerror_util.h"
+#include "driver_netlink.h"
 
 static const char *TAG="iperf";
+
+extern int dbg_mode;
 
 osThreadId iperf_client_task_id = NULL;
 osThreadId iperf_server_task_id = NULL;
 osThreadId iperf_report_task_id = NULL;
 
-static uint8_t cfg_mode       = 0x00;
+static uint16_t cfg_mode       = 0x00;
 static iperf_cfg_t s_iperf_ctrl;
 static iperf_ctrl_t iperf_client_ctrl;
 static iperf_ctrl_t iperf_server_ctrl;
@@ -38,6 +41,7 @@ static iperf_ctrl_t iperf_server_ctrl;
 #define IS_UDP_CLIENT       ((cfg_mode & IPERF_FLAG_CLIENT) != 0 && (cfg_mode & IPERF_FLAG_UDP) != 0)
 #define IS_UDP_SERVER       ((cfg_mode & IPERF_FLAG_SERVER) != 0 && (cfg_mode & IPERF_FLAG_UDP) != 0)
 #define IS_AMOUNT           (s_iperf_ctrl.mAmount != 0)
+#define IS_ABORT            ((cfg_mode & IPERF_FLAG_ABORT) != 0)
 
 static int iperf_task_create(char *name, uint32_t size, uint32_t pri, os_pthread fn, osThreadId *thread);
 
@@ -60,12 +64,18 @@ void iperf_report_task(void* arg)
     char bw_string[16] = {0};
     char tran_string[16] = {0};
     char bidr_str[10] = {0};
+    int8_t rssi;
     
     delay_interval = (s_iperf_ctrl.interval * 1000);
     interval = s_iperf_ctrl.interval;
     time = s_iperf_ctrl.time;
     
-    printf("\n%12s      %s        %s\n", "Interval", "Transfer", "Bandwidth");
+    if (dbg_mode == 0) {
+        printf("\n%12s      %s        %s\n", "Interval", "Transfer", "Bandwidth");
+    }
+    else {
+        printf("\n%12s      %s        %s          %s\n", "Interval", "Transfer", "Bandwidth", "RSSI");
+    }
 
     if (IS_CLIENT) {
         p_ctrl = &iperf_client_ctrl;
@@ -77,25 +87,56 @@ void iperf_report_task(void* arg)
 
     while(1) {
         vTaskDelay(delay_interval);
-
+        
+        if (dbg_mode == 1) {
+            rssi = wpa_driver_netlink_get_rssi();
+        }
+        
         if (IS_DUAL_TEST) {
-            printf("%4d-%4d sec     %s MBytes    %s Mbits/sec    %s\n", cur, cur+interval,
-                    ftoa((double)((iperf_client_ctrl.total_len - iperf_client_ctrl.last_len))/1048576, tran_string, 3),
-                    ftoa((double)((iperf_client_ctrl.total_len - iperf_client_ctrl.last_len))/1000000/interval*8, bw_string, 3),
-                    "Sender");
+            if (dbg_mode == 0) {
+                printf("%4d-%4d sec     %s MBytes    %s Mbits/sec    %s\n", cur, cur+interval,
+                        ftoa((double)((iperf_client_ctrl.total_len - iperf_client_ctrl.last_len))/1048576, tran_string, 3),
+                        ftoa((double)((iperf_client_ctrl.total_len - iperf_client_ctrl.last_len))/1000000/interval*8, bw_string, 3),
+                        "Sender");
+            }
+            else {
+                printf("%4d-%4d sec     %s MBytes    %s Mbits/sec    %s    %d\n", cur, cur+interval,
+                        ftoa((double)((iperf_client_ctrl.total_len - iperf_client_ctrl.last_len))/1048576, tran_string, 3),
+                        ftoa((double)((iperf_client_ctrl.total_len - iperf_client_ctrl.last_len))/1000000/interval*8, bw_string, 3),
+                        "Sender",
+                        rssi);
+            }
             
             iperf_client_ctrl.last_len = iperf_client_ctrl.total_len;
 
-            printf("%4d-%4d sec     %s MBytes    %s Mbits/sec    %s\n", cur, cur+interval, 
-                    ftoa((double)((iperf_server_ctrl.total_len - iperf_server_ctrl.last_len))/1048576, tran_string, 3),
-                    ftoa((double)((iperf_server_ctrl.total_len - iperf_server_ctrl.last_len))/1000000/interval*8, bw_string, 3),
-                    "Receiver");
+            if (dbg_mode == 0) {
+                printf("%4d-%4d sec     %s MBytes    %s Mbits/sec    %s\n", cur, cur+interval, 
+                        ftoa((double)((iperf_server_ctrl.total_len - iperf_server_ctrl.last_len))/1048576, tran_string, 3),
+                        ftoa((double)((iperf_server_ctrl.total_len - iperf_server_ctrl.last_len))/1000000/interval*8, bw_string, 3),
+                        "Receiver"); 
+            }
+            else {
+                printf("%4d-%4d sec     %s MBytes    %s Mbits/sec    %s    %d\n", cur, cur+interval, 
+                        ftoa((double)((iperf_server_ctrl.total_len - iperf_server_ctrl.last_len))/1048576, tran_string, 3),
+                        ftoa((double)((iperf_server_ctrl.total_len - iperf_server_ctrl.last_len))/1000000/interval*8, bw_string, 3),
+                        "Receiver",
+                        rssi);            
+            }
+
             iperf_server_ctrl.last_len = iperf_server_ctrl.total_len;
 
         } else {
-            printf("%4d-%4d sec     %s MBytes    %s Mbits/sec\n", cur, cur+interval,
-                    ftoa((double)((p_ctrl->total_len - p_ctrl->last_len))/1048576, tran_string, 3),
-                    ftoa((double)((p_ctrl->total_len - p_ctrl->last_len))/1000000/interval*8, bw_string, 3));
+            if (dbg_mode == 0) {
+                printf("%4d-%4d sec     %s MBytes    %s Mbits/sec\n", cur, cur+interval,
+                        ftoa((double)((p_ctrl->total_len - p_ctrl->last_len))/1048576, tran_string, 3),
+                        ftoa((double)((p_ctrl->total_len - p_ctrl->last_len))/1000000/interval*8, bw_string, 3)); 
+            }
+            else {
+                printf("%4d-%4d sec     %s MBytes    %s Mbits/sec    %d\n", cur, cur+interval,
+                        ftoa((double)((p_ctrl->total_len - p_ctrl->last_len))/1048576, tran_string, 3),
+                        ftoa((double)((p_ctrl->total_len - p_ctrl->last_len))/1000000/interval*8, bw_string, 3), rssi); 
+            }
+
            p_ctrl->last_len = p_ctrl->total_len;
         }
         
@@ -123,7 +164,7 @@ void iperf_report_task(void* arg)
         }
         
         //Abort
-        if (iperf_client_ctrl.finish && iperf_server_ctrl.finish) {
+        if (IS_ABORT) {
             break; 
         }
     }
@@ -143,7 +184,7 @@ void iperf_report_task(void* arg)
                 ftoa((double)(p_ctrl->total_len)/1048576, tran_string, 3),
                 ftoa((double)(p_ctrl->total_len)/1000000/cur*8, bw_string, 3));
     }
-
+    
     LOGI(TAG, "iperf report exit");
     iperf_report_task_id = NULL;
     vTaskDelete(NULL);
@@ -165,7 +206,7 @@ static int iperf_report_task_create(void)
     }
     else
     {
-        LOGI_DRCT(TAG, IPERF_REPORT_TASK_NAME"Task create successful");
+        LOGI(TAG, IPERF_REPORT_TASK_NAME"Task create successful");
     }
     
     return 0;
@@ -294,7 +335,9 @@ void iperf_run_udp_server(void *arg)
     int opt;
     int is_dual = false;
     int report_created = false;
-
+    int ret;
+    fd_set read_fd;
+    
     malloc_service_buffer(&iperf_server_ctrl, IPERF_UDP_RX_LEN);
     
     sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -321,11 +364,37 @@ void iperf_run_udp_server(void *arg)
     want_recv = iperf_server_ctrl.buffer_len;
     LOGI(TAG, "want recv=%d", want_recv);
     
+    if (dbg_mode == 1 && !report_created) {
+        iperf_start_report();
+        report_created = true;
+    }
+    
+    while (1) {
+        FD_ZERO(&read_fd);
+        FD_SET(sockfd, &read_fd);
+        t.tv_sec = 0;
+        t.tv_usec = 500000;
+        
+        ret = select(sockfd + 1, &read_fd, NULL, NULL, &t);
+        if (ret < 0) {
+            goto done;
+        }
+        
+        if (iperf_server_ctrl.finish) { //abort
+            goto done;
+        }
+        
+        if (FD_ISSET(sockfd, &read_fd)) { 
+            break;
+        }
+    }
+    
     while (!iperf_server_ctrl.finish) {
         actual_recv = recvfrom(sockfd, buffer, want_recv, 0, (struct sockaddr *)&addr, &addr_len);
  
         if (actual_recv < 0) {
             iperf_show_socket_error_reason("udp server recv", sockfd);
+            goto done;
         } else {
             if (!report_created) {
                 if (!IS_CLIENT_DUAL_TEST)
@@ -352,6 +421,7 @@ void iperf_run_udp_server(void *arg)
     }
 
 done:
+    FD_CLR(sockfd, &read_fd);
     close(sockfd);
     iperf_server_ctrl.finish = true;
     
@@ -470,6 +540,8 @@ void iperf_run_tcp_server(void *arg)
     int sockfd;
     int opt;
     int is_dual = false;
+    int ret;
+    fd_set read_fd;
     
     malloc_service_buffer(&iperf_server_ctrl, IPERF_TCP_RX_LEN);
 
@@ -488,10 +560,30 @@ void iperf_run_tcp_server(void *arg)
         iperf_show_socket_error_reason("tcp server bind", listen_socket);
         goto done;
     }
-
+    
     if (listen(listen_socket, 5) < 0) {
         iperf_show_socket_error_reason("tcp server listen", listen_socket);
         goto done;
+    }
+            
+    while (1) {
+        FD_ZERO(&read_fd);
+        FD_SET(listen_socket, &read_fd);
+        t.tv_sec = 0;
+        t.tv_usec = 500000;
+        
+        ret = select(listen_socket + 1, &read_fd, NULL, NULL, &t);
+        if (ret < 0) {
+            goto done;
+        }
+        
+        if (iperf_server_ctrl.finish) { //abort
+            goto done;
+        }
+
+        if (FD_ISSET(listen_socket, &read_fd)) { 
+            break;
+        }
     }
 
     buffer = iperf_server_ctrl.buffer;
@@ -535,6 +627,7 @@ void iperf_run_tcp_server(void *arg)
     }
 
 done:
+    FD_CLR(listen_socket, &read_fd);
     close(sockfd);
     close(listen_socket);
     iperf_server_ctrl.finish = true;
@@ -745,21 +838,7 @@ int iperf_stop(void)
     iperf_client_ctrl.finish = true;
     iperf_server_ctrl.finish = true;
 
-    if (iperf_client_ctrl.buffer) {
-        free(iperf_client_ctrl.buffer);
-        iperf_client_ctrl.buffer = 0;
-    }
-
-    if (iperf_server_ctrl.buffer) {
-        free(iperf_server_ctrl.buffer);
-        iperf_server_ctrl.buffer = 0;
-    }
-
-    if (iperf_server_task_id != NULL) {
-        vTaskDelete(iperf_server_task_id);
-        iperf_server_task_id = NULL;
-        LOGI_DRCT(TAG, "iperf server exit");
-    }
+    cfg_mode |= IPERF_FLAG_ABORT;
     
     printf("\n");
     LOGI_DRCT(TAG, "Aborted iperf");

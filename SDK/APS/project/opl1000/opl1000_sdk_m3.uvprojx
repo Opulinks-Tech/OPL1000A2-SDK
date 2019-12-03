@@ -557,6 +557,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\APS_PATCH\middleware\netlink\mw_fim\mw_fim_patch.c</FilePath>
             </File>
+            <File>
+              <FileName>mw_fim_default_group01_patch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\APS_PATCH\middleware\netlink\mw_fim\mw_fim_default_group01_patch.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

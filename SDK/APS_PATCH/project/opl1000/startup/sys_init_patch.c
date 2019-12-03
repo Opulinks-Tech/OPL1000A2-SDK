@@ -49,6 +49,7 @@
 #include "ble_host_patch_init.h"
 #include "ps_patch.h"
 #include "mw_fim_patch.h"
+#include "mw_fim_default_group01_patch.h"
 #include "sys_cfg_patch.h"
 
 
@@ -497,6 +498,7 @@ void SysInit_EntryPoint(void)
     
     // 19. FIM
     MwFim_PreInit_patch();
+    MwFim_Group01_patch();
 
     // 20. AUXADC
 

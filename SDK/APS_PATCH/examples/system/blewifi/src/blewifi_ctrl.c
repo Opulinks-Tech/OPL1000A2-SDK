@@ -427,12 +427,12 @@ static void BleWifi_Ctrl_TaskEvtHandler_WifiDisconnectionInd(uint32_t evt_type, 
 static void BleWifi_Ctrl_TaskEvtHandler_WifiGotIpInd(uint32_t evt_type, void *data, int len)
 {
     BLEWIFI_INFO("BLEWIFI: MSG BLEWIFI_CTRL_MSG_WIFI_GOT_IP_IND \r\n");
+    BleWifi_Wifi_SendStatusInfo(BLEWIFI_IND_IP_STATUS_NOTIFY);
 #if (SNTP_FUNCTION_EN == 1)		    
     BleWifi_SntpInit();
 #endif
     BleWifi_Wifi_UpdateBeaconInfo();
     BleWifi_Wifi_SetDTIM(BleWifi_Ctrl_DtimTimeGet());
-    BleWifi_Wifi_SendStatusInfo(BLEWIFI_IND_IP_STATUS_NOTIFY);
 
     BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_GOT_IP, true);
 }

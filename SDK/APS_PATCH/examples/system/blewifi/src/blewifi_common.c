@@ -14,6 +14,7 @@
 #include "blewifi_common.h"
 #include "sys_common_api.h"
 #include "sys_cfg_patch.h"
+#include "lwip/errno.h"
 
 #if (SNTP_FUNCTION_EN == 1)
 #include "cmsis_os.h"
@@ -147,10 +148,30 @@ int BleWifi_SntpInit(void)
         }
         else
         {
-           if (read(sockfd, (char*) &sntp_h, sizeof(sntp_h)) < 0)
-           {
-               printf("[SNTP] recvfrom failed.\n");
-               goto CloseSocket;
+			//int nRet = read(sockfd, (char*) &sntp_h, sizeof(sntp_h));
+            int nRet;
+            int error;
+            socklen_t errlen = sizeof(error);
+
+            if (-1 == getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &error, &errlen))
+            {
+                printf("getsockopt error return -1.");
+            }
+
+            if ((nRet = read(sockfd, (char*) &sntp_h, sizeof(sntp_h)) ) < 0)
+            {           
+                printf("[SNTP] recvfrom failed ret is %d .\n",nRet);
+                printf(" [SNTP] getsockopt return errinfo = %d", error);
+                
+                if (errno == EWOULDBLOCK)
+                {
+                    printf("sntp read timeout \n");
+                }
+                else
+				{
+                    printf("sntp recv error\n");
+                }
+				goto CloseSocket;
            }
            else
            {
@@ -160,6 +181,8 @@ int BleWifi_SntpInit(void)
                pSntpTime = localtime(&rawtime);
                printf("Current time: %d-%d-%d %d:%d:%d\n", pSntpTime->tm_year + 1900, pSntpTime->tm_mon + 1, pSntpTime->tm_mday, pSntpTime->tm_hour, pSntpTime->tm_min, pSntpTime->tm_sec);
                lRet = true;
+                if (sockfd >= 0)
+                    close(sockfd);
                break;
            }
         }

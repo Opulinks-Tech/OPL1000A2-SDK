@@ -32,6 +32,8 @@ extern uint8_t g_ubAppCtrlRequestRetryTimes;
 wifi_config_t wifi_config_req_connect;
 uint32_t g_ulBleWifi_Wifi_BeaconTime;
 
+extern uint8_t g_wifi_disconnectedDoneForAppDoWIFIScan;
+
 static int BleWifi_Wifi_EventHandler_Start(wifi_event_id_t event_id, void *data, uint16_t length);
 static int BleWifi_Wifi_EventHandler_Connected(wifi_event_id_t event_id, void *data, uint16_t length);
 static int BleWifi_Wifi_EventHandler_Disconnected(wifi_event_id_t event_id, void *data, uint16_t length);
@@ -626,6 +628,7 @@ static int BleWifi_Wifi_EventHandler_Disconnected(wifi_event_id_t event_id, void
     uint8_t reason = *((uint8_t*)data);
     
     printf("\r\nWi-Fi Disconnected , reason %d\r\n", reason);
+    g_wifi_disconnectedDoneForAppDoWIFIScan = 1;
     BleWifi_Ctrl_MsgSend(BLEWIFI_CTRL_MSG_WIFI_DISCONNECTION_IND, NULL, 0);
 
     return 0;

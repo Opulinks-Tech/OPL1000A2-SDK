@@ -18,5 +18,6 @@ int wifi_cmd_query(int argc, char **argv);
 int wifi_cmd_disconnect(int argc, char **argv);
 int wifi_cmd_data_rate(int argc, char **argv);
 int wifi_cmd_sta_mac_addr(int argc, char **argv);
+int wifi_cmd_hl_power(int argc, char **argv);
 
 #endif /* _WIFI_CLI_H_ */

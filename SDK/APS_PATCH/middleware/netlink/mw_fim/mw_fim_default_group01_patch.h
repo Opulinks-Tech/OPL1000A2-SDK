@@ -56,7 +56,7 @@ extern "C" {
  *                          Public Functions
  *************************************************************************
  */
-
+void MwFim_Group01_patch( void );
 
 #ifdef __cplusplus
 }

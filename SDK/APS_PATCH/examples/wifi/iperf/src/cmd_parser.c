@@ -20,6 +20,8 @@
 
 static const char *TAG="cmd_pser";
 
+int dbg_mode = 0;
+
 static int commands_help(int argc, char** argv)
 {
     LOGI_DRCT(TAG, "Wifi Part:");
@@ -29,6 +31,9 @@ static int commands_help(int argc, char** argv)
     LOGI_DRCT(TAG, "  query                           Query Wifi States");
     LOGI_DRCT(TAG, "  wifi_data_rate [TYPE]           Set Tx Data rate.");
     LOGI_DRCT(TAG, "        [TYPE]                    - 0:DTO, 1:1M, 2:2M, 3:5.5M, 4:11M");
+    LOGI_DRCT(TAG, "  wifi_tx_power  [INT]            Set transmit power");
+    LOGI_DRCT(TAG, "        [INT]                     - 0:Tx low power, 240:Tx high power");
+    LOGI_DRCT(TAG, "                                  After set, device will reboot.");
     LOGI_DRCT(TAG, "  sta_mac                         Get current setting of STA mac address.");
     LOGI_DRCT(TAG, "  sta_mac set [MAC_ADDR]          Set STA mac address. Format likes XX:XX:XX:XX:XX:XX.");
     LOGI_DRCT(TAG, "                                  Please reboot after modified to effective.");
@@ -69,8 +74,10 @@ static int cmd_buf_to_arg(int *argc, char **argv, char *pbuf)
 int cmd_parser_func(char *pbuf, int len)
 {
     char *argv[10] = {0};
+    char *tmp[32] = {0};
     int argc = 0;
     
+    memcpy(&tmp[0], pbuf, len);
     cmd_buf_to_arg(&argc, &argv[0], pbuf);
     
     tracer_drct_printf("\n");
@@ -102,6 +109,10 @@ int cmd_parser_func(char *pbuf, int len)
         wifi_cmd_data_rate(argc, argv);
         return CMD_FINISHED;
     }
+    else if (!strcmp(argv[0], "wifi_tx_power")) {
+        wifi_cmd_hl_power(argc, argv);
+        return CMD_FINISHED;
+    }
     else if (!strcmp(argv[0], "ping")) {
         common_cmd_ping(argc, argv);
         return CMD_FINISHED;
@@ -117,6 +128,16 @@ int cmd_parser_func(char *pbuf, int len)
     else if (!strcmp(argv[0], "version")) {
         common_cmd_version(argc, argv);
         return CMD_FINISHED;
+    }
+    else if(!strcmp(argv[0], "dbg")) {
+        LOGI_DRCT(TAG, "Enter debug mode");
+        dbg_mode = 1;
+        return CMD_FINISHED;
+    }
+    else {
+        if (dbg_mode == 1) {
+            memcpy(pbuf, &tmp[0], len);
+        }
     }
     
     return CMD_CONTINUE;

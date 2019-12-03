@@ -1,4 +1,48 @@
 ## Release Version:
+SDK Package: MP_2.15
+Patch_Lib : 4132
+ROM_CODE: 1655 
+
+## Release Date: 2019/11/29
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 OPL1000-AT-instruction-set-and-examples,R05-v0.41,Change default AT+RFHP to 176.
+   1.2 OPL1000-WIFI聯通性測試報告,new document about  WIFI IOP result that done in TestIn.
+2. Tool version information and update:
+   2.1 download tool: v0.27, No update.
+   2.2 pin-mux tool: v0.8,No update.
+   2.3 MP RF test tool:  v3.2,No update.
+   2.4 MP multi-dev download tool: update to v2.11.
+3. Demo update:
+   3.1 opulinks_iot_app.apk, Android app update to v1.6.0.
+4. Examples update:
+   4.1 mqtt: default RF value is changed to 0x20.
+   4.2 awsIOT_blewifi: default RF value is changed to 0x20.
+   4.3 ali_blewifi: Add MAC address source setting and read function. Change BLE adv interval time as 30 minutes.
+   4.4 blewifi: Add MAC address source setting and read function.
+5. Add static power voltage checking in main loop at M0.
+6. Add new feature for calibrate the parameters relative to temperature(TCA).
+7. Setting changed for AOS_024: Control for PMU_SF (used in SEQ) output.
+8. Add DCOC in warm-boot stage.
+9. Add optional of "Boosting 2db/3db on Wi-Fi HPA".
+10. optimize tcp pcb allocation algorithm.
+11. Skip DTIM enhancement - Set skip DTIM to 0 when last Beacon lost
+
+
+
+## Bug Fix List 
+1. fix "deep sleep wakeup failed by IO".
+2. fix "aotomatic voltage checking on ext ldo board".
+3. fix "using Iphone XS(IOS 13) as wifi hotspot failed to connect network".
+4. fix "iperf performance degraded after temperature calibaration(TCA) triggered".
+
+## Notes List 
+
+
+*****
+
+## Release Version:
 SDK Package: MP_2.13
 Patch_Lib : 4073
 

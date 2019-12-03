@@ -12,6 +12,8 @@
 #ifndef _IPER_H_
 #define _IPER_H_
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,9 +23,7 @@ extern "C" {
 #define IPERF_FLAG_DUAL   (1<<2)
 #define IPERF_FLAG_TCP    (1<<3)
 #define IPERF_FLAG_UDP    (1<<4)
-
-#define IPERF_REPORT_CLIENT (1)
-#define IPERF_REPORT_SERVER (1<<1)
+#define IPERF_FLAG_ABORT  (1<<15)
 
 #define IPERF_CLIENT_TASK_NAME       "iperf_traf_client"
 #define IPERF_CLIENT_TASK_PRIORITY   0
@@ -64,7 +64,7 @@ typedef struct {
     uint32_t last_len;
     uint32_t buffer_len;
     uint8_t  *buffer;
-    uint32_t sockfd;
+    int      sockfd;
 } iperf_ctrl_t;
 
 typedef struct {

@@ -16,7 +16,7 @@
 /*
 FIM version
 */
-#define MW_FIM_VER11_PROJECT            0x03    // 0x00 ~ 0xFF
+#define MW_FIM_VER11_PROJECT            0x06    // 0x00 ~ 0xFF
 
 /*
 Smart sleep
@@ -31,10 +31,19 @@ RF Power
 :-----------------+----------------+----------------:
 | WIFI Low power  |  0x00          | 0x0F           |
 :-----------------+----------------+----------------:
-| WIFI High power |  0xF0          | 0xFF           |
+| WIFI Low power  |  0x20          |                |
+|   + 2 DB        |                |                |
+:-----------------+----------------+----------------:
+| WIFI High power |  0xB0          | 0xFF           |
+:-----------------+----------------+----------------:
+| WIFI High power |  0xD0          | 				|
+|		+2 db     |				   |				|
+:-----------------+----------------+----------------:
+| WIFI High power |  0xE0          |                |
+|   +3 DB         |                |				|
 '-----------------'----------------'----------------'
 */
-#define BLEWIFI_COM_RF_POWER_SETTINGS   (0xF0)
+#define BLEWIFI_COM_RF_POWER_SETTINGS   (0x20)
 
 /*
 SNTP
@@ -96,17 +105,18 @@ method 2: full name
 #define BLEWIFI_BLE_DEVICE_NAME_PREFIX      "OPL_"      // for method 1 "OPL_33:44:55:66"
 #define BLEWIFI_BLE_DEVICE_NAME_FULL        "OPL1000"   // for method 2
 
-/* Advertisement Interval Calculation Method:
+/* Advertisement Interval in wake mode:
 1000 (ms) / 0.625 (ms) = 1600 = 0x640
+ 0xFFFF is deifined 30 min in dirver part
 */
-#define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_MIN  0x640  // For 1 Second
-#define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_MAX  0x640  // For 1 Second
+#define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_MIN  0x640  // For 1 sec
+#define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_MAX  0x640  // For 1 sec
 
 /* For power saving
-10000 (ms) / 0.625 (ms) = 16000 = 0x3E80
+0xFFFF is deifined 30 min in dirver part
 */
-#define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_PS_MIN   0x3E80  // 10 sec
-#define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_PS_MAX   0x3E80  // 10 sec
+#define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_PS_MIN   0xFFFF  // 30 min
+#define BLEWIFI_BLE_ADVERTISEMENT_INTERVAL_PS_MAX   0xFFFF  // 30 min
 
 
 // Wifi part

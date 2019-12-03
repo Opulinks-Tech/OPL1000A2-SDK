@@ -33,6 +33,9 @@
 #include "mw_fim_default_group03.h"
 #include "mw_fim_default_group03_patch.h"
 #include "at_cmd_common.h"
+#include "sys_common_types.h"
+#include "sys_common_api.h"
+
 
 #define HI_UINT16(a) (((a) >> 8) & 0xFF)
 #define LO_UINT16(a) ((a) & 0xFF)
@@ -79,6 +82,8 @@ static void BleWifi_Ble_ProtocolHandler_EngWifiMacRead(uint16_t type, uint8_t *d
 static void BleWifi_Ble_ProtocolHandler_EngBleMacWrite(uint16_t type, uint8_t *data, int len);
 static void BleWifi_Ble_ProtocolHandler_EngBleMacRead(uint16_t type, uint8_t *data, int len);
 static void BleWifi_Ble_ProtocolHandler_EngBleCmd(uint16_t type, uint8_t *data, int len);
+static void BleWifi_Ble_ProtocolHandler_EngMacSrcWrite(uint16_t type, uint8_t *data, int len);
+static void BleWifi_Ble_ProtocolHandler_EngMacSrcRead(uint16_t type, uint8_t *data, int len);
 static T_BleWifi_Ble_ProtocolHandlerTbl g_tBleProtocolHandlerTbl[] =
 {
     {BLEWIFI_REQ_SCAN,                      BleWifi_Ble_ProtocolHandler_Scan},
@@ -115,6 +120,8 @@ static T_BleWifi_Ble_ProtocolHandlerTbl g_tBleProtocolHandlerTbl[] =
     {BLEWIFI_REQ_ENG_BLE_MAC_WRITE,         BleWifi_Ble_ProtocolHandler_EngBleMacWrite},
     {BLEWIFI_REQ_ENG_BLE_MAC_READ,          BleWifi_Ble_ProtocolHandler_EngBleMacRead},
     {BLEWIFI_REQ_ENG_BLE_CMD,               BleWifi_Ble_ProtocolHandler_EngBleCmd},
+    {BLEWIFI_REQ_ENG_MAC_SRC_WRITE,         BleWifi_Ble_ProtocolHandler_EngMacSrcWrite},
+    {BLEWIFI_REQ_ENG_MAC_SRC_READ,          BleWifi_Ble_ProtocolHandler_EngMacSrcRead},
     
     {0xFFFFFFFF,                            NULL}
 };
@@ -508,6 +515,74 @@ static void BleWifi_Eng_BleCmd(uint8_t *data, int len)
     BleWifi_Ble_SendResponse(BLEWIFI_RSP_ENG_BLE_CMD, 0);
 }
 
+static void BleWifi_Eng_MacSrcWrite(uint8_t *data, int len)
+{
+    uint8_t sta_type, ble_type;
+    int ret=0;
+    u8 ret_st = true;
+    
+    sta_type = data[0];
+    ble_type = data[1];
+
+    BLEWIFI_INFO("Enter BleWifi_Eng_MacSrcWrite: WiFi MAC Src=%d, BLE MAC Src=%d\n", sta_type, ble_type);
+    
+    ret = mac_addr_set_config_source(MAC_IFACE_WIFI_STA, (mac_source_type_t)sta_type);
+    if (ret != 0) {
+        ret_st = false;
+        goto done;
+    }
+    
+    ret = mac_addr_set_config_source(MAC_IFACE_BLE, (mac_source_type_t)ble_type);
+    if (ret != 0) {
+        ret_st = false;
+        goto done;
+    }
+    
+    
+done:
+    if (ret_st)
+        BleWifi_Ble_SendResponse(BLEWIFI_RSP_ENG_MAC_SRC_WRITE, 0);
+    else 
+        BleWifi_Ble_SendResponse(BLEWIFI_RSP_ENG_MAC_SRC_WRITE, 1);
+    
+}
+
+static void BleWifi_Eng_MacSrcRead(uint8_t *data, int len)
+{
+    
+    uint8_t sta_type, ble_type;
+    
+    uint8_t MacSrc[2]={0};
+    int ret=0;
+    u8 ret_st = true;
+    
+    ret = mac_addr_get_config_source(MAC_IFACE_WIFI_STA, (mac_source_type_t *)&sta_type);
+    if (ret != 0) {
+        ret_st = false;
+        goto done;
+    }
+    
+    ret = mac_addr_get_config_source(MAC_IFACE_BLE, (mac_source_type_t *)&ble_type);
+    if (ret != 0) {
+        ret_st = false;
+        goto done;
+    }
+    
+    MacSrc[0] = sta_type;
+    MacSrc[1] = ble_type;
+    
+    BLEWIFI_INFO("WiFi MAC Src=%d, BLE MAC Src=%d\n", MacSrc[0], MacSrc[1]);
+
+done:
+    if (ret_st)
+        BleWifi_Ble_DataSendEncap(BLEWIFI_RSP_ENG_MAC_SRC_READ, MacSrc, 2);
+    else{
+        BleWifi_Ble_SendResponse(BLEWIFI_RSP_ENG_MAC_SRC_READ, 1);
+    }        
+    
+    
+}
+
 static void BleWifi_Ble_ProtocolHandler_Scan(uint16_t type, uint8_t *data, int len)
 {
     BLEWIFI_INFO("BLEWIFI: Recv BLEWIFI_REQ_SCAN \r\n");
@@ -665,6 +740,18 @@ static void BleWifi_Ble_ProtocolHandler_EngBleCmd(uint16_t type, uint8_t *data, 
 {
     BLEWIFI_INFO("BLEWIFI: Recv BLEWIFI_REQ_ENG_BLE_CMD \r\n");
     BleWifi_Eng_BleCmd(data, len);
+}
+
+static void BleWifi_Ble_ProtocolHandler_EngMacSrcWrite(uint16_t type, uint8_t *data, int len)
+{
+    BLEWIFI_INFO("BLEWIFI: Recv BLEWIFI_REQ_ENG_MAC_SRC_WRITE \r\n");
+    BleWifi_Eng_MacSrcWrite(data, len);
+}
+
+static void BleWifi_Ble_ProtocolHandler_EngMacSrcRead(uint16_t type, uint8_t *data, int len)
+{
+    BLEWIFI_INFO("BLEWIFI: Recv BLEWIFI_REQ_ENG_MAC_SRC_READ \r\n");
+    BleWifi_Eng_MacSrcRead(data, len);
 }
 
 // it is used in the ctrl task
