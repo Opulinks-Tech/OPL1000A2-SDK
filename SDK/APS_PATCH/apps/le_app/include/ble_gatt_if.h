@@ -179,6 +179,8 @@ extern const UINT16 gcReportRefUuid;
 #define CHAR_SERVER_CONFIG_DESCRIPTOR(permit, pVal)					{0, LE_GATT_UUID16,  (UINT16 *)&gcServerCharConfigUuid, LE_GATT_PERMIT_READ | permit,  0,   2, (UINT8 *)(pVal)}
 #define CHAR_PRESENT_FORMAT_DESCRIPTOR(pVal)						{0, LE_GATT_UUID16,  (UINT16 *)&gcCharFormatUuid,       LE_GATT_PERMIT_READ,   0,   7, (UINT8 *)(pVal)}
 #define CHAR_AGGREGATE_DESCRIPTOR(len, pVal)						{0, LE_GATT_UUID16,  (UINT16 *)&gcCharAggregateUuid,    LE_GATT_PERMIT_READ,   0, len, (UINT8 *)(pVal)}
+#define CHAR_EXT_RPT_REF_DESCRIPTOR(len, pVal)						{0, LE_GATT_UUID16,  (UINT16 *)&gcExtReportRefUuid,     LE_GATT_PERMIT_READ,   0, len, (UINT8 *)(pVal)}
+#define CHAR_RPT_REF_DESCRIPTOR(pVal)								{0, LE_GATT_UUID16,  (UINT16 *)&gcReportRefUuid,     	LE_GATT_PERMIT_READ,   0, 2,   (UINT8 *)(pVal)}
 
 #define INCLUDE_DECL_UUID16_ATTR_VAL(uuid)							{0, 0, 0, 0, UINT16_LO(uuid), UINT16_HI(uuid)}
 #define INCLUDE_DECL_UUID128_ATTR_VAL()								{0, 0, 0, 0}

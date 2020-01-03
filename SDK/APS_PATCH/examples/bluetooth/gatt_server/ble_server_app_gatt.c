@@ -15,7 +15,7 @@
 #include "ble_uuid.h"
 
 
-#define BLE_DEVICE_NAME					"NL1000 SERVER APP"
+#define BLE_DEVICE_NAME                    "NL1000 SERVER APP"
 
 
 // This is used for GATT service
@@ -74,16 +74,16 @@ static LE_GATT_SERVICE_T *gGapSvc = 0;
 
 static void BleAppHandleGattServiceRead(LE_GATT_MSG_ACCESS_READ_IND_T *ind)
 {
-	UINT8 attErr = 0;
-	UINT16 attrid = ind->handle - gGattSvc->startHdl;
+    UINT8 attErr = 0;
+    UINT16 attrid = ind->handle - gGattSvc->startHdl;
     BLE_APP_PRINT("BleAppHandleGattServiceRead attId = %d offset = %d\r\n", attrid, ind->offset);
-	switch (attrid)
+    switch (attrid)
     {
-		case GATT_IDX_SERVICE_CHANGE_CFG:
-		break;
+        case GATT_IDX_SERVICE_CHANGE_CFG:
+        break;
 
-		default:
-			attErr = LE_ATT_ERR_READ_NOT_PERMITTED;
+        default:
+            attErr = LE_ATT_ERR_READ_NOT_PERMITTED;
         break;
     }
 
@@ -92,206 +92,206 @@ static void BleAppHandleGattServiceRead(LE_GATT_MSG_ACCESS_READ_IND_T *ind)
 
 static void BleAppHandleGattServiceWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T *ind)
 {
-	UINT8 attErr = 0;
-	UINT16 attrid = ind->handle - gGattSvc->startHdl;
+    UINT8 attErr = 0;
+    UINT16 attrid = ind->handle - gGattSvc->startHdl;
     BLE_APP_PRINT("BleAppHandleGattServiceWrite attId = %d op = %x offset = %d\r\n", attrid, ind->flag, ind->offset);
-	switch (attrid)
+    switch (attrid)
     {
-		case GATT_IDX_SERVICE_CHANGE_CFG:
-		{
-			UINT16 val = *((UINT16 *)ind->pVal);
+        case GATT_IDX_SERVICE_CHANGE_CFG:
+        {
+            UINT16 val = *((UINT16 *)ind->pVal);
             
-			BLE_APP_PRINT("GATT_IDX_SERVICE_CHANGE_CFG Len = %d  attr-val = %d\r\n", val);
+            BLE_APP_PRINT("GATT_IDX_SERVICE_CHANGE_CFG Len = %d  attr-val = %d\r\n", val);
 
             LeGattChangeAttrVal(gGattSvc, attrid, 2, &val);
         }
-		break;
+        break;
 
-		default:
+        default:
             attErr = LE_ATT_ERR_WRITE_NOT_PERMITTED;
         break;
     }
     
-	LeGattAccessWriteRsp(ind->conn_hdl, ind->flag, ind->handle, attErr);
+    LeGattAccessWriteRsp(ind->conn_hdl, ind->flag, ind->handle, attErr);
 }
 
 static void BleAppHandleGapServiceRead(LE_GATT_MSG_ACCESS_READ_IND_T *ind)
 {
-	UINT8 attErr = 0;
-	UINT16 attrid = ind->handle - gGapSvc->startHdl;
+    UINT8 attErr = 0;
+    UINT16 attrid = ind->handle - gGapSvc->startHdl;
         
-	switch (attrid)
+    switch (attrid)
     {
-		case GAP_IDX_DEVICE_NAME_VAL:
+        case GAP_IDX_DEVICE_NAME_VAL:
         {
-			BLE_APP_PRINT("GAP_IDX_DEVICE_NAME_VAL offset = %d\r\n", ind->offset);
+            BLE_APP_PRINT("GAP_IDX_DEVICE_NAME_VAL offset = %d\r\n", ind->offset);
         }
-		break;
+        break;
         
-		default:
+        default:
             attErr = LE_ATT_ERR_READ_NOT_PERMITTED;
         break;
     }
     
-	LeGattAccessReadRsp(ind->conn_hdl, ind->handle, attErr);
+    LeGattAccessReadRsp(ind->conn_hdl, ind->handle, attErr);
 }
 
 static void BleAppHandleGapServiceWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T *ind)
 {
-	UINT8 attErr = 0;
-	UINT16 attrid = ind->handle - gGapSvc->startHdl;
+    UINT8 attErr = 0;
+    UINT16 attrid = ind->handle - gGapSvc->startHdl;
     BLE_APP_PRINT("BleAppHandleGapServiceWrite attId = %d op = %x offset = %d\r\n", attrid, ind->flag, ind->offset);
-	switch (attrid)
+    switch (attrid)
     {
-		case GAP_IDX_DEVICE_NAME_VAL:
-		{
-			if (ind->offset > 31)
-			{
-				attErr = LE_ATT_ERR_INVALID_OFFSET;
+        case GAP_IDX_DEVICE_NAME_VAL:
+        {
+            if (ind->offset > 31)
+            {
+                attErr = LE_ATT_ERR_INVALID_OFFSET;
             }
             else if ((ind->offset + ind->len) > 31)
-			{
-				attErr = LE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
+            {
+                attErr = LE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
             }
-			else
-			{
-				// It could change or modify the attribute value, because the length of device name is variable length. (max length is not equal zero.)
-				LeGattChangeAttrVal(gGattSvc, attrid, ind->len, ind->pVal);
+            else
+            {
+                // It could change or modify the attribute value, because the length of device name is variable length. (max length is not equal zero.)
+                LeGattChangeAttrVal(gGattSvc, attrid, ind->len, ind->pVal);
             }
         }
         break;
 
-		default:
+        default:
             attErr = LE_ATT_ERR_WRITE_NOT_PERMITTED;
         break;
     }
 
-	LeGattAccessWriteRsp(ind->conn_hdl, ind->flag, ind->handle, attErr);
+    LeGattAccessWriteRsp(ind->conn_hdl, ind->flag, ind->handle, attErr);
 }
 
 static void BleGattHandleAccessRead(LE_GATT_MSG_ACCESS_READ_IND_T *ind)
 {
-	if ((ind->handle >= gGattSvc->startHdl) && (ind->handle <= gGattSvc->endHdl))
-	{
-		BleAppHandleGattServiceRead(ind);
+    if ((ind->handle >= gGattSvc->startHdl) && (ind->handle <= gGattSvc->endHdl))
+    {
+        BleAppHandleGattServiceRead(ind);
     }
-	else if ((ind->handle >= gGapSvc->startHdl) && (ind->handle <= gGapSvc->endHdl))
-	{
-		BleAppHandleGapServiceRead(ind);
+    else if ((ind->handle >= gGapSvc->startHdl) && (ind->handle <= gGapSvc->endHdl))
+    {
+        BleAppHandleGapServiceRead(ind);
     }
-	else
-	{
-		LeGattAccessReadRsp(ind->conn_hdl, ind->handle, LE_ATT_ERR_READ_NOT_PERMITTED);
+    else
+    {
+        LeGattAccessReadRsp(ind->conn_hdl, ind->handle, LE_ATT_ERR_READ_NOT_PERMITTED);
     }
 }
 
 static void BleGattHandleAccessWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T *ind)
 {
-	if ((ind->handle >= gGattSvc->startHdl) && (ind->handle <= gGattSvc->endHdl))
-	{
-		BleAppHandleGattServiceWrite(ind);
+    if ((ind->handle >= gGattSvc->startHdl) && (ind->handle <= gGattSvc->endHdl))
+    {
+        BleAppHandleGattServiceWrite(ind);
     }
-	else if ((ind->handle >= gGapSvc->startHdl) && (ind->handle <= gGapSvc->endHdl))
-	{
-		BleAppHandleGapServiceWrite(ind);
+    else if ((ind->handle >= gGapSvc->startHdl) && (ind->handle <= gGapSvc->endHdl))
+    {
+        BleAppHandleGapServiceWrite(ind);
     }
-	else
-	{
-		LeGattAccessReadRsp(ind->conn_hdl, ind->handle, LE_ATT_ERR_WRITE_NOT_PERMITTED);
+    else
+    {
+        LeGattAccessReadRsp(ind->conn_hdl, ind->handle, LE_ATT_ERR_WRITE_NOT_PERMITTED);
     }
 }
 
 void BleAppGattMsgHandler(TASK task, MESSAGEID id, MESSAGE message)
 {
-	switch (id)
-	{
-		case LE_GATT_MSG_INIT_CFM:
-		{
-			BLE_APP_PRINT("LE_GATT_MSG_INIT_CFM\r\n");
+    switch (id)
+    {
+        case LE_GATT_MSG_INIT_CFM:
+        {
+            BLE_APP_PRINT("LE_GATT_MSG_INIT_CFM\r\n");
 
-			gGattSvc = LeGattRegisterService(gGattSvcDb, sizeof(gGattSvcDb) / sizeof(LE_GATT_ATTR_T));
+            gGattSvc = LeGattRegisterService(gGattSvcDb, sizeof(gGattSvcDb) / sizeof(LE_GATT_ATTR_T));
 
-			if (gGattSvc)
-			{
-				BLE_APP_PRINT("LeGattRegisterService gGattSvc success\r\n");
+            if (gGattSvc)
+            {
+                BLE_APP_PRINT("LeGattRegisterService gGattSvc success\r\n");
             }
 
-			gGapSvc = LeGattRegisterService(gGapSvcDb, sizeof(gGapSvcDb) / sizeof(LE_GATT_ATTR_T));
+            gGapSvc = LeGattRegisterService(gGapSvcDb, sizeof(gGapSvcDb) / sizeof(LE_GATT_ATTR_T));
 
-			if (gGapSvc)
-			{
-				BLE_APP_PRINT("LeGattRegisterService gGapSvc success\r\n");
+            if (gGapSvc)
+            {
+                BLE_APP_PRINT("LeGattRegisterService gGapSvc success\r\n");
             }
-        }
-		break;
-
-		case LE_GATT_MSG_ACCESS_READ_IND:
-		{
-            BLE_APP_PRINT("LE_GATT_MSG_ACCESS_READ_IND\r\n");
-			BleGattHandleAccessRead((LE_GATT_MSG_ACCESS_READ_IND_T *)message);
-        }
-		break;
-
-		case LE_GATT_MSG_ACCESS_WRITE_IND:
-		{
-            BLE_APP_PRINT("LE_GATT_MSG_ACCESS_WRITE_IND\r\n");
-			BleGattHandleAccessWrite((LE_GATT_MSG_ACCESS_WRITE_IND_T *)message);
         }
         break;
 
-		case LE_GATT_MSG_EXCHANGE_MTU_IND:
-		{
+        case LE_GATT_MSG_ACCESS_READ_IND:
+        {
+            BLE_APP_PRINT("LE_GATT_MSG_ACCESS_READ_IND\r\n");
+            BleGattHandleAccessRead((LE_GATT_MSG_ACCESS_READ_IND_T *)message);
+        }
+        break;
+
+        case LE_GATT_MSG_ACCESS_WRITE_IND:
+        {
+            BLE_APP_PRINT("LE_GATT_MSG_ACCESS_WRITE_IND\r\n");
+            BleGattHandleAccessWrite((LE_GATT_MSG_ACCESS_WRITE_IND_T *)message);
+        }
+        break;
+
+        case LE_GATT_MSG_EXCHANGE_MTU_IND:
+        {
             LE_GATT_MSG_EXCHANGE_MTU_IND_T *ind = (LE_GATT_MSG_EXCHANGE_MTU_IND_T *)message;
             BLE_APP_PRINT("LE_GATT_MSG_EXCHANGE_MTU_IND client mtu = %d\r\n", ind->client_rx_mtu);
             LeGattExchangeMtuRsp(ind->conn_hdl, LE_ATT_MAX_MTU);
-		}
+        }
         break;
 
         case LE_GATT_MSG_EXCHANGE_MTU_CFM:
-		{
-			LE_GATT_MSG_EXCHANGE_MTU_CFM_T *cfm = (LE_GATT_MSG_EXCHANGE_MTU_CFM_T *)message;
+        {
+            LE_GATT_MSG_EXCHANGE_MTU_CFM_T *cfm = (LE_GATT_MSG_EXCHANGE_MTU_CFM_T *)message;
             BLE_APP_PRINT("LE_GATT_MSG_EXCHANGE_MTU_CFM curr mtu = %d\r\n", cfm->current_rx_mtu);
             BleAppGetEntity()->curr_mtu = cfm->current_rx_mtu;
         }
         break;
 
-		case LE_GATT_MSG_CONFIRMATION_CFM:
-		{
-			LE_GATT_MSG_CONFIRMATION_CFM_T *cfm = (LE_GATT_MSG_CONFIRMATION_CFM_T *)message;
+        case LE_GATT_MSG_CONFIRMATION_CFM:
+        {
+            LE_GATT_MSG_CONFIRMATION_CFM_T *cfm = (LE_GATT_MSG_CONFIRMATION_CFM_T *)message;
             BLE_APP_PRINT("LE_GATT_MSG_CONFIRMATION_CFM curr handle = %d\r\n", cfm->handle);
 
         }
         break;
 
         case LE_GATT_MSG_OPERATION_TIMEOUT:
-		{
-			LE_GATT_MSG_OPERATION_TIMEOUT_T *ind = (LE_GATT_MSG_OPERATION_TIMEOUT_T *)message;
-			BLE_APP_PRINT("LE_GATT_MSG_OPERATION_TIMEOUT op = %x\r\n", ind->att_op);
+        {
+            LE_GATT_MSG_OPERATION_TIMEOUT_T *ind = (LE_GATT_MSG_OPERATION_TIMEOUT_T *)message;
+            BLE_APP_PRINT("LE_GATT_MSG_OPERATION_TIMEOUT op = %x\r\n", ind->att_op);
         }
         break;
 
-		default:
+        default:
         break;
     }
 }
 
 void BleGattIndicateServiceChange(UINT16 conn_hdl)
 {
-	UINT16 len;
-	UINT16 val;
-	LE_ERR_STATE rc = LeGattGetAttrVal(gGattSvc, GATT_IDX_SERVICE_CHANGE_CFG, &len, &val);
+    UINT16 len;
+    UINT16 val;
+    LE_ERR_STATE rc = LeGattGetAttrVal(gGattSvc, GATT_IDX_SERVICE_CHANGE_CFG, &len, &val);
 
-	if (rc) return;
+    if (rc) return;
 
-	if (val == LE_GATT_CLIENT_CFG_INDICATION)
-	{
-		UINT16 handle[2];
+    if (val == LE_GATT_CLIENT_CFG_INDICATION)
+    {
+        UINT16 handle[2];
 
-		LeGattGetAttrVal(gGattSvc, GATT_IDX_SERVICE_CHANGE_VAL, &len, handle);
+        LeGattGetAttrVal(gGattSvc, GATT_IDX_SERVICE_CHANGE_VAL, &len, handle);
 
-		if (!handle[0] || !handle[1]) return;
+        if (!handle[0] || !handle[1]) return;
 
-		LeGattCharValIndicate(conn_hdl, LeGattGetAttrHandle(gGattSvc, GATT_IDX_SERVICE_CHANGE_VAL), 4, (UINT8 *)handle);
+        LeGattCharValIndicate(conn_hdl, LeGattGetAttrHandle(gGattSvc, GATT_IDX_SERVICE_CHANGE_VAL), 4, (UINT8 *)handle);
     }
 }
 

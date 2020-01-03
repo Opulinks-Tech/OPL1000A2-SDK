@@ -1,4 +1,42 @@
 ## Release Version:
+SDK Package: MP_2.16
+Patch_Lib : 4208
+
+## Release Date: 2020/1/3
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 OPL1000-AT-instruction-set-and-examples,R05-v0.42,Add commands for AUXADC.
+   1.2 OPL1000-WIFI-BLE-API-guide.pdf,MP2.16, update document.
+   1.3 OPL1000_peripheral_PWM_application_notes.pdf, V0.4, add PWM example result in complex mode.
+   1.4 OPL1000-Power-Saving-Introduction, R01-V03, Update wake-up time and section 4.1
+   1.5 OPL1000-Demo-ota-wifi-guide.pdf, R01-V04, update http_server.exe user guide.
+2. Tool version information and update:
+   2.1 pin-mux tool: v0.8
+   2.2 MP multi-dev download tool: update to v2.13.
+3. Demo update:
+   3.1 http_server.exe for OTA_WiFi demo, v1.2, add some options.
+4. Examples update:
+   4.1 auxadc: update based on new HAL API.
+   4.2 awsIOT_blewifi: move it as a reference - OPL1000A2-Sensor-Device-Reference-Code-Aws-Cloud-with-MQTT.
+   4.3 pwm: realize duty cycle gradual change waveform with timer and complex mode.
+5. Added auto-calibrate method.
+6. OPL1000A2 setting of TX+2db adjustment.
+7. Add LE gain control function.
+8. Add at+tx command to transmit every packets with RF TX/RX switch.
+
+
+## Bug Fix List 
+1. fix "DebugUART wrong handler after warmboot".
+2. fix "Timer-sleep duration overflow issue".
+3. fix "memory leak in AT+CWMODE=4 command".
+4. fix "Device not awakened by expected timing".
+
+## Notes List 
+
+*****
+
+## Release Version:
 SDK Package: MP_2.15
 Patch_Lib : 4132
 ROM_CODE: 1655 
@@ -33,12 +71,11 @@ ROM_CODE: 1655
 
 ## Bug Fix List 
 1. fix "deep sleep wakeup failed by IO".
-2. fix "aotomatic voltage checking on ext ldo board".
+2. fix "automatic voltage checking on ext ldo board".
 3. fix "using Iphone XS(IOS 13) as wifi hotspot failed to connect network".
 4. fix "iperf performance degraded after temperature calibaration(TCA) triggered".
 
 ## Notes List 
-
 
 *****
 
@@ -54,10 +91,10 @@ Patch_Lib : 4073
    1.2 OPL1000-WIFI聯通性測試報告,new document about  WIFI IOP result that done in TestIn.
    1.3 OPL1000-BLE聯通性測試報告R2,new document about BLE IOP result that done in TestIn.
 2.  Tool version information and update:
-   2.1 download tool: v0.27, No update.
-   2.2 pin-mux tool: v0.8. No update.
-   2.3 MP RF test tool: update to v3.2, add a  new "RF test tool" that support iTest instrument.
-   2.4 MP multi-dev download tool: update to v2.9, support Ali 5 unit writing fuction.
+      2.1 download tool: v0.27, No update.
+      2.2 pin-mux tool: v0.8. No update.
+      2.3 MP RF test tool: update to v3.2, add a  new "RF test tool" that support iTest instrument.
+      2.4 MP multi-dev download tool: update to v2.9, support Ali 5 unit writing fuction.
 3. Demo update:
    3.1 Expand_M3_RAM，new demo that shows how to use M3 shared memory to enlarge M3 MCU avaliable RAM size for application.
 4. Examples update:

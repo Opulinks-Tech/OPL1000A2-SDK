@@ -151,7 +151,7 @@ void __Patch_EntryPoint(void)
     
     // update the flash layout
     MwFim_FlashLayoutUpdate = Main_FlashLayoutUpdate;
-	
+    
     Sys_SetUnsuedSramEndBound(0x440000);
     // the initial of driver part for cold and warm boot
     Sys_MiscModulesInit = Main_MiscModulesInit;
@@ -263,7 +263,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	    
+        
 }
 
 /*************************************************************************

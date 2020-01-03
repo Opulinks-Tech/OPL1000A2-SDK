@@ -47,7 +47,7 @@ const T_MwFim_GP12_Mqtt_Data g_tMwFimDefaultGp12MqttData =
     .ubQos                 = MQTT_QOS,
     .ubaServerIpAddr       = TCP_SERVER_ADDR,
     .ubServerIpPort        = TCP_SERVER_PORT,
-	
+    
     .ubaReserved            = {0xFF, 0xFF}
 };
 // the address buffer of MQTT data.

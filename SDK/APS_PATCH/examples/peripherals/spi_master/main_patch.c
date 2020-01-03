@@ -251,7 +251,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	  
+      
 }
 
 /*************************************************************************
@@ -362,12 +362,12 @@ void App_Pin_InitConfig(void)
 void Main_AppInit_patch(void)
 {
     // init the pin assignment
-    App_Pin_InitConfig();	
-	
-		// flash write and read demo, use SPI0 to access on board SPI flash 
-		spi_flash_test();				
-		
-	  // create a thread and run SPI access function 
+    App_Pin_InitConfig();    
+    
+        // flash write and read demo, use SPI0 to access on board SPI flash 
+        spi_flash_test();                
+        
+      // create a thread and run SPI access function 
     spi_test();
 
 }
@@ -387,15 +387,15 @@ void Main_AppInit_patch(void)
 *
 *************************************************************************/
 static void Main_AppThread1(void *argu)
-{	
+{    
     while (1)
-    {	
-        osDelay(500);      // delay 500 ms		
-        printf("[Thread1] SPI Running \r\n");			
-				// communicate with external SPI slave device 
-				spi_send_data(TEST_SPI);
-        osDelay(500);      // delay 500 ms				
-			  spi_send_block_data(TEST_SPI);
+    {    
+        osDelay(500);      // delay 500 ms        
+        printf("[Thread1] SPI Running \r\n");            
+                // communicate with external SPI slave device 
+                spi_send_data(TEST_SPI);
+        osDelay(500);      // delay 500 ms                
+              spi_send_block_data(TEST_SPI);
     }
 }
 
@@ -414,12 +414,12 @@ static void Main_AppThread1(void *argu)
 *
 *************************************************************************/
 static void Main_AppThread2(void *argu)
-{	
+{    
     while (1)
-    {	
-        osDelay(500);      // delay 500 ms		
-        printf("[Thread2] SPI Running \r\n");			
-				// communicate with external SPI slave device 
+    {    
+        osDelay(500);      // delay 500 ms        
+        printf("[Thread2] SPI Running \r\n");            
+                // communicate with external SPI slave device 
         spi_recv_data(TEST_SPI);
     }
 }
@@ -440,7 +440,7 @@ static void Main_AppThread2(void *argu)
 *************************************************************************/
 static void spi_flash_test(void)
 {
- 	
+     
     uint8_t u8BlockData[BLOCK_DATA_SIZE],u8ReadData[BLOCK_DATA_SIZE] = {0};
     uint32_t i,u32Length,u32SectorAddr32bit;
     uint16_t u16SectorAddr;
@@ -474,8 +474,8 @@ static void spi_flash_test(void)
     if (match_flag == true)
     {
         printf("Write and read %d bytes data on flash @%x successfully \r\n",u32Length, u32SectorAddr32bit); 
-    }	
-		
+    }    
+        
 }
 
 /*************************************************************************
@@ -497,19 +497,19 @@ static void spi_send_data(int port)
     char output_str[32]= {0};   
     uint32_t u32Data, i, spi_idx = 0;
     T_OPL1000_Spi *spi;
-		
+        
     spi = &OPL1000_periph.spi[port];
-		if (spi->index == SPI_IDX_1) 
-		{
-			  spi_idx = 1; // indicate it is SPI1 
-			  strcpy(output_str,"Hello from SPI1 \r\n");
-		}
-	  else if (spi->index == SPI_IDX_2)
-		{
-			  spi_idx = 2; // indicate it is SPI2 
-			  strcpy(output_str,"Hello from SPI2 \r\n");
-		}
-		
+        if (spi->index == SPI_IDX_1) 
+        {
+              spi_idx = 1; // indicate it is SPI1 
+              strcpy(output_str,"Hello from SPI1 \r\n");
+        }
+      else if (spi->index == SPI_IDX_2)
+        {
+              spi_idx = 2; // indicate it is SPI2 
+              strcpy(output_str,"Hello from SPI2 \r\n");
+        }
+        
     //sprintf(output_str,"Hello from SPI%d \r\n",spi_idx);
     printf("Send data to external SPI%d slave device \r\n",spi_idx);    
     for(i=0;i<strlen(output_str);i++)
@@ -541,24 +541,24 @@ static void spi_recv_data(int port)
     char input_str[32]= {0};    
     uint32_t u32Temp, i, spi_idx = 0;
     T_OPL1000_Spi *spi;
-		
+        
     spi = &OPL1000_periph.spi[port];
-		if (spi->index == SPI_IDX_1)
-			  spi_idx = 1; // indicate it is SPI1 
-	  else if (spi->index == SPI_IDX_2)
-			  spi_idx = 2; // indicate it is SPI2 
+        if (spi->index == SPI_IDX_1)
+              spi_idx = 1; // indicate it is SPI1 
+      else if (spi->index == SPI_IDX_2)
+              spi_idx = 2; // indicate it is SPI2 
         
     for(i=0;i<strlen(input_str);i++)
     {
         u32Temp = TAG_DFS_08 | TAG_CS_COMP | TAG_1_BIT | TAG_READ | DUMMY; // complete
         Hal_Spi_Data_Send(spi->index, u32Temp);
-			
-			  Hal_Spi_Data_Recv(spi->index, &u32Temp);
-			  if (u32Temp == 0x13 || u32Temp == 0x0A)  // received character is '\n' or '\r'
-				   break; 
-				input_str[i] = u32Temp & 0xFF; 
+            
+              Hal_Spi_Data_Recv(spi->index, &u32Temp);
+              if (u32Temp == 0x13 || u32Temp == 0x0A)  // received character is '\n' or '\r'
+                   break; 
+                input_str[i] = u32Temp & 0xFF; 
     } 
-    printf("Receive from SPI%d slave device: %s \r\n",spi_idx,input_str);		
+    printf("Receive from SPI%d slave device: %s \r\n",spi_idx,input_str);        
 }
 
 /*************************************************************************
@@ -580,25 +580,25 @@ static void spi_send_block_data(int port)
     char output_str[10]= {0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa};   
     uint32_t u32Temp, u32Idx, u32DataSize, spi_idx = 0;
     T_OPL1000_Spi *spi;
-		
+        
     spi = &OPL1000_periph.spi[port];
-		if (spi->index == SPI_IDX_1)
-			  spi_idx = 1; // indicate it is SPI1 
-	  else if (spi->index == SPI_IDX_2)
-			  spi_idx = 2; // indicate it is SPI2 
+        if (spi->index == SPI_IDX_1)
+              spi_idx = 1; // indicate it is SPI1 
+      else if (spi->index == SPI_IDX_2)
+              spi_idx = 2; // indicate it is SPI2 
 
     printf("Send multiple bytes to external SPI%d slave device \r\n",spi_idx);    
 
-		u32DataSize = strlen(output_str);
-		for (u32Idx=0; u32Idx<u32DataSize; u32Idx++)
-		{
-				if (u32Idx != (u32DataSize-1))
-						u32Temp = TAG_DFS_08 | TAG_CS_CONT | TAG_1_BIT | TAG_WRITE | output_str[u32Idx];
-				else
-						u32Temp = TAG_DFS_08 | TAG_CS_COMP | TAG_1_BIT | TAG_WRITE | output_str[u32Idx]; // complete
-				Hal_Spi_Data_Send(spi->index, u32Temp);				
-				//Hal_Spi_Data_Recv(spi->index, &u32Temp); // dummy
-		}		
+        u32DataSize = strlen(output_str);
+        for (u32Idx=0; u32Idx<u32DataSize; u32Idx++)
+        {
+                if (u32Idx != (u32DataSize-1))
+                        u32Temp = TAG_DFS_08 | TAG_CS_CONT | TAG_1_BIT | TAG_WRITE | output_str[u32Idx];
+                else
+                        u32Temp = TAG_DFS_08 | TAG_CS_COMP | TAG_1_BIT | TAG_WRITE | output_str[u32Idx]; // complete
+                Hal_Spi_Data_Send(spi->index, u32Temp);                
+                //Hal_Spi_Data_Recv(spi->index, &u32Temp); // dummy
+        }        
 }
 
 /*************************************************************************
@@ -629,9 +629,9 @@ static void spi_test(void)
     if (g_tAppThread1 == NULL)
     {
         printf("Create SPI write thread is fail.\n");
-    }	
+    }    
 
-		// create thread for SPI read operation
+        // create thread for SPI read operation
     tThreadDef.name = "App_2";
     tThreadDef.pthread = Main_AppThread2;
     tThreadDef.tpriority = OS_TASK_PRIORITY_APP;        // osPriorityNormal
@@ -642,7 +642,7 @@ static void spi_test(void)
     {
         printf("Create SPI read thread is fail.\n");
     }
-	
+    
 }
 
 /*************************************************************************

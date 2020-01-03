@@ -10,8 +10,10 @@
 @IF EXIST %OBJ_PATH%%OUTPUT_NAME%.bin DEL %OBJ_PATH%%OUTPUT_NAME%.bin /Q
 
 @SET AUTO_GEN_RELEASE=0
-@SET FROM_ELF=D:\Keil_v5\ARM\ARMCC\bin\fromelf.exe
+@SET FROM_ELF=C:\Keil_v5\ARM\ARMCC\bin\fromelf.exe
 @SET SREC_CAT=..\..\..\..\APS\tools\srec_cat.exe
 
 %FROM_ELF% %AXF_FULL_PATH% --m32combined --output %OBJ_PATH%%OUTPUT_NAME%.s37
 %FROM_ELF% %AXF_FULL_PATH% --bin --output %OBJ_PATH%%OUTPUT_NAME%.bin
+
+

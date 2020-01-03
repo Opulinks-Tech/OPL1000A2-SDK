@@ -112,10 +112,10 @@ static void http_request(void)
                 putchar(recv_buf[i]);
             }
 #else
-						if(r > 0) {
-							  recv_buf[r] = '\n';
-							  printf("%s",recv_buf);
-						}
+                        if(r > 0) {
+                              recv_buf[r] = '\n';
+                              printf("%s",recv_buf);
+                        }
 #endif
         } while (r > 0);
 
@@ -174,7 +174,7 @@ int wifi_connection(void)
     wifi_scan_list_t *p_scan_list = NULL;
     int i = 0;
     int isMatched = 0;
-		
+        
     p_scan_list = (wifi_scan_list_t *)malloc(sizeof(wifi_scan_list_t));
 
     if(p_scan_list == NULL)

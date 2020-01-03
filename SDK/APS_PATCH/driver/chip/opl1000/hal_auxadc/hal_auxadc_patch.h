@@ -41,23 +41,64 @@ extern "C" {
  *                          Typedefs and Structures
  *************************************************************************
  */
+// source type
+typedef enum
+{
+    //HAL_AUX_SRC_GPIO = 0,
+    //HAL_AUX_SRC_VBAT,
+    //HAL_AUX_SRC_LDO_VCO,
+    //HAL_AUX_SRC_LDO_RF,
+    //HAL_AUX_SRC_TEMP_SEN,
+    //HAL_AUX_SRC_HPBG_REF,
+    //HAL_AUX_SRC_LPBG_REF,
+    //HAL_AUX_SRC_PMU_SF,
+    
+    HAL_AUX_SRC_VSS = HAL_AUX_SRC_MAX, // New source
+    HAL_AUX_SRC_MAX_PATCH
+} E_HalAux_Src_Patch_t;
 
+typedef struct _sAuxadcCal
+{
+    uint16_t u16MiniVolt;
+    uint16_t u16RawData;
+}S_AuxadcCal_t;
 
+typedef struct _sAuxadcCalTable
+{
+    uint32_t      u32Header;    // Reserved for future used
+    S_AuxadcCal_t stIntSrc[ 2 ];
+    S_AuxadcCal_t stGpioSrc[ HAL_AUX_GPIO_NUM_MAX ][ 2 ];
+}S_AuxadcCalTable_t;
 
 /*
  *************************************************************************
  *                          Public Variables
  *************************************************************************
  */
-
+extern char *pAuxadcSrcName[ HAL_AUX_SRC_MAX_PATCH ];
+extern S_AuxadcCalTable_t sAuxadcCalTable;
+extern uint8_t g_ubHalAux_Pu_WriteDirect; // Only enable for calibration
 
 /*
  *************************************************************************
  *                          Public Functions
  *************************************************************************
  */
-void Hal_Aux_PatchInit(void);
+/* Internal used*/
 void Hal_Aux_AdcUpdateCtrlReg(uint32_t u32Enable);
+
+/* API */
+void Hal_Aux_AdcCal_Init( void );
+
+uint32_t Hal_Aux_AdcCal_LoadDef( void );
+uint32_t Hal_Aux_AdcCal_LoadTable( void );
+uint32_t Hal_Aux_AdcCal_StoreTable( void );
+
+uint32_t Hal_Aux_AdcVbatInCal(uint16_t u16MiniVolt);
+uint32_t Hal_Aux_AdcGpioInCal(uint8_t u8GpioIdx, uint16_t u16MiniVolt);
+uint16_t Hal_Aux_AdcMiniVolt_Convert( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, uint32_t u32RawData);
+
+void Hal_Aux_PatchInit(void);
 
 #ifdef __cplusplus
 }

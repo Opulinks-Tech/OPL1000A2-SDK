@@ -43,22 +43,22 @@ static T_IoT_Data_EvtHandlerTbl g_tAppIotDataTxTaskEvtHandlerTbl[] =
 static void Iot_Data_TxTaskEvtHandler_DataPost(uint32_t evt_type, void *data, int len)
 {
     // get the IoT data here, or the data are from *data and len parameters.
-	  char *tpTopic = NULL;
-	  char *tpMsg = NULL;
-	  uint8_t top_len = 0;
-	
-	  top_len = ((uint8_t *)data)[0];
+      char *tpTopic = NULL;
+      char *tpMsg = NULL;
+      uint8_t top_len = 0;
+    
+      top_len = ((uint8_t *)data)[0];
 
-	  switch(evt_type)
-		{
-			case IOT_DATA_TX_MSG_DATA_POST:// data_buf contents: <sizeof topic,1 byte>+<topic>+'\0'+<msg>+'\0' ;
-				  tpTopic = (char *)((char *)data + 1);
-			    tpMsg   = (char *)((char *)data + top_len + 2);
-			    MQTT_Publish(tpTopic, tpMsg);
-			    break;
-			default:
-				  printf("event type error!");
-		}
+      switch(evt_type)
+        {
+            case IOT_DATA_TX_MSG_DATA_POST:// data_buf contents: <sizeof topic,1 byte>+<topic>+'\0'+<msg>+'\0' ;
+                  tpTopic = (char *)((char *)data + 1);
+                tpMsg   = (char *)((char *)data + top_len + 2);
+                MQTT_Publish(tpTopic, tpMsg);
+                break;
+            default:
+                  printf("event type error!");
+        }
 }
 
 void Iot_Data_TxTaskEvtHandler(uint32_t evt_type, void *data, int len)
@@ -127,18 +127,18 @@ int Iot_Data_TxTask_MsgSend(int msg_type, uint8_t *data, int data_len)
 {
     xIotDataMessage_t *pMsg = 0;
 
-	if (NULL == g_tAppIotDataTxQueueId)
-	{
+    if (NULL == g_tAppIotDataTxQueueId)
+    {
         BLEWIFI_ERROR("BLEWIFI: No IoT Tx task queue \r\n");
         return -1;
-	}
+    }
 
     /* Mem allocate */
     pMsg = malloc(sizeof(xIotDataMessage_t) + data_len);
     if (pMsg == NULL)
-	{
+    {
         BLEWIFI_ERROR("BLEWIFI: IoT Tx task pmsg allocate fail \r\n");
-	    goto error;
+        goto error;
     }
     
     pMsg->event = msg_type;
@@ -157,12 +157,12 @@ int Iot_Data_TxTask_MsgSend(int msg_type, uint8_t *data, int data_len)
     return 0;
 
 error:
-	if (pMsg != NULL)
-	{
-	    free(pMsg);
+    if (pMsg != NULL)
+    {
+        free(pMsg);
     }
-	
-	return -1;
+    
+    return -1;
 }
 
 void Iot_Data_TxInit(void)

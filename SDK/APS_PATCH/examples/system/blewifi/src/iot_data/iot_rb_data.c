@@ -38,7 +38,7 @@ uint8_t IoT_Ring_Buffer_Push(IoT_Properity_t *ptProperity)
     }
 
     // update the temperature data to write index
-	memcpy(&(g_tRBData.taProperity[g_tRBData.ulWriteIdx]), ptProperity, sizeof(IoT_Properity_t));
+    memcpy(&(g_tRBData.taProperity[g_tRBData.ulWriteIdx]), ptProperity, sizeof(IoT_Properity_t));
     g_tRBData.ulWriteIdx = ulWriteNext;
 
     return IOT_RB_DATA_OK;
@@ -55,8 +55,8 @@ uint8_t IoT_Ring_Buffer_Pop(IoT_Properity_t *ptProperity)
     if (g_tRBData.ulWriteIdx == g_tRBData.ulReadIdx)
         goto done;
 
-	memcpy(ptProperity, &(g_tRBData.taProperity[g_tRBData.ulReadIdx]), sizeof(IoT_Properity_t));
-	
+    memcpy(ptProperity, &(g_tRBData.taProperity[g_tRBData.ulReadIdx]), sizeof(IoT_Properity_t));
+    
     bRet = IOT_RB_DATA_OK;
 
 done:

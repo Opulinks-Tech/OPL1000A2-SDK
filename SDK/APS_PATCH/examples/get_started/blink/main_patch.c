@@ -133,7 +133,7 @@ void __Patch_EntryPoint(void)
     
     // update the switch AT UART / dbg UART function
     at_cmd_switch_uart1_dbguart = Main_AtUartDbgUartSwitch;
-	
+    
     Sys_SetUnsuedSramEndBound(0x440000);
     // application init
     Sys_AppInit = Main_AppInit_patch;

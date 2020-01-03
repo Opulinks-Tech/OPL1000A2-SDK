@@ -111,7 +111,7 @@ static T_BleWifi_Ble_MsgHandlerTbl gBleAppMsgHandlerTbl[] =
     {BLEWIFI_APP_MSG_SEND_DATA,                 BleWifi_Ble_AppMsgHandler_SendData},
     {BLEWIFI_APP_MSG_SEND_TO_PEER,              BleWifi_Ble_AppMsgHandler_SendToPeer},
     {BLEWIFI_APP_MSG_SEND_TO_PEER_CFM,          BleWifi_Ble_AppMsgHandler_SendToPeerCfm},
-#ifdef ALI_BLE_WIFI_PROVISION		
+#ifdef ALI_BLE_WIFI_PROVISION        
     {BLEWIFI_APP_MSG_ALI_SEND_RANDOM,           BleWifi_Ble_AppMsgHandler_AliSendRandom},
     {BLEWIFI_APP_MSG_ALI_SEND_DEVICE_NAME,      BleWifi_Ble_AppMsgHandler_AliSendDeviceName},
     {BLEWIFI_APP_MSG_ALI_SEND_DEVICE_SECRET,    BleWifi_Ble_AppMsgHandler_AliSendDeviceSecret},
@@ -120,20 +120,20 @@ static T_BleWifi_Ble_MsgHandlerTbl gBleAppMsgHandlerTbl[] =
 
     {0xFFFFFFFF,                                NULL}
 };
-#ifdef ALI_BLE_WIFI_PROVISION		
+#ifdef ALI_BLE_WIFI_PROVISION        
 ali_init_t init_ali;
 extern auth_t g_auth;
 extern breeze_dev_info_t dinfo;
 
 uint32_t tx_func_indicate(uint8_t cmd, uint8_t *p_data, uint16_t length)
 {
-	reset_tx();
+    reset_tx();
     return transport_tx(TX_INDICATION, cmd, p_data, length, LeGattCharValIndicate, gTheBle.conn_hdl, gTheBle.ali_indhdl);
 }
 
 uint32_t tx_func_notify(uint8_t cmd, uint8_t *p_data, uint16_t length)
 {
-	reset_tx();
+    reset_tx();
     return transport_tx(TX_NOTIFICATION, cmd, p_data, length, LeGattCharValNotify, gTheBle.conn_hdl, gTheBle.ali_notihdl);
 }
 
@@ -176,42 +176,42 @@ static void BleWifi_Ble_SmMsgHandler_PairingCompleteInd(TASK task, MESSAGEID id,
 
 static void BleWifi_Ble_SetAdvtisingPara(UINT8 type, UINT8 own_addr_type, LE_BT_ADDR_T *peer_addr, UINT8 filter, UINT16 interval_min, UINT16 interval_max)
 {
-	LE_GAP_ADVERTISING_PARAM_T para;
+    LE_GAP_ADVERTISING_PARAM_T para;
 
-	para.interval_min = interval_min;
-	para.interval_max = interval_max;
-	para.type = type;
-	para.own_addr_type = own_addr_type;
+    para.interval_min = interval_min;
+    para.interval_max = interval_max;
+    para.type = type;
+    para.own_addr_type = own_addr_type;
 
-	if (peer_addr)
+    if (peer_addr)
     {
-	    para.peer_addr_type = peer_addr->type;
+        para.peer_addr_type = peer_addr->type;
         MemCopy(para.peer_addr, peer_addr->addr, 6);
     }
     else
     {
-	    para.peer_addr_type = LE_HCI_ADV_PEER_ADDR_PUBLIC;
-		MemSet(para.peer_addr, 0, 6);
+        para.peer_addr_type = LE_HCI_ADV_PEER_ADDR_PUBLIC;
+        MemSet(para.peer_addr, 0, 6);
     }
 
-	para.channel_map = 0x7;
+    para.channel_map = 0x7;
     para.filter_policy = filter;
 
-	LeGapSetAdvParameter(&para);
+    LeGapSetAdvParameter(&para);
 }
-#ifndef ALI_BLE_WIFI_PROVISION	
+#ifndef ALI_BLE_WIFI_PROVISION    
 static void BleWifi_UtilHexToStr(void *data, UINT16 len, UINT8 **p)
 {
-	UINT8 t[] = "0123456789ABCDEF";
-	UINT8 *num = data;
-	UINT8 *buf = *p;
+    UINT8 t[] = "0123456789ABCDEF";
+    UINT8 *num = data;
+    UINT8 *buf = *p;
     UINT16 i = 0;
     
-	while (len--)
-	{
-		buf[i << 1] = t[num[i] >> 4];
-		buf[(i << 1) + 1] = t[num[i] & 0xf];
-		i++;
+    while (len--)
+    {
+        buf[i << 1] = t[num[i] >> 4];
+        buf[(i << 1) + 1] = t[num[i] & 0xf];
+        i++;
     }
 
     *p += (i << 1);
@@ -219,7 +219,7 @@ static void BleWifi_UtilHexToStr(void *data, UINT16 len, UINT8 **p)
 #endif
 
 
-#ifdef ALI_BLE_WIFI_PROVISION		
+#ifdef ALI_BLE_WIFI_PROVISION        
 
 #define MAX_ADV_DATA_LEN 16
 #define BT_DATA_FLAGS                   0x01 /* AD flags */
@@ -245,9 +245,9 @@ static void BleWifi_UtilHexToStr(void *data, UINT16 len, UINT8 **p)
 #define MAC_ASCII_LEN 6
 
 struct bt_data {
-	uint8_t type;
-	uint8_t data_len;
-	const uint8_t *data;
+    uint8_t type;
+    uint8_t data_len;
+    const uint8_t *data;
 };
 
 #define MAX_ADV_DATA_LEN 16
@@ -262,10 +262,10 @@ int ble_advertising_start(ais_adv_init_t *adv)
     uint8_t        flag = 0, srv[] = { 0xb3, 0xfe }, ad_len = AD_LEN;//, sd_len = SD_LEN;
     static struct bt_data ad[AD_LEN];
     static struct bt_data sd[SD_LEN];
-		
+        
     memset(ad,0,sizeof(struct bt_data)*AD_LEN);
 
-	
+    
 
     if (adv->flag & AIS_AD_GENERAL) {
         flag |= GAP_ADTYPE_FLAGS_GENERAL;
@@ -278,7 +278,7 @@ int ble_advertising_start(ais_adv_init_t *adv)
         return AIS_ERR_INVALID_ADV_DATA;
     }
 */
-	
+    
 
     ad[0].type     = BT_DATA_FLAGS;
     ad[0].data     = &flag;
@@ -347,15 +347,15 @@ int ble_advertising_start(ais_adv_init_t *adv)
     gTheBle.scn_data.buf[1] = sd[0].type;
     MemCopy(gTheBle.scn_data.buf + 2, sd[0].data, sd[0].data_len);
 
-		
+        
     printf("ALi BLE SCN data:\n");
     for(int i=0;i<gTheBle.scn_data.len;i++)
     {
         printf("%02x", gTheBle.scn_data.buf[i]);
     }
     printf("\n");
-	
-	/*
+    
+    /*
 
     err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ad_len, sd, sd_len);
     if (err) {
@@ -405,7 +405,7 @@ static void BleWifi_Ble_SetAdvData(void)
         .name = { .ntype = AIS_ADV_NAME_FULL, .name = "AZ" },
     };
 
-	/* device key may be NULL */
+    /* device key may be NULL */
     if (dinfo.device_name != NULL) {
     init_ali.device_key.length = strlen(dinfo.device_name);
     init_ali.device_key.p_data = (uint8_t*)dinfo.device_name;
@@ -418,7 +418,7 @@ static void BleWifi_Ble_SetAdvData(void)
     } else {
         init_ali.device_key.length = 0;
     }
-	
+    
     /* device secret may be NULL */
     if (dinfo.device_secret != NULL) {
     init_ali.secret.length = strlen(dinfo.device_secret);
@@ -445,7 +445,7 @@ static void BleWifi_Ble_SetAdvData(void)
 //    init_ali.user_adv_data         = user_adv.data;
 //    init_ali.user_adv_len          = user_adv.len;
 
-#ifdef ALI_OPL_DBG		 
+#ifdef ALI_OPL_DBG         
     printf("product secret len: %d\r\n", strlen(dinfo.product_secret));
     printf("product secret: %s\r\n", init_ali.product_secret.p_data);
     printf("product key len: %d\r\n", init_ali.product_key.length);
@@ -455,12 +455,12 @@ static void BleWifi_Ble_SetAdvData(void)
     printf("device secret len: %d\r\n", init_ali.secret.length);
     printf("device secret: %s\r\n", init_ali.secret.p_data);
     printf("product id: %d\r\n", init_ali.model_id);
-#endif	
-	transport_init((ali_init_t const *)&init_ali);
-	uint32_t model_id=init_ali.model_id;
-	unsigned char mac_be[6]={0x78,0x78,0x78,0x78,0x78,0x78};
-	LeGapGetBdAddr(mac_be);
-	create_bz_adv_data(model_id, mac_be);
+#endif    
+    transport_init((ali_init_t const *)&init_ali);
+    uint32_t model_id=init_ali.model_id;
+    unsigned char mac_be[6]={0x78,0x78,0x78,0x78,0x78,0x78};
+    LeGapGetBdAddr(mac_be);
+    create_bz_adv_data(model_id, mac_be);
     adv_data.vdata.len = sizeof(adv_data.vdata.data);
     if (get_bz_adv_data(adv_data.vdata.data, &(adv_data.vdata.len))) {
 //      BREEZE_LOG_ERR("%s %d fail.\r\n", __func__, __LINE__);
@@ -469,27 +469,27 @@ static void BleWifi_Ble_SetAdvData(void)
    }
 
 /*
-	memcpy(gTheBle.adv_data.buf + gTheBle.adv_data.len,adv_data.vdata.data, adv_data.vdata.len);
+    memcpy(gTheBle.adv_data.buf + gTheBle.adv_data.len,adv_data.vdata.data, adv_data.vdata.len);
     gTheBle.adv_data.len+=adv_data.vdata.len;
 */
-	
-	
-	ble_advertising_start(&adv_data);
+    
+    
+    ble_advertising_start(&adv_data);
 
-//	memcpy(adv_data.vdata.data + adv_data.vdata.len,
+//    memcpy(adv_data.vdata.data + adv_data.vdata.len,
  //                      g_ali_init->user_adv_data, g_ali_init->user_adv_len);
  //               adv_data.vdata.len += g_ali_init->user_adv_len;
-#endif	
+#endif    
     LeGapSetAdvData(gTheBle.adv_data.len, gTheBle.adv_data.buf);
 #ifdef ALI_BLE_WIFI_PROVISION
 exit:
     return;
-#endif	
+#endif    
 }
 
 static void BleWifi_Ble_SetScanData(void)
 {
-#ifndef ALI_BLE_WIFI_PROVISION	
+#ifndef ALI_BLE_WIFI_PROVISION    
     T_MwFim_GP11_BleDeviceName tBleDeviceName;    
     uint8_t ubLen;
     BOOL isOk = FALSE;
@@ -503,33 +503,33 @@ static void BleWifi_Ble_SetScanData(void)
     
     if (tBleDeviceName.ubNameMethod == 1)
     {
-    	BD_ADDR addr;
+        BD_ADDR addr;
 
-    	if (LeGapGetBdAddr(addr) == SYS_ERR_SUCCESS)
-    	{
-    		UINT8 *p = gTheBle.scn_data.buf;
-    		UINT16 i = tBleDeviceName.ubNamePostfixMacCount;
+        if (LeGapGetBdAddr(addr) == SYS_ERR_SUCCESS)
+        {
+            UINT8 *p = gTheBle.scn_data.buf;
+            UINT16 i = tBleDeviceName.ubNamePostfixMacCount;
 
-    		// error handle, the mac address length
-    		if (i > 6)
-    		    i = 6;
+            // error handle, the mac address length
+            if (i > 6)
+                i = 6;
             
-    		*p++ = 0x10;
-    		*p++ = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
+            *p++ = 0x10;
+            *p++ = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
             // error handle
             // !!! if i = 4, the other char are 12 bytes (i*3)
             ubLen = strlen((const char *)(tBleDeviceName.ubaNamePrefix));
-    		if (ubLen > (BLE_ADV_SCAN_BUF_SIZE - 2 - (i*3)))
-    	        ubLen = BLE_ADV_SCAN_BUF_SIZE - 2 - (i*3);
-    		MemCopy(p, tBleDeviceName.ubaNamePrefix, ubLen);
-    		p += ubLen;
+            if (ubLen > (BLE_ADV_SCAN_BUF_SIZE - 2 - (i*3)))
+                ubLen = BLE_ADV_SCAN_BUF_SIZE - 2 - (i*3);
+            MemCopy(p, tBleDeviceName.ubaNamePrefix, ubLen);
+            p += ubLen;
 
             if (i > 0)
             {
-        		while (i--)
-        		{
+                while (i--)
+                {
                     BleWifi_UtilHexToStr(&addr[i], 1, &p);
-        			*p++ = ':';
+                    *p++ = ':';
                 }
 
                 gTheBle.scn_data.len = p - gTheBle.scn_data.buf - 1;    // remove the last char ":"
@@ -550,7 +550,7 @@ static void BleWifi_Ble_SetScanData(void)
         ubLen = strlen((const char *)(tBleDeviceName.ubaNameFull));
         if (ubLen > (BLE_ADV_SCAN_BUF_SIZE - 2))
             ubLen = (BLE_ADV_SCAN_BUF_SIZE - 2);
-    	gTheBle.scn_data.len = ubLen + 2;
+        gTheBle.scn_data.len = ubLen + 2;
         gTheBle.scn_data.buf[0] = gTheBle.scn_data.len - 1;
         gTheBle.scn_data.buf[1] = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
         MemCopy(gTheBle.scn_data.buf + 2, tBleDeviceName.ubaNameFull, ubLen);
@@ -775,28 +775,28 @@ static void BleWifi_Ble_CmMsgHandler_DisconnectCompleteInd(TASK task, MESSAGEID 
 
 static void BleWifi_Ble_CopyToBuf(UINT16 len, UINT8 *data)
 {
-	if (gTheBle.state != APP_STATE_CONNECTED) return;
+    if (gTheBle.state != APP_STATE_CONNECTED) return;
 
-	if (len && data)
-	{
-		BLEWIFI_DATA_OUT_STORE_T *s = &gTheBle.store;
-		UINT16 ridx = s->ridx;
+    if (len && data)
+    {
+        BLEWIFI_DATA_OUT_STORE_T *s = &gTheBle.store;
+        UINT16 ridx = s->ridx;
         UINT16 remain = 0;
-		UINT16 copyLen;
+        UINT16 copyLen;
 
-		if (len >= LE_GATT_DATA_OUT_BUF_SIZE) return;
+        if (len >= LE_GATT_DATA_OUT_BUF_SIZE) return;
 
-		if ((ridx + len) > LE_GATT_DATA_OUT_BUF_SIZE) remain = ridx + len - LE_GATT_DATA_OUT_BUF_SIZE;
+        if ((ridx + len) > LE_GATT_DATA_OUT_BUF_SIZE) remain = ridx + len - LE_GATT_DATA_OUT_BUF_SIZE;
 
         copyLen = len - remain;
 
-		MemCopy(&s->buf[ridx], data, copyLen);
+        MemCopy(&s->buf[ridx], data, copyLen);
 
-		if (remain) MemCopy(s->buf, &data[copyLen], remain);
+        if (remain) MemCopy(s->buf, &data[copyLen], remain);
 
-		ridx = (ridx + len) & (LE_GATT_DATA_OUT_BUF_SIZE - 1);
+        ridx = (ridx + len) & (LE_GATT_DATA_OUT_BUF_SIZE - 1);
 
-		s->ridx = ridx;
+        s->ridx = ridx;
 
         BleWifi_Ble_SendAppMsgToBle(BLEWIFI_APP_MSG_SEND_TO_PEER, 0, NULL);
     }
@@ -804,44 +804,44 @@ static void BleWifi_Ble_CopyToBuf(UINT16 len, UINT8 *data)
 
 static void BleWifi_Ble_SendToPeer(void)
 {
-	BLEWIFI_DATA_OUT_STORE_T *s = &gTheBle.store;
+    BLEWIFI_DATA_OUT_STORE_T *s = &gTheBle.store;
 
-	if (s->sending < 4)
-	{
-		LE_ERR_STATE status;
-		UINT16 ridx = s->ridx;
-		UINT16 pidx = s->pidx;
-		UINT16 sendLen;
+    if (s->sending < 4)
+    {
+        LE_ERR_STATE status;
+        UINT16 ridx = s->ridx;
+        UINT16 pidx = s->pidx;
+        UINT16 sendLen;
 
-		while (pidx != ridx)
-		{
-			if (pidx > ridx)
-				sendLen = LE_GATT_DATA_OUT_BUF_SIZE - pidx;
-			else
-				sendLen = ridx - pidx;
+        while (pidx != ridx)
+        {
+            if (pidx > ridx)
+                sendLen = LE_GATT_DATA_OUT_BUF_SIZE - pidx;
+            else
+                sendLen = ridx - pidx;
 
-			if (sendLen > (gTheBle.curr_mtu - 3)) sendLen = gTheBle.curr_mtu - 3;
+            if (sendLen > (gTheBle.curr_mtu - 3)) sendLen = gTheBle.curr_mtu - 3;
 
-		    status = LeGattCharValNotify(gTheBle.conn_hdl, s->send_hdl, sendLen, s->buf + pidx);
+            status = LeGattCharValNotify(gTheBle.conn_hdl, s->send_hdl, sendLen, s->buf + pidx);
 
-	    	BLEWIFI_INFO("APP-BleWifi_Ble_SendToPeer pidx = %d ridx = %d status = %x sending = %d\r\n", pidx, ridx, status, s->sending);
+            BLEWIFI_INFO("APP-BleWifi_Ble_SendToPeer pidx = %d ridx = %d status = %x sending = %d\r\n", pidx, ridx, status, s->sending);
 
-			if (status != SYS_ERR_SUCCESS)
-			{
-				s->pidx = s->ridx;
+            if (status != SYS_ERR_SUCCESS)
+            {
+                s->pidx = s->ridx;
                 s->sending = 0;
                 return;
-		    }
-			else
-			{
-				pidx = (pidx + sendLen) & (LE_GATT_DATA_OUT_BUF_SIZE - 1);
-				s->sending++;
+            }
+            else
+            {
+                pidx = (pidx + sendLen) & (LE_GATT_DATA_OUT_BUF_SIZE - 1);
+                s->sending++;
             }
 
             if (s->sending == 4) break;
-	    }
+        }
 
-		s->pidx = pidx;
+        s->pidx = pidx;
     }
 }
 
@@ -953,7 +953,7 @@ static void BleWifi_Ble_AppMsgHandler_AliSendDeviceSecret(TASK task, MESSAGEID i
 {
     if (gTheBle.state == APP_STATE_CONNECTED)
     {
-        reset_tx();            	
+        reset_tx();                
 //        printf("send Device secret: %s\r\n", g_auth.ikm + g_auth.ikm_len);
 //        transport_tx(TX_INDICATION, BZ_CMD_AUTH_RAND,  g_auth.ikm + g_auth.ikm_len, RANDOM_SEQ_LEN, LeGattCharValIndicate, gTheBle.conn_hdl, gTheBle.ali_indhdl);
 //        auth_tx_done();
@@ -992,16 +992,16 @@ static void BleWifi_Ble_MsgHandler(T_BleWifi_Ble_MsgHandlerTbl tHanderTbl[], TAS
 
 static void BleWifi_Ble_TaskHandler(TASK task, MESSAGEID id, MESSAGE message)
 {
-	if ((id >= LE_GATT_MSG_BASE) && (id < LE_GATT_MSG_TOP))
-	{
-		BleWifi_Ble_MsgHandler(gBleGattMsgHandlerTbl, task, id, message);
+    if ((id >= LE_GATT_MSG_BASE) && (id < LE_GATT_MSG_TOP))
+    {
+        BleWifi_Ble_MsgHandler(gBleGattMsgHandlerTbl, task, id, message);
     }
     else if ((id >= LE_SMP_MSG_BASE) && (id < LE_SMP_MSG_TOP))
-	{
+    {
         BleWifi_Ble_MsgHandler(gBleSmMsgHandlerTbl, task, id, message);
     }
-	else if ((id >= LE_CM_MSG_BASE) && (id < LE_CM_MSG_TOP))
-	{
+    else if ((id >= LE_CM_MSG_BASE) && (id < LE_CM_MSG_TOP))
+    {
         BleWifi_Ble_MsgHandler(gBleCmMsgHandlerTbl, task, id, message);
     }
     else if ((id >= BLEWIFI_APP_MSG_BASE) && (id < BLEWIFI_APP_MSG_TOP))
@@ -1012,43 +1012,43 @@ static void BleWifi_Ble_TaskHandler(TASK task, MESSAGEID id, MESSAGE message)
 
 BLE_APP_DATA_T* BleWifi_Ble_GetEntity(void)
 {
-	return &gTheBle;
+    return &gTheBle;
 }
 
 UINT16 BleWifi_Ble_GetBufFreeSize(void)
 {
-	UINT16 freeSize;
-	BLEWIFI_DATA_OUT_STORE_T *s = &gTheBle.store;
-	UINT16 ridx = s->ridx;
-	UINT16 pidx = s->pidx;
+    UINT16 freeSize;
+    BLEWIFI_DATA_OUT_STORE_T *s = &gTheBle.store;
+    UINT16 ridx = s->ridx;
+    UINT16 pidx = s->pidx;
 
-	if (pidx == ridx)
-		freeSize = LE_GATT_DATA_OUT_BUF_SIZE - 1;
-	else if (pidx > ridx)
-		freeSize = pidx - ridx - 1;
-	else
-		freeSize = (LE_GATT_DATA_OUT_BUF_SIZE - 1) - ridx + pidx;
+    if (pidx == ridx)
+        freeSize = LE_GATT_DATA_OUT_BUF_SIZE - 1;
+    else if (pidx > ridx)
+        freeSize = pidx - ridx - 1;
+    else
+        freeSize = (LE_GATT_DATA_OUT_BUF_SIZE - 1) - ridx + pidx;
 
-	return freeSize;
+    return freeSize;
 }
 
 void BleWifi_Ble_SendAppMsgToBle(UINT32 id, UINT16 len, void *data)
 {
-	if ((id >= BLEWIFI_APP_MSG_BASE) && (id < BLEWIFI_APP_MSG_TOP))
-	{
-		void *p = 0;
+    if ((id >= BLEWIFI_APP_MSG_BASE) && (id < BLEWIFI_APP_MSG_TOP))
+    {
+        void *p = 0;
 
-		if (len)
+        if (len)
         {
-			MESSAGE_DATA_BULID(BLEWIFI_MESSAGE, len);
+            MESSAGE_DATA_BULID(BLEWIFI_MESSAGE, len);
 
-			msg->len = len;
-			msg->data = MESSAGE_OFFSET(BLEWIFI_MESSAGE);
-			MemCopy(msg->data, data, len);
-			p = msg;
+            msg->len = len;
+            msg->data = MESSAGE_OFFSET(BLEWIFI_MESSAGE);
+            MemCopy(msg->data, data, len);
+            p = msg;
         }
 
-	    LeSendMessage(&gTheBle.task, id, p);
+        LeSendMessage(&gTheBle.task, id, p);
     }
 }
 
@@ -1056,17 +1056,17 @@ void BleWifi_Ble_ServerAppInit(void)
 {
     BLEWIFI_INFO("APP-BleWifi_Ble_ServerAppInit\r\n");
     
-	MemSet(&gTheBle, 0, sizeof(gTheBle));
-	MemSet(&gTheBleAdvTime, 0, sizeof(gTheBleAdvTime));
+    MemSet(&gTheBle, 0, sizeof(gTheBle));
+    MemSet(&gTheBleAdvTime, 0, sizeof(gTheBleAdvTime));
 
-	gTheBle.state = APP_STATE_INIT;
-	gTheBle.curr_mtu = 23;
+    gTheBle.state = APP_STATE_INIT;
+    gTheBle.curr_mtu = 23;
 
-	gTheBle.min_itvl = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
-	gTheBle.max_itvl = DEFAULT_DESIRED_MAX_CONN_INTERVAL;
-	gTheBle.latency  = DEFAULT_DESIRED_SLAVE_LATENCY;
-	gTheBle.sv_tmo   = DEFAULT_DESIRED_SUPERVERSION_TIMEOUT;
+    gTheBle.min_itvl = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
+    gTheBle.max_itvl = DEFAULT_DESIRED_MAX_CONN_INTERVAL;
+    gTheBle.latency  = DEFAULT_DESIRED_SLAVE_LATENCY;
+    gTheBle.sv_tmo   = DEFAULT_DESIRED_SUPERVERSION_TIMEOUT;
 
     LeHostCreateTask(&gTheBle.task, BleWifi_Ble_TaskHandler);
-	BleWifi_Ble_SendAppMsgToBle(BLEWIFI_APP_MSG_INITIALIZING, 0, NULL);
+    BleWifi_Ble_SendAppMsgToBle(BLEWIFI_APP_MSG_INITIALIZING, 0, NULL);
 }

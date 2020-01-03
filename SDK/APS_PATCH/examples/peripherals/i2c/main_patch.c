@@ -234,7 +234,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	  
+      
 }
 
 /*************************************************************************
@@ -374,7 +374,7 @@ static void Main_AppThread(void *argu)
         // SDA: (w)8 bits high byte address | (w)8 bits low byte address | (w)8 bits data
         
         printf("I2C Running\n");
-			
+            
         // write the data
         ubaData[0] = (uwAddr >> 8) & 0xFF;              // high byte address
         ubaData[1] = uwAddr & 0xFF;                     // low byte address

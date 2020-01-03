@@ -135,7 +135,7 @@ void blewifi_ctrl_http_ota_task_create(void)
     BleWifiCtrlHttpOtaQueueId = osMessageCreate(&blewifi_queue_def, NULL);
     if(BleWifiCtrlHttpOtaQueueId == NULL)
     {
-		BLEWIFI_ERROR("BLEWIFI: ctrl task create queue fail \r\n");
+        BLEWIFI_ERROR("BLEWIFI: ctrl task create queue fail \r\n");
     }
 }
 

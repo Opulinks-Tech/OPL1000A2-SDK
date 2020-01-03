@@ -69,13 +69,13 @@ ret_code_t ali_auth_init(ali_init_t const *p_init, tx_func_t tx_func)
     g_auth.key_len = p_init->device_key.length;
     memcpy(g_auth.key, p_init->device_key.p_data, g_auth.key_len);
     ikm_init(p_init);
-		
+        
 #ifdef ALI_OPL_DBG
-		printf("product_key=%s\r\n",g_auth.product_key);
-		printf("product_secret=%s\r\n",g_auth.secret);
-		printf("product_device_name=%s\r\n",g_auth.device_name);		
-		printf("device_key=%s\r\n",g_auth.key);
-#endif		
+        printf("product_key=%s\r\n",g_auth.product_key);
+        printf("product_secret=%s\r\n",g_auth.secret);
+        printf("product_device_name=%s\r\n",g_auth.device_name);        
+        printf("device_key=%s\r\n",g_auth.key);
+#endif        
 //    ret = os_timer_new(&g_auth.timer, on_timeout, &g_auth, BZ_AUTH_TIMEOUT);
     return ret;
 }
@@ -97,8 +97,8 @@ void auth_rx_command(uint8_t cmd, uint8_t *p_data, uint16_t length)
     switch (g_auth.state) {
         case AUTH_STATE_RAND_SENT:
             g_dn_complete = true;
-				printf("p_data=%s\r\n", p_data);
-//				printf("p_data_len=%d\r\n", strlen((const char*)p_data));
+                printf("p_data=%s\r\n", p_data);
+//                printf("p_data_len=%d\r\n", strlen((const char*)p_data));
             if (cmd == BZ_CMD_AUTH_REQ &&
                 memcmp(HI_SERVER_STR, p_data, MIN(length, strlen(HI_SERVER_STR))) == 0) {
                 g_auth.state = AUTH_STATE_REQ_RECVD;
@@ -156,9 +156,9 @@ static void update_aes_key(bool use_device_key)
 
     if (use_device_key) {
         memcpy(g_auth.ikm + g_auth.ikm_len, device_secret, device_secret_len);
-#ifdef ALI_OPL_DBG			
-			printf("device secret=%s\r\n", g_auth.ikm + g_auth.ikm_len);
-#endif			
+#ifdef ALI_OPL_DBG            
+            printf("device secret=%s\r\n", g_auth.ikm + g_auth.ikm_len);
+#endif            
         g_auth.ikm_len += device_secret_len;
     } else {
         memcpy(g_auth.ikm + g_auth.ikm_len, product_secret, product_secret_len);
@@ -226,7 +226,7 @@ void auth_tx_done(void)
         return;
 #else
         update_aes_key(true);
-			return;
+            return;
 #endif
     }
 }

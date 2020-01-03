@@ -79,7 +79,7 @@ int  MQTT_Connect(void)
     int32_t len=0;
     int rc = 0;
     int tmp;
- 		uint8_t  t = 5; 
+         uint8_t  t = 5; 
     uint8_t retryNum = 0;
     uint32_t tmp_time;
     int buflen = sizeof(buf);
@@ -105,7 +105,7 @@ int  MQTT_Connect(void)
         {
             printf("... Failed to allocate socket. \r\n");
             retryNum++;
-					  osDelay(1000);
+                      osDelay(1000);
             if(retryNum > 10)
             {
                 return -1;
@@ -120,8 +120,8 @@ int  MQTT_Connect(void)
     
     while(t)
     {
-	    t--;
-		rc = connect(MQTT_Socket, (struct sockaddr *)&MQTT_ServerAdd, sizeof(MQTT_ServerAdd));
+        t--;
+        rc = connect(MQTT_Socket, (struct sockaddr *)&MQTT_ServerAdd, sizeof(MQTT_ServerAdd));
         if( rc != 0) 
         {
             printf("... socket connect failed errno=%d \r\n", rc);
@@ -131,22 +131,22 @@ int  MQTT_Connect(void)
         else
         {
             MQTT_SocketStatus = 1;
-					  miss_ping_ack_count = 0; //initialize it to 0 when connection setting up.
+                      miss_ping_ack_count = 0; //initialize it to 0 when connection setting up.
             rc = 1;
             break;
         }
         
     }
-		
+        
     if(rc == 1)
     {
         printf("tcp connect server is ok !\r\n");
     }
     else
     {
-				// update status and close socket failed to be connected. 
-				MQTT_SocketStatus = 0;
-				close(MQTT_Socket);    
+                // update status and close socket failed to be connected. 
+                MQTT_SocketStatus = 0;
+                close(MQTT_Socket);    
         printf("tcp connect server is failed:%d\r\n",rc);
         return -1;
     }
@@ -270,25 +270,25 @@ int MQTT_Subscribe(char *topick)
     int tmp = 0;
     uint32_t tmp_time;
     int buflen = sizeof(buf);  
-	  int msgid = 1;
-	  int req_qos = 1;
+      int msgid = 1;
+      int req_qos = 1;
 
-	  char* payload = "mypayload";
+      char* payload = "mypayload";
     MQTTString topicString = MQTTString_initializer;
-	  int payloadlen = strlen(payload);
+      int payloadlen = strlen(payload);
     topicString.cstring = topick;
 
 
-	  /* subscribe */
-	  topicString.cstring = topick;
-	  len = MQTTSerialize_subscribe(buf, buflen, 0, msgid, 1, &topicString, &req_qos);
+      /* subscribe */
+      topicString.cstring = topick;
+      len = MQTTSerialize_subscribe(buf, buflen, 0, msgid, 1, &topicString, &req_qos);
 
-	  tcp_write_data(buf, len);
+      tcp_write_data(buf, len);
     tmp_time = 0;//retry 5 times at most here;
     do{
-			  tmp_time++;
+              tmp_time++;
         tmp = MQTTPacket_read(buf, buflen, tcp_read_data);
-        if (tmp == SUBACK) 	/* wait for suback */
+        if (tmp == SUBACK)     /* wait for suback */
         {
             unsigned short submsgid;
             int subcount;
@@ -306,9 +306,9 @@ int MQTT_Subscribe(char *topick)
             printf("granted_qos:%d\r\n",granted_qos);
             return 0;
         }
-				osDelay(100);
+                osDelay(100);
     }
     while(tmp != SUBACK && (tmp_time < 5));
-	  return -1;
+      return -1;
 }
 

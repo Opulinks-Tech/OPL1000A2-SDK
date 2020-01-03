@@ -122,28 +122,28 @@ static T_BleWifi_Ble_ProtocolHandlerTbl g_tBleProtocolHandlerTbl[] =
 #if (BLE_OTA_FUNCTION_EN == 1)
 static void BleWifi_OtaSendVersionRsp(uint8_t status, uint16_t pid, uint16_t cid, uint16_t fid)
 {
-	uint8_t data[7];
-	uint8_t *p = (uint8_t *)data;
+    uint8_t data[7];
+    uint8_t *p = (uint8_t *)data;
 
-	*p++ = status;
-	*p++ = LO_UINT16(pid);
-	*p++ = HI_UINT16(pid);
-	*p++ = LO_UINT16(cid);
-	*p++ = HI_UINT16(cid);
-	*p++ = LO_UINT16(fid);
-	*p++ = HI_UINT16(fid);
+    *p++ = status;
+    *p++ = LO_UINT16(pid);
+    *p++ = HI_UINT16(pid);
+    *p++ = LO_UINT16(cid);
+    *p++ = HI_UINT16(cid);
+    *p++ = LO_UINT16(fid);
+    *p++ = HI_UINT16(fid);
 
-	BleWifi_Ble_DataSendEncap(BLEWIFI_RSP_OTA_VERSION, data, 7);
+    BleWifi_Ble_DataSendEncap(BLEWIFI_RSP_OTA_VERSION, data, 7);
 }
 
 static void BleWifi_OtaSendUpgradeRsp(uint8_t status)
 {
-	BleWifi_Ble_DataSendEncap(BLEWIFI_RSP_OTA_UPGRADE, &status, 1);
+    BleWifi_Ble_DataSendEncap(BLEWIFI_RSP_OTA_UPGRADE, &status, 1);
 }
 
 static void BleWifi_OtaSendEndRsp(uint8_t status, uint8_t stop)
 {
-	BleWifi_Ble_DataSendEncap(BLEWIFI_RSP_OTA_END, &status, 1);
+    BleWifi_Ble_DataSendEncap(BLEWIFI_RSP_OTA_END, &status, 1);
 
     if (stop)
     {
@@ -164,104 +164,104 @@ static void BleWifi_OtaSendEndRsp(uint8_t status, uint8_t stop)
 
 static void BleWifi_HandleOtaVersionReq(uint8_t *data, int len)
 {
-	uint16_t pid;
-	uint16_t cid;
-	uint16_t fid;
-	uint8_t state = MwOta_VersionGet(&pid, &cid, &fid);
+    uint16_t pid;
+    uint16_t cid;
+    uint16_t fid;
+    uint8_t state = MwOta_VersionGet(&pid, &cid, &fid);
     
-	BLEWIFI_INFO("BLEWIFI: BLEWIFI_REQ_OTA_VERSION\r\n");
+    BLEWIFI_INFO("BLEWIFI: BLEWIFI_REQ_OTA_VERSION\r\n");
 
-	if (state != MW_OTA_OK) 
-		BleWifi_OtaSendVersionRsp(BLEWIFI_OTA_ERR_HW_FAILURE, 0, 0, 0);
-	else
-		BleWifi_OtaSendVersionRsp(BLEWIFI_OTA_SUCCESS, pid, cid, fid);
+    if (state != MW_OTA_OK) 
+        BleWifi_OtaSendVersionRsp(BLEWIFI_OTA_ERR_HW_FAILURE, 0, 0, 0);
+    else
+        BleWifi_OtaSendVersionRsp(BLEWIFI_OTA_SUCCESS, pid, cid, fid);
 }
 
 static uint8_t BleWifi_MwOtaPrepare(uint16_t uwProjectId, uint16_t uwChipId, uint16_t uwFirmwareId, uint32_t ulImageSize, uint32_t ulImageSum)
 {
-	uint8_t state = MW_OTA_OK;
+    uint8_t state = MW_OTA_OK;
 
-	state = MwOta_Prepare(uwProjectId, uwChipId, uwFirmwareId, ulImageSize, ulImageSum);
-	return state;
+    state = MwOta_Prepare(uwProjectId, uwChipId, uwFirmwareId, ulImageSize, ulImageSum);
+    return state;
 }
 
 static uint8_t BleWifi_MwOtaDatain(uint8_t *pubAddr, uint32_t ulSize)
 {
-	uint8_t state = MW_OTA_OK;
+    uint8_t state = MW_OTA_OK;
 
-	state = MwOta_DataIn(pubAddr, ulSize);
-	return state;
+    state = MwOta_DataIn(pubAddr, ulSize);
+    return state;
 }
 
 static uint8_t BleWifi_MwOtaDataFinish(void)
 {
-	uint8_t state = MW_OTA_OK;
+    uint8_t state = MW_OTA_OK;
 
-	state = MwOta_DataFinish();
-	return state;
+    state = MwOta_DataFinish();
+    return state;
 }
 
 static void BleWifi_HandleOtaUpgradeReq(uint8_t *data, int len)
 {
-	blewifi_ota_t *ota = gTheOta;
-	uint8_t state = MW_OTA_OK;
+    blewifi_ota_t *ota = gTheOta;
+    uint8_t state = MW_OTA_OK;
 
-	BLEWIFI_INFO("BLEWIFI: BLEWIFI_REQ_OTA_UPGRADE\r\n");
+    BLEWIFI_INFO("BLEWIFI: BLEWIFI_REQ_OTA_UPGRADE\r\n");
 
-	if (len != 26)
-	{
-		BleWifi_OtaSendUpgradeRsp(BLEWIFI_OTA_ERR_INVALID_LEN);
-		return;
-	}
+    if (len != 26)
+    {
+        BleWifi_OtaSendUpgradeRsp(BLEWIFI_OTA_ERR_INVALID_LEN);
+        return;
+    }
 
-	if (ota)
-	{
-		BleWifi_OtaSendUpgradeRsp(BLEWIFI_OTA_ERR_IN_PROGRESS);
-		return;
-	}
+    if (ota)
+    {
+        BleWifi_OtaSendUpgradeRsp(BLEWIFI_OTA_ERR_IN_PROGRESS);
+        return;
+    }
 
-	ota = malloc(sizeof(blewifi_ota_t));
+    ota = malloc(sizeof(blewifi_ota_t));
 
-	if (ota)
-	{
-		T_MwOtaFlashHeader *ota_hdr= (T_MwOtaFlashHeader*) &data[2];
-		
-		ota->pkt_idx = 0;
-		ota->idx     = 0;		
+    if (ota)
+    {
+        T_MwOtaFlashHeader *ota_hdr= (T_MwOtaFlashHeader*) &data[2];
+        
+        ota->pkt_idx = 0;
+        ota->idx     = 0;        
         ota->rx_pkt  = *(uint16_t *)&data[0];
         ota->proj_id = ota_hdr->uwProjectId;
         ota->chip_id = ota_hdr->uwChipId;
         ota->fw_id   = ota_hdr->uwFirmwareId;
         ota->total   = ota_hdr->ulImageSize;
-        ota->chksum  = ota_hdr->ulImageSum;		
-		ota->curr 	 = 0;
+        ota->chksum  = ota_hdr->ulImageSum;        
+        ota->curr      = 0;
 
-		state = BleWifi_MwOtaPrepare(ota->proj_id, ota->chip_id, ota->fw_id, ota->total, ota->chksum);
+        state = BleWifi_MwOtaPrepare(ota->proj_id, ota->chip_id, ota->fw_id, ota->total, ota->chksum);
 
         if (state == MW_OTA_OK) 
         {
-	        BleWifi_OtaSendUpgradeRsp(BLEWIFI_OTA_SUCCESS);
-	        gTheOta = ota;
+            BleWifi_OtaSendUpgradeRsp(BLEWIFI_OTA_SUCCESS);
+            gTheOta = ota;
 
-	        BleWifi_Ctrl_MsgSend(BLEWIFI_CTRL_MSG_OTHER_OTA_ON, NULL, 0);
+            BleWifi_Ctrl_MsgSend(BLEWIFI_CTRL_MSG_OTHER_OTA_ON, NULL, 0);
         }
         else
             BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_HW_FAILURE, TRUE);
     }
-	else
-	{
-		BleWifi_OtaSendUpgradeRsp(BLEWIFI_OTA_ERR_MEM_CAPACITY_EXCEED);
-	}
+    else
+    {
+        BleWifi_OtaSendUpgradeRsp(BLEWIFI_OTA_ERR_MEM_CAPACITY_EXCEED);
+    }
 }
 
 static uint32_t BleWifi_OtaAdd(uint8_t *data, int len)
 {
-	uint16_t i;
-	uint32_t sum = 0;
+    uint16_t i;
+    uint32_t sum = 0;
 
-	for (i = 0; i < len; i++)
+    for (i = 0; i < len; i++)
     {
-		sum += data[i];
+        sum += data[i];
     }
 
     return sum;
@@ -269,130 +269,130 @@ static uint32_t BleWifi_OtaAdd(uint8_t *data, int len)
 
 static void BleWifi_HandleOtaRawReq(uint8_t *data, int len)
 {
-	blewifi_ota_t *ota = gTheOta;
-	uint8_t state = MW_OTA_OK;
+    blewifi_ota_t *ota = gTheOta;
+    uint8_t state = MW_OTA_OK;
 
-	BLEWIFI_INFO("BLEWIFI: BLEWIFI_REQ_OTA_RAW\r\n");
+    BLEWIFI_INFO("BLEWIFI: BLEWIFI_REQ_OTA_RAW\r\n");
 
-	if (!ota)
-	{
-		BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_NOT_ACTIVE, FALSE);
+    if (!ota)
+    {
+        BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_NOT_ACTIVE, FALSE);
         goto err;
-	}
-
-	if ((ota->curr + len) > ota->total)
-	{
-		BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_INVALID_LEN, TRUE);
-		goto err;
     }
 
-	ota->pkt_idx++;
-	ota->curr += len;
-	ota->curr_chksum += BleWifi_OtaAdd(data, len);
+    if ((ota->curr + len) > ota->total)
+    {
+        BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_INVALID_LEN, TRUE);
+        goto err;
+    }
 
-	if ((ota->idx + len) >= 256)
-	{
-		UINT16 total = ota->idx + len;
-		UINT8 *s = data;
-		UINT8 *e = data + len;
-		UINT16 cpyLen = 256 - ota->idx;
+    ota->pkt_idx++;
+    ota->curr += len;
+    ota->curr_chksum += BleWifi_OtaAdd(data, len);
 
-		if (ota->idx)
-		{
-			MemCopy(&ota->buf[ota->idx], s, cpyLen);
-			s += cpyLen;
-			total -= 256;
-			ota->idx = 0;
+    if ((ota->idx + len) >= 256)
+    {
+        UINT16 total = ota->idx + len;
+        UINT8 *s = data;
+        UINT8 *e = data + len;
+        UINT16 cpyLen = 256 - ota->idx;
 
-			state = BleWifi_MwOtaDatain(ota->buf, 256);
-		}
+        if (ota->idx)
+        {
+            MemCopy(&ota->buf[ota->idx], s, cpyLen);
+            s += cpyLen;
+            total -= 256;
+            ota->idx = 0;
 
-		if (state == MW_OTA_OK)
-		{
-			while (total >= 256)
-			{
-				state = BleWifi_MwOtaDatain(s, 256);
-				s += 256;
-				total -= 256;
+            state = BleWifi_MwOtaDatain(ota->buf, 256);
+        }
 
-				if (state != MW_OTA_OK) break;
-			}
+        if (state == MW_OTA_OK)
+        {
+            while (total >= 256)
+            {
+                state = BleWifi_MwOtaDatain(s, 256);
+                s += 256;
+                total -= 256;
 
-			if (state == MW_OTA_OK)
-			{
-				MemCopy(ota->buf, s, e - s);
-				ota->idx = e - s;
+                if (state != MW_OTA_OK) break;
+            }
 
-				if ((ota->curr == ota->total) && ota->idx)
-				{
-					state = BleWifi_MwOtaDatain(ota->buf, ota->idx);
-				}
-			}
-		}
-	}
-	else
-	{
-		MemCopy(&ota->buf[ota->idx], data, len);
-		ota->idx += len;
+            if (state == MW_OTA_OK)
+            {
+                MemCopy(ota->buf, s, e - s);
+                ota->idx = e - s;
 
-		if ((ota->curr == ota->total) && ota->idx)
-		{
-			state = BleWifi_MwOtaDatain(ota->buf, ota->idx);
-		}
-	}
+                if ((ota->curr == ota->total) && ota->idx)
+                {
+                    state = BleWifi_MwOtaDatain(ota->buf, ota->idx);
+                }
+            }
+        }
+    }
+    else
+    {
+        MemCopy(&ota->buf[ota->idx], data, len);
+        ota->idx += len;
 
-	if (state == MW_OTA_OK)
-	{
-		if (ota->rx_pkt && (ota->pkt_idx >= ota->rx_pkt))
-		{
-	        BleWifi_Ble_DataSendEncap(BLEWIFI_RSP_OTA_RAW, 0, 0);
-	    		ota->pkt_idx = 0;
+        if ((ota->curr == ota->total) && ota->idx)
+        {
+            state = BleWifi_MwOtaDatain(ota->buf, ota->idx);
+        }
+    }
+
+    if (state == MW_OTA_OK)
+    {
+        if (ota->rx_pkt && (ota->pkt_idx >= ota->rx_pkt))
+        {
+            BleWifi_Ble_DataSendEncap(BLEWIFI_RSP_OTA_RAW, 0, 0);
+                ota->pkt_idx = 0;
     }
   }
     else
-		BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_HW_FAILURE, TRUE);
+        BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_HW_FAILURE, TRUE);
 
 err:
-	return;
+    return;
 }
 
 static void BleWifi_HandleOtaEndReq(uint8_t *data, int len)
 {
-	blewifi_ota_t *ota = gTheOta;
-	uint8_t status = data[0];
+    blewifi_ota_t *ota = gTheOta;
+    uint8_t status = data[0];
 
-	BLEWIFI_INFO("BLEWIFI: BLEWIFI_REQ_OTA_END\r\n");
+    BLEWIFI_INFO("BLEWIFI: BLEWIFI_REQ_OTA_END\r\n");
 
-	if (!ota)
-	{
-		BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_NOT_ACTIVE, FALSE);
+    if (!ota)
+    {
+        BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_NOT_ACTIVE, FALSE);
         goto err;
     }
 
-		if (status == BLEWIFI_OTA_SUCCESS)
-		{
-		if (ota->curr == ota->total)
-				{
-					if (BleWifi_MwOtaDataFinish() == MW_OTA_OK)
-						BleWifi_OtaSendEndRsp(BLEWIFI_OTA_SUCCESS, TRUE);
+        if (status == BLEWIFI_OTA_SUCCESS)
+        {
+        if (ota->curr == ota->total)
+                {
+                    if (BleWifi_MwOtaDataFinish() == MW_OTA_OK)
+                        BleWifi_OtaSendEndRsp(BLEWIFI_OTA_SUCCESS, TRUE);
                     else
-						BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_CHECKSUM, TRUE);
-	            }
-	            else
-				{
-					BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_INVALID_LEN, TRUE);
-	            }
-	        }
-			else
-			{
-		if (ota) MwOta_DataGiveUp();
+                        BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_CHECKSUM, TRUE);
+                }
+                else
+                {
+                    BleWifi_OtaSendEndRsp(BLEWIFI_OTA_ERR_INVALID_LEN, TRUE);
+                }
+            }
+            else
+            {
+        if (ota) MwOta_DataGiveUp();
 
-			// APP stop OTA
-			BleWifi_OtaSendEndRsp(BLEWIFI_OTA_SUCCESS, TRUE);
-		}
+            // APP stop OTA
+            BleWifi_OtaSendEndRsp(BLEWIFI_OTA_SUCCESS, TRUE);
+        }
 
 err:
-	return;
+    return;
 }
 #endif /* #if (BLE_OTA_FUNCTION_EN == 1) */
 

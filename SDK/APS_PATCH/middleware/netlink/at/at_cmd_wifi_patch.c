@@ -18,17 +18,19 @@
 #include "at_cmd.h"
 #include "at_cmd_common.h"
 #include "at_cmd_data_process.h"
+#include "at_cmd_nvm.h"
 #include "controller_wifi_com.h"
 #include "wpa_at_if.h"
 #include "wpa_cli.h"
 #include "driver_netlink.h"
-#include "wpa_at_if.h"
 
 #include "at_cmd_wifi_patch.h"
+#include "at_cmd_app_patch.h"
 #include "controller_wifi_com_patch.h"
 #include "at_cmd_task_patch.h"
 
 #define AT_SCAN_PASSIVE_INT_DEF 150 //ms
+#define AT_BLE_WIFI_MODE 4
 
 #ifdef AT_CMD_WIFI_DBG
     #define AT_LOG                  printf
@@ -39,6 +41,7 @@
 extern at_command_t *g_AtCmdTbl_Wifi_Ptr;
 extern int g_wifi_argc;
 extern char *g_wifi_argv[AT_MAX_CMD_ARGS];
+extern uint8_t g_wifi_init_mode;
 
 S_WIFI_MLME_SCAN_CFG gATScanCfg = {0};
 at_lap_opt_t gATLapOpt = {0};
@@ -57,14 +60,115 @@ extern int at_cmd_wifi_cwmode(char *buf, int len, int mode);
  */
 int at_cmd_wifi_cwmode_patch(char *buf, int len, int mode)
 {
-    int iRet = at_cmd_wifi_cwmode(buf, len, mode);
+    int cwmode;
+    char *argv[AT_MAX_CMD_ARGS] = {0};
+    int argc = 0;
+    uint8_t ret = false;
+    static uint8_t pre_wifi_mode = 0;
     
-    if(iRet)
+    at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS);
+
+    switch(mode)
     {
-        at_cmd_crlf_term_set(1); // Enable CR-LF termination for WiFi AT commands
+        case AT_CMD_MODE_READ:
+            msg_print_uart1("\r\n+CWMODE:%d\r\n", g_wifi_init_mode);
+            ret = true;
+            break;
+
+        case AT_CMD_MODE_EXECUTION:
+            //Do nothing
+            break;
+
+        case AT_CMD_MODE_SET:
+            if(argc > 1) {
+                if (at_cmd_get_para_as_digital(argv[1], &cwmode) != 0) {
+                    goto exit;
+                }
+                
+                switch (cwmode)
+                {
+                    case 0:
+                    {
+                        if (g_wifi_init_mode == 0) {
+                            ret = true;
+                            goto exit;
+                        }
+                        
+                        if (at_cmd_nvm_cw_ble_wifi_mode_set((uint8_t *)&cwmode))
+                            goto exit;
+                        
+                        //Keep previous mode 
+                        pre_wifi_mode = g_wifi_init_mode;
+                        
+                        g_wifi_init_mode = 0;
+                        
+                        ret = true;
+                    }
+                        break;
+
+                    case 1:
+                        if ((g_wifi_init_mode == AT_BLE_WIFI_MODE))
+                            goto exit;
+                        
+                        //wpa_set_wpa_mode(WPA_MODE_STA);
+                        g_wifi_init_mode = WPA_MODE_STA;
+                        
+                        //Initialize AT task (TCPIP data task, event loop task)
+                        at_wifi_net_task_init();
+                        
+                        at_cmd_crlf_term_set(1); // Enable CR-LF termination for WiFi AT commands
+                        
+                        ret = true;
+                        break;
+                        
+                    case 4:
+                    {
+                        if (g_wifi_init_mode == AT_BLE_WIFI_MODE) {
+                            ret = true;
+                            goto exit;
+                        }
+                            
+                        if (g_wifi_init_mode == WPA_MODE_STA)
+                            goto exit;
+                        
+                        uint8_t enable = 1;
+                        if (at_cmd_nvm_cw_ble_wifi_mode_set(&enable))
+                            goto exit;
+                        
+                        g_wifi_init_mode = AT_BLE_WIFI_MODE;
+                        
+                        //Initialize BleWifi task
+                        if (pre_wifi_mode != AT_BLE_WIFI_MODE) {
+                            at_blewifi_init();
+                            at_cmd_crlf_term_set(1); // Enable CR-LF termination for WiFi AT commands
+                        }
+
+                        ret = true;
+                    }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            break;
+
+        case AT_CMD_MODE_TESTING:
+            msg_print_uart1("\r\n+CWMODE:%d\r\n", g_wifi_init_mode);
+            ret = true;
+            break;
+
+        default:
+            break;
     }
+
+exit:
+    if (ret == true) {
+        msg_print_uart1("\r\nOK\r\n");
+    }
+    else 
+        msg_print_uart1("\r\nERROR\r\n");
     
-    return iRet;
+    return ret;
 }
 
 /*

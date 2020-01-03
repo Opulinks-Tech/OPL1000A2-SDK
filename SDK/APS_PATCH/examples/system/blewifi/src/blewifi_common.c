@@ -26,23 +26,23 @@ uint32_t g_ulSntpSecondInit;      // GMT Time Initialize
 
 void BleWifi_HexDump(const char *title, const uint8_t *buf, size_t len)
 {
-	size_t i;
+    size_t i;
 
-	printf("\n%s - hexdump(len=%lu):", title, (unsigned long)len);
-	if (buf == NULL)
-	{
-		printf(" [NULL]");
-	}
-	else
-	{
-		for (i = 0; i < len; i++)
-		{
+    printf("\n%s - hexdump(len=%lu):", title, (unsigned long)len);
+    if (buf == NULL)
+    {
+        printf(" [NULL]");
+    }
+    else
+    {
+        for (i = 0; i < len; i++)
+        {
             if (i%16 == 0)
                 printf("\n");
-			printf(" %02x", buf[i]);
-		}
-	}
-	printf("\n");
+            printf(" %02x", buf[i]);
+        }
+    }
+    printf("\n");
 
 }
 
@@ -148,7 +148,7 @@ int BleWifi_SntpInit(void)
         }
         else
         {
-			//int nRet = read(sockfd, (char*) &sntp_h, sizeof(sntp_h));
+            //int nRet = read(sockfd, (char*) &sntp_h, sizeof(sntp_h));
             int nRet;
             int error;
             socklen_t errlen = sizeof(error);
@@ -168,10 +168,10 @@ int BleWifi_SntpInit(void)
                     printf("sntp read timeout \n");
                 }
                 else
-				{
+                {
                     printf("sntp recv error\n");
                 }
-				goto CloseSocket;
+                goto CloseSocket;
            }
            else
            {

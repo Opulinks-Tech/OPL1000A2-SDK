@@ -76,6 +76,11 @@ extern volatile uint16_t server_timeover;
 extern uint8_t g_server_mode;
 extern uint32_t g_server_port;
 extern int tcp_server_socket;
+extern at_socket_t atcmd_socket[AT_LINK_MAX_NUM];
+extern uint8_t sending_id;
+extern uint32_t at_send_len;
+extern uint8_t *pDataLine;
+extern uint8_t  at_data_line[];
 
 /******************************************************
  *               Function Definitions
@@ -238,6 +243,113 @@ int at_cmd_tcpip_cipserver_patch(char *buf, int len, int mode)
         at_create_tcpip_data_task();
     }
     return true;
+}
+
+/*
+ * @brief Command at+cipsend
+ *
+ * @param [in] argc count of parameters
+ *
+ * @param [in] argv parameters array
+ *
+ * @return 0 fail 1 success
+ *
+ */
+int at_cmd_tcpip_cipsend_patch(char *buf, int len, int mode)
+{
+    char *param = NULL;
+    at_socket_t *link;
+    int send_id = 0;
+    int send_len = 0;
+    uint8_t ret = AT_RESULT_CODE_ERROR;
+    char *pSavedPtr = NULL;
+
+    switch (mode) {
+        case AT_CMD_MODE_EXECUTION:
+            if (at_ipMux == true || at_ip_mode == false) {
+                goto exit;
+            }
+
+            if (atcmd_socket[0].sock < 0) {
+                goto exit;
+            }
+
+            atcmd_socket[0].link_state = AT_LINK_TRANSMIT_SEND;
+
+            sending_id = send_id;
+            at_send_len = 0;
+            pDataLine = at_data_line;
+
+            at_cmd_trans_lock();
+
+            at_response_result(AT_RESULT_CODE_OK);
+            msg_print_uart1("\r\n> ");
+            ret = AT_RESULT_CODE_IGNORE;
+            break;
+
+        case AT_CMD_MODE_SET:  // AT+CIPSEND= link,<op>
+            param = strtok_r(buf, "=", &pSavedPtr);
+
+            if (at_ip_mode == true) {
+                goto exit;
+            } 
+            
+            if (at_ipMux) {
+                /* Multiple connections */
+                param = strtok_r(NULL, ",", &pSavedPtr);
+                
+                if (at_cmd_get_para_as_digital(param, &send_id) != 0) {
+                    goto exit;
+                }
+
+                if (send_id >= AT_LINK_MAX_NUM) {
+                    goto exit;
+                }
+            } else {
+                send_id = 0;
+            }
+
+            link = at_link_get_id(send_id);
+            if (link->sock < 0) {
+                AT_LOG("link is not connected\r\n");
+                goto exit;
+            }
+
+            param = strtok_r(NULL, "\0", &pSavedPtr);
+
+            if (at_cmd_get_para_as_digital(param, &send_len) != 0) {
+                goto exit;
+            }
+                
+            if (send_len > AT_DATA_LEN_MAX) {
+               AT_LOG("data length is too long\r\n");
+               goto exit;
+            }
+
+
+            if (link->link_type == AT_LINK_TYPE_UDP)
+            {
+              //TODO: Remote IP and ports can be set in UDP transmission:
+              //AT+CIPSEND=[<link ID>,]<length>[,<remote IP>,<remote port>]
+            }
+
+            //switch port input to TCP/IP module
+            sending_id = send_id;
+            at_send_len = send_len;
+            pDataLine = at_data_line;
+            data_process_lock(LOCK_TCPIP, at_send_len);
+            at_response_result(AT_RESULT_CODE_OK);
+            msg_print_uart1("\r\n> ");
+            ret = AT_RESULT_CODE_IGNORE;
+            break;
+
+        default :
+            break;
+    }
+
+exit:
+    at_response_result(ret);
+    return ret;
 }
 
 /*
@@ -430,6 +542,7 @@ void at_cmd_tcpip_api_preinit_patch(void)
     at_cmd_ping_callback           = at_cmd_ping_callback_patch;
     
     g_AtCmdTbl_Tcpip_Ptr[2].cmd_handle   = at_cmd_tcpip_cipstart_patch;
+    g_AtCmdTbl_Tcpip_Ptr[3].cmd_handle   = at_cmd_tcpip_cipsend_patch;
     g_AtCmdTbl_Tcpip_Ptr[8].cmd_handle   = at_cmd_tcpip_cipserver_patch;
     g_AtCmdTbl_Tcpip_Ptr[10].cmd_handle  = at_cmd_tcpip_savetranslink_patch;
     g_AtCmdTbl_Tcpip_Ptr[19].cmd_handle  = at_cmd_tcpip_ping_patch;

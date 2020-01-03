@@ -260,7 +260,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	  
+      
 }
 
 /*************************************************************************
@@ -414,7 +414,7 @@ static void Main_AppThread_1(void *argu)
     // do the timer_periodic_test
     timer_periodic_test();
     
-	  printf("Timer Running \r\n");
+      printf("Timer Running \r\n");
     while (1)
     {
         // receive the message from AppMessageQ

@@ -128,8 +128,8 @@ void __Patch_EntryPoint(void)
 
     // the initial of driver part for cold and warm boot
     Sys_MiscModulesInit = Main_MiscModulesInit;
-	    
-	Sys_SetUnsuedSramEndBound(0x440000);
+        
+    Sys_SetUnsuedSramEndBound(0x440000);
  
     Sys_MiscDriverConfigSetup = Main_MiscDriverConfigSetup;
 
@@ -221,7 +221,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	    
+        
 }
 
 
@@ -312,7 +312,7 @@ static void Main_AtUartDbgUartSwitch(void)
 *************************************************************************/
 static void Main_AppInit_patch(void)
 {
-	OtaAppInit();
+    OtaAppInit();
 }
 /*************************************************************************
 * FUNCTION:

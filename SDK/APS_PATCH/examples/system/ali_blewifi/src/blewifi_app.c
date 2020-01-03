@@ -61,7 +61,7 @@ void BleWifiAppInit(void)
     T_MwFim_SysMode tSysMode;
     T_MwFim_GP11_PowerSaving tPowerSaving;
     
-	gTheOta = 0;
+    gTheOta = 0;
 
 #if (SNTP_FUNCTION_EN == 1)
     g_ulSntpSecondInit = SNTP_SEC_2019;     // Initialize the Sntp Value
@@ -69,14 +69,14 @@ void BleWifiAppInit(void)
 #endif
 
     // get the settings of system mode
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP03_PATCH_SYS_MODE, 0, MW_FIM_SYS_MODE_SIZE, (uint8_t*)&tSysMode))
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP03_PATCH_SYS_MODE, 0, MW_FIM_SYS_MODE_SIZE, (uint8_t*)&tSysMode))
     {
         // if fail, get the default value
         memcpy(&tSysMode, &g_tMwFimDefaultSysMode, MW_FIM_SYS_MODE_SIZE);
     }
 
     // get the settings of power saving
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_POWER_SAVING, 0, MW_FIM_GP11_POWER_SAVING_SIZE, (uint8_t*)&tPowerSaving))
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_POWER_SAVING, 0, MW_FIM_GP11_POWER_SAVING_SIZE, (uint8_t*)&tPowerSaving))
     {
         // if fail, get the default value
         memcpy(&tPowerSaving, &g_tMwFimDefaultGp11PowerSaving, MW_FIM_GP11_POWER_SAVING_SIZE);
@@ -98,8 +98,8 @@ void BleWifiAppInit(void)
         #if (WIFI_OTA_FUNCTION_EN == 1)
         blewifi_ctrl_http_ota_task_create();
         #endif
-			
-        Ali_Hal_Devive_init();				
+            
+        Ali_Hal_Devive_init();                
         HAL_GetProductKey(dinfo.product_key);
         HAL_GetProductSecret(dinfo.product_secret);
         HAL_GetDeviceName(dinfo.device_name);

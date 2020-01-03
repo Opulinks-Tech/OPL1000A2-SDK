@@ -34,7 +34,7 @@ extern "C" {
 #define MACSTR "\n%02x:%02x:%02x:%02x:%02x:%02x\n"
 
 #if defined(__UPDATE_MAC_ADDR_FLAG__)
-#define  OPL_STA_MAC_ADDR	      {0x78, 0x22, 0x33, 0x44, 0x55, 0x67}
+#define  OPL_STA_MAC_ADDR          {0x78, 0x22, 0x33, 0x44, 0x55, 0x67}
 
 void MacAddrInit(void);
 #endif

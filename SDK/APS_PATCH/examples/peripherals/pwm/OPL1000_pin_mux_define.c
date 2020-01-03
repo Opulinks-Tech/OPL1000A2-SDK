@@ -11,6 +11,7 @@
 ******************************************************************************/ 
 
 #include "OPL1000_pin_mux_define.h" 
+#include "pwm_complex.h"
 
 T_OPL1000_Periph OPL1000_periph = {
   0,{{UART_IDX_MAX,
@@ -65,7 +66,7 @@ T_OPL1000_Periph OPL1000_periph = {
        SPI_FMT_MOTOROLA,
        SPI_DFS_08_bit,
        QMODE_DISABLE}},
-  2,{
+  3,{
       {OPL1000_IO18_PIN,
        CLK_22MHz,
        CFG_SIMPLE,
@@ -90,7 +91,18 @@ T_OPL1000_Periph OPL1000_periph = {
        0,
        0,
        0},
-      {BLANK_PIN,CLK_32KHz,CFG_SIMPLE,0,0,0,0,0,0,0,0,0},
+      {OPL1000_IO20_PIN,
+       CLK_22MHz,
+       CFG_COMPLEX,
+       50,
+       3000,
+       PWM_COMPLEX_PERIOD_DEF,
+       PWM_COMPLEX_DUTY_DEF,
+       PWM_COMPLEX_DUTY_DEF,
+       PWM_COMPLEX_DUTY_DEF,
+       0,
+       1,
+       1},
       {BLANK_PIN,CLK_32KHz,CFG_SIMPLE,0,0,0,0,0,0,0,0,0},
       {BLANK_PIN,CLK_32KHz,CFG_SIMPLE,0,0,0,0,0,0,0,0,0},
       {BLANK_PIN,CLK_32KHz,CFG_SIMPLE,0,0,0,0,0,0,0,0,0}

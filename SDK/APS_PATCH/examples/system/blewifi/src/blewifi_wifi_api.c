@@ -298,7 +298,7 @@ void BleWifi_Wifi_SendStatusInfo(uint16_t uwType)
     /* create Wi-Fi status info data packet */
     BleWifi_Ble_DataSendEncap(uwType, pubData, uwDataLen);
 
-release:	
+release:    
     free(pubData);
 }
 

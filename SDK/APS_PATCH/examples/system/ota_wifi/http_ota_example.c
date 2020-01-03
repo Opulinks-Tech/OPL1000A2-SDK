@@ -66,7 +66,7 @@ int wifi_connection(void)
     wifi_scan_list_t *p_scan_list = NULL;
     int i = 0;
     int isMatched = 0;
-		
+        
     p_scan_list = (wifi_scan_list_t *)malloc(sizeof(wifi_scan_list_t));
 
     if(p_scan_list == NULL)
@@ -140,7 +140,7 @@ int wifi_event_handler_cb(wifi_event_id_t event_id, void *data, uint16_t length)
     case WIFI_EVENT_STA_GOT_IP:
         printf("\r\nWi-Fi Got IP \r\n");
         //lwip_get_ip_info("st1");
-		    g_connection_flag = true;
+            g_connection_flag = true;
         break;
     case WIFI_EVENT_STA_CONNECTION_FAILED:
         printf("\r\nWi-Fi Connected failed\r\n");
@@ -155,44 +155,44 @@ int wifi_event_handler_cb(wifi_event_id_t event_id, void *data, uint16_t length)
 
 void ota_write_hexdump(const uint8_t *buf, size_t len)
 {
-	size_t i;
-	for (i = 0; i < len; i++) {
+    size_t i;
+    for (i = 0; i < len; i++) {
         if (i%16 == 0)
             printf("\r\n");
-		printf(" %02x", buf[i]);
-	}
-	printf("\n");
+        printf(" %02x", buf[i]);
+    }
+    printf("\n");
 }
 static uint8_t ota_get_version(uint16_t *project_id, uint16_t *chip_id, uint16_t *firmware_id)
 {
-	uint8_t state = MW_OTA_OK;
+    uint8_t state = MW_OTA_OK;
 
-	state = MwOta_VersionGet(project_id, chip_id, firmware_id);
-	return state;
+    state = MwOta_VersionGet(project_id, chip_id, firmware_id);
+    return state;
 }
 
 static uint8_t ota_prepare(uint16_t project_id, uint16_t chip_id, uint16_t firmware_id, uint32_t img_size, uint32_t img_sum)
 {
-	uint8_t state = MW_OTA_OK;
+    uint8_t state = MW_OTA_OK;
 
-	state = MwOta_Prepare(project_id, chip_id, firmware_id, img_size, img_sum);
-	return state;
+    state = MwOta_Prepare(project_id, chip_id, firmware_id, img_size, img_sum);
+    return state;
 }
 
 static uint8_t ota_data_write(uint8_t *pubAddr, uint32_t ulSize)
 {
-	uint8_t state = MW_OTA_OK;
+    uint8_t state = MW_OTA_OK;
 
-	state = MwOta_DataIn(pubAddr, ulSize);
-	return state;
+    state = MwOta_DataIn(pubAddr, ulSize);
+    return state;
 }
 
 static uint8_t ota_data_finish(void)
 {
-	uint8_t state = MW_OTA_OK;
+    uint8_t state = MW_OTA_OK;
 
-	state = MwOta_DataFinish();
-	return state;
+    state = MwOta_DataFinish();
+    return state;
 }
 
 static uint8_t ota_abort(void)
@@ -219,11 +219,11 @@ int ota_http_retrieve_offset(httpclient_t *client, httpclient_data_t *client_dat
             ota_hdr = (T_MwOtaFlashHeader*)client_data->response_buf;
             LOG_E(TAG, "proj_id=%d, chip_id=%d, fw_id=%d, checksum=%d, total_len=%d\r\n",
                 ota_hdr->uwProjectId, ota_hdr->uwChipId, ota_hdr->uwFirmwareId, ota_hdr->ulImageSum, ota_hdr->ulImageSize);
-		    if (ota_prepare(ota_hdr->uwProjectId, ota_hdr->uwChipId, ota_hdr->uwFirmwareId, ota_hdr->ulImageSize, ota_hdr->ulImageSum) != MW_OTA_OK) {
+            if (ota_prepare(ota_hdr->uwProjectId, ota_hdr->uwChipId, ota_hdr->uwFirmwareId, ota_hdr->ulImageSize, ota_hdr->ulImageSum) != MW_OTA_OK) {
                 LOG_I(TAG, "ota_prepare fail\r\n");
-    		    return -1;
-    		}
-    		ota_hdr1_start = 0;
+                return -1;
+            }
+            ota_hdr1_start = 0;
         }
         if ( (client_data->response_content_len - client_data->retrieve_len) == offset )
             break;
@@ -265,7 +265,7 @@ int ota_http_retrieve_get(char* get_url, char* buf, uint32_t len)
 
 
         return ret;
-    		}
+            }
 
     // skip 2st OTA header,  0x00003000 ~ 0x00004000 : 4 KB
 
@@ -320,9 +320,9 @@ int ota_download_by_http(char *param)
     int32_t ret = HTTPCLIENT_ERROR_CONN;
     uint32_t len_param = strlen(param);
     uint16_t retry_count = 0;
-	uint16_t pid;
-	uint16_t cid;
-	uint16_t fid;
+    uint16_t pid;
+    uint16_t cid;
+    uint16_t fid;
 
     if (len_param < 1) {
       return -1;
@@ -384,17 +384,17 @@ int ota_download_by_http(char *param)
 
 void user_wifi_app_entry(void *args)
 {
-	  g_connection_flag = false; 
-	
+      g_connection_flag = false; 
+    
     /* Tcpip stack and net interface initialization,  dhcp client process initialization. */
     lwip_network_init(WIFI_MODE_STA);
 
     /* Waiting for connection & got IP from DHCP server */
     lwip_net_ready();
 
-	  if(g_connection_flag == true)
-	      LOG_I(TAG,"Opulinks-TEST-AP connected \r\n");
-	
+      if(g_connection_flag == true)
+          LOG_I(TAG,"Opulinks-TEST-AP connected \r\n");
+    
     if (ota_download_by_http(HTTP_GET_URL) == 0)
     {
         //Hal_Sys_SwResetAll();

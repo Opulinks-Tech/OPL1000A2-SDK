@@ -308,5 +308,5 @@ static void Main_ApsUartRxDectecCb(E_GpioIdx_t tGpioIdx)
 *************************************************************************/
 static void Main_AppInit_patch(void)
 {
-	BleAppInit();
+    BleAppInit();
 }

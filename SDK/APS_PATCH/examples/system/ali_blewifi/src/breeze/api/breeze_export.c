@@ -96,22 +96,22 @@ static void event_handler(ali_event_t *p_event)
 #if BZ_ENABLE_COMBO_NET
             if(m_apinfo_handler != NULL){
                 m_apinfo_handler(p_event->rx_data.p_data);
-	    }
+        }
 #endif
             break;
-	case BZ_CMD_CTX_INFO:
-	    if(p_event->rx_data.p_data != NULL){
+    case BZ_CMD_CTX_INFO:
+        if(p_event->rx_data.p_data != NULL){
                 struct rx_cmd_post_t *r_cmd  = (struct rx_cmd_post_t*) p_event->rx_data.p_data;
-                uint8_t cmd = r_cmd ->cmd;	
-		if(cmd == BZ_CMD_QUERY){
-	            if (m_query_handler != NULL) {
+                uint8_t cmd = r_cmd ->cmd;    
+        if(cmd == BZ_CMD_QUERY){
+                if (m_query_handler != NULL) {
                         m_query_handler(r_cmd->p_rx_buf, r_cmd->buf_sz);
                     }
-		} else if(cmd == BZ_CMD_CTRL){
-		    if (m_ctrl_handler != NULL) {
+        } else if(cmd == BZ_CMD_CTRL){
+            if (m_ctrl_handler != NULL) {
                         m_ctrl_handler (r_cmd->p_rx_buf, r_cmd->buf_sz);
                     }
-		}else if((cmd & BZ_CMD_TYPE_MASK) == BZ_CMD_TYPE_OTA){
+        }else if((cmd & BZ_CMD_TYPE_MASK) == BZ_CMD_TYPE_OTA){
 #if BZ_ENABLE_OTA
                     m_disc_evt.type = OTA_CMD;
                     m_disc_evt.cmd_evt.m_cmd.cmd = r_cmd->cmd;
@@ -120,23 +120,23 @@ static void event_handler(ali_event_t *p_event)
                     memcpy(m_disc_evt.cmd_evt.m_cmd.data, r_cmd->p_rx_buf, r_cmd->buf_sz);
                     b_notify_upper = true;
 #endif
-		}
-	    }
-	    break;
+        }
+        }
+        break;
 #if BZ_ENABLE_OTA
         case BZ_EVENT_ERR_DISCONT:
             m_disc_evt.type = OTA_EVT;
             m_disc_evt.cmd_evt.m_evt.evt = ALI_OTA_ON_DISCONTINUE_ERR;
             m_disc_evt.cmd_evt.m_evt.d = 0;
             b_notify_upper = true;
-	    break;
+        break;
 #endif
         default:
             break;
     }
 #if BZ_ENABLE_OTA
     if(b_notify_upper && (m_ota_dev_handler != NULL)){
-	m_ota_dev_handler(&m_disc_evt);
+    m_ota_dev_handler(&m_disc_evt);
     }
 #endif
 }

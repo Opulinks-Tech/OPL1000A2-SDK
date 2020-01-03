@@ -51,10 +51,10 @@ static UINT16 gBleWifiDataInUuid          = BLEWIFI_BLE_UUID_DATA_IN;
 static UINT8  gBleWifiDataInCharVal[]     = CHAR_DECL_UUID16_ATTR_VAL(LE_GATT_CHAR_PROP_WR_NO_RESP | LE_GATT_CHAR_PROP_WR, BLEWIFI_BLE_UUID_DATA_IN);
 static UINT8  gBleWifiDataInVal[LE_ATT_MAX_MTU];
 
-static UINT16 gBleWifiDataOutUuid		  = BLEWIFI_BLE_UUID_DATA_OUT;
+static UINT16 gBleWifiDataOutUuid          = BLEWIFI_BLE_UUID_DATA_OUT;
 static UINT8  gBleWifiDataOutCharVal[]    = CHAR_DECL_UUID16_ATTR_VAL(LE_GATT_CHAR_PROP_NTF, BLEWIFI_BLE_UUID_DATA_OUT);
 static UINT8  gBleWifiDataOutVal[LE_ATT_MAX_MTU];
-static UINT16 gBleWifiDataOutClientCfg 	  = 1;
+static UINT16 gBleWifiDataOutClientCfg       = 1;
 
 
 static LE_GATT_ATTR_T gGattSvcDb[GATT_IDX_TOP] =
@@ -124,18 +124,18 @@ T_BleWifi_Ble_MsgHandlerTbl gBleGattMsgHandlerTbl[] =
 
 static void BleWifi_Ble_AppHandleGattServiceRead(LE_GATT_MSG_ACCESS_READ_IND_T *ind)
 {
-	UINT8 attErr = 0;
-	UINT16 attrid = ind->handle - gGattSvc->startHdl;
+    UINT8 attErr = 0;
+    UINT16 attrid = ind->handle - gGattSvc->startHdl;
 
     BLEWIFI_INFO("APP-BleWifi_Ble_AppHandleGattServiceRead attId = %d offset = %d\r\n", attrid, ind->offset);
     
-	switch (attrid)
+    switch (attrid)
     {
-		case GATT_IDX_SERVICE_CHANGE_CFG:
-		break;
+        case GATT_IDX_SERVICE_CHANGE_CFG:
+        break;
 
-		default:
-			attErr = LE_ATT_ERR_READ_NOT_PERMITTED;
+        default:
+            attErr = LE_ATT_ERR_READ_NOT_PERMITTED;
         break;
     }
 
@@ -144,203 +144,203 @@ static void BleWifi_Ble_AppHandleGattServiceRead(LE_GATT_MSG_ACCESS_READ_IND_T *
 
 static void BleWifi_Ble_AppHandleGattServiceWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T *ind)
 {
-	UINT8 attErr = 0;
-	UINT16 attrid = ind->handle - gGattSvc->startHdl;
-	
+    UINT8 attErr = 0;
+    UINT16 attrid = ind->handle - gGattSvc->startHdl;
+    
     BLEWIFI_INFO("APP-BleWifi_Ble_AppHandleGattServiceWrite attId = %d op = %x offset = %d\r\n", attrid, ind->flag, ind->offset);
     
-	switch (attrid)
+    switch (attrid)
     {
-		case GATT_IDX_SERVICE_CHANGE_CFG:
-		{
-			UINT16 val = *((UINT16 *)ind->pVal);
+        case GATT_IDX_SERVICE_CHANGE_CFG:
+        {
+            UINT16 val = *((UINT16 *)ind->pVal);
 
-			BLEWIFI_INFO("APP-GATT_IDX_SERVICE_CHANGE_CFG Len = %d  attr-val = %d\r\n", val);
+            BLEWIFI_INFO("APP-GATT_IDX_SERVICE_CHANGE_CFG Len = %d  attr-val = %d\r\n", val);
 
             LeGattChangeAttrVal(gGattSvc, attrid, 2, &val);
         }
-		break;
+        break;
 
-		default:
+        default:
             attErr = LE_ATT_ERR_WRITE_NOT_PERMITTED;
         break;
     }
 
-	LeGattAccessWriteRsp(ind->conn_hdl, ind->flag, ind->handle, attErr);
+    LeGattAccessWriteRsp(ind->conn_hdl, ind->flag, ind->handle, attErr);
 }
 
 static void BleWifi_Ble_AppHandleGapServiceRead(LE_GATT_MSG_ACCESS_READ_IND_T *ind)
 {
-	UINT8 attErr = 0;
-	UINT16 attrid = ind->handle - gGapSvc->startHdl;
+    UINT8 attErr = 0;
+    UINT16 attrid = ind->handle - gGapSvc->startHdl;
 
-	switch (attrid)
+    switch (attrid)
     {
-		case GAP_IDX_DEVICE_NAME_VAL:
-		case GAP_IDX_APPEARANCE_VAL:
-		case GAP_IDX_CONN_PARAM_VAL:
+        case GAP_IDX_DEVICE_NAME_VAL:
+        case GAP_IDX_APPEARANCE_VAL:
+        case GAP_IDX_CONN_PARAM_VAL:
         break;
         
-		default:
+        default:
             attErr = LE_ATT_ERR_READ_NOT_PERMITTED;
         break;
     }
 
-	LeGattAccessReadRsp(ind->conn_hdl, ind->handle, attErr);
+    LeGattAccessReadRsp(ind->conn_hdl, ind->handle, attErr);
 }
 
 static void BleWifi_Ble_AppHandleGapServiceWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T *ind)
 {
-	UINT8 attErr = 0;
-	UINT16 attrid = ind->handle - gGapSvc->startHdl;
-	
+    UINT8 attErr = 0;
+    UINT16 attrid = ind->handle - gGapSvc->startHdl;
+    
     BLEWIFI_INFO("APP-BleWifi_Ble_AppHandleGapServiceWrite attId = %d op = %x offset = %d\r\n", attrid, ind->flag, ind->offset);
     
-	switch (attrid)
+    switch (attrid)
     {
-		case GAP_IDX_DEVICE_NAME_VAL:
-		{
-			BLE_APP_DATA_T *app = BleWifi_Ble_GetEntity();
-			UINT8 *p = app->scn_data.buf;
-			UINT16 wrLen = ind->len;
+        case GAP_IDX_DEVICE_NAME_VAL:
+        {
+            BLE_APP_DATA_T *app = BleWifi_Ble_GetEntity();
+            UINT8 *p = app->scn_data.buf;
+            UINT16 wrLen = ind->len;
 
-			if (!wrLen || (wrLen > 31))
+            if (!wrLen || (wrLen > 31))
             {
-            	attErr = LE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
+                attErr = LE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
                 
-				break;
+                break;
             }
 
-			LeGattChangeAttrVal(gGapSvc, GAP_IDX_DEVICE_NAME_VAL, wrLen, ind->pVal);
+            LeGattChangeAttrVal(gGapSvc, GAP_IDX_DEVICE_NAME_VAL, wrLen, ind->pVal);
 
-			if (wrLen > 29) 
-			{
-				wrLen = 29;
-				*p++ = wrLen + 1;
-				*p++ = GAP_ADTYPE_LOCAL_NAME_SHORT;
+            if (wrLen > 29) 
+            {
+                wrLen = 29;
+                *p++ = wrLen + 1;
+                *p++ = GAP_ADTYPE_LOCAL_NAME_SHORT;
             }
             else
-			{
-				*p++ = wrLen + 1;
-				*p++ = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
+            {
+                *p++ = wrLen + 1;
+                *p++ = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
             }
             
             MemCopy(p, ind->pVal, wrLen);
 
-			LeSetScanRspData(wrLen + 2, app->scn_data.buf);
+            LeSetScanRspData(wrLen + 2, app->scn_data.buf);
         }
-		break;
+        break;
 
-		default:
+        default:
             attErr = LE_ATT_ERR_WRITE_NOT_PERMITTED;
         break;
     }
 
-	LeGattAccessWriteRsp(ind->conn_hdl, ind->flag, ind->handle, attErr);
+    LeGattAccessWriteRsp(ind->conn_hdl, ind->flag, ind->handle, attErr);
 }
 
 static void BleWifi_Ble_AppHandleBwpServiceRead(LE_GATT_MSG_ACCESS_READ_IND_T *ind)
 {
-	UINT8 attErr = 0;
-	UINT16 attrid = ind->handle - gBwpSvc->startHdl;
+    UINT8 attErr = 0;
+    UINT16 attrid = ind->handle - gBwpSvc->startHdl;
 
-	switch (attrid)
+    switch (attrid)
     {
-		case BWP_IDX_DATA_OUT_CFG:
+        case BWP_IDX_DATA_OUT_CFG:
         {
-			UINT16 enable;
-			UINT16 len = 0;
+            UINT16 enable;
+            UINT16 len = 0;
 
-			LeGattGetAttrVal(gBwpSvc, BWP_IDX_DATA_OUT_CFG, &len, &enable);
+            LeGattGetAttrVal(gBwpSvc, BWP_IDX_DATA_OUT_CFG, &len, &enable);
 
-			BLEWIFI_INFO("APP-BWP_IDX_DATA_OUT_CFG val = %d\r\n", enable);
+            BLEWIFI_INFO("APP-BWP_IDX_DATA_OUT_CFG val = %d\r\n", enable);
         }
-		break;
+        break;
 
-		default:
+        default:
             attErr = LE_ATT_ERR_READ_NOT_PERMITTED;
         break;
     }
 
-	LeGattAccessReadRsp(ind->conn_hdl, ind->handle, attErr);
+    LeGattAccessReadRsp(ind->conn_hdl, ind->handle, attErr);
 }
 
 static void BleWifi_Ble_AppHandleBwpServiceWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T *ind)
 {
-	UINT8 attErr = 0;
-	UINT16 attrid = ind->handle - gBwpSvc->startHdl;
-	
+    UINT8 attErr = 0;
+    UINT16 attrid = ind->handle - gBwpSvc->startHdl;
+    
     BLEWIFI_INFO("APP - BleWifi_Ble_AppHandleBwpServiceWrite attId = %d op = %x offset = %d len = %d\r\n", attrid, ind->flag, ind->offset, ind->len);
     
-	switch (attrid)
+    switch (attrid)
     {
-		case BWP_IDX_DATA_IN_VAL:
-		{
-		    // !!! BLE Data in 
-		    // receive the data from peer to device
+        case BWP_IDX_DATA_IN_VAL:
+        {
+            // !!! BLE Data in 
+            // receive the data from peer to device
             BleWifi_Ctrl_MsgSend(BLEWIFI_CTRL_MSG_BLE_DATA_IND, ind->pVal, ind->len);
         }
-		break;
+        break;
 
-		case BWP_IDX_DATA_OUT_CFG:
-		{
-			UINT16 enable = *((UINT16 *)ind->pVal);
+        case BWP_IDX_DATA_OUT_CFG:
+        {
+            UINT16 enable = *((UINT16 *)ind->pVal);
 
-			if ((ind->len == 2) && (enable <= 1))
-			{
-				LeGattChangeAttrVal(gBwpSvc, BWP_IDX_DATA_OUT_CFG, 2, &enable);
+            if ((ind->len == 2) && (enable <= 1))
+            {
+                LeGattChangeAttrVal(gBwpSvc, BWP_IDX_DATA_OUT_CFG, 2, &enable);
             }
             else
                 attErr = LE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
         }
         break;
 
-		default:
+        default:
             attErr = LE_ATT_ERR_WRITE_NOT_PERMITTED;
         break;
     }
 
-	LeGattAccessWriteRsp(ind->conn_hdl, ind->flag, ind->handle, attErr);
+    LeGattAccessWriteRsp(ind->conn_hdl, ind->flag, ind->handle, attErr);
 }
 
 
 static void BleWifi_Ble_GattHandleAccessRead(LE_GATT_MSG_ACCESS_READ_IND_T *ind)
 {
-	if ((ind->handle >= gGattSvc->startHdl) && (ind->handle <= gGattSvc->endHdl))
-	{
-		BleWifi_Ble_AppHandleGattServiceRead(ind);
+    if ((ind->handle >= gGattSvc->startHdl) && (ind->handle <= gGattSvc->endHdl))
+    {
+        BleWifi_Ble_AppHandleGattServiceRead(ind);
     }
-	else if ((ind->handle >= gGapSvc->startHdl) && (ind->handle <= gGapSvc->endHdl))
-	{
-		BleWifi_Ble_AppHandleGapServiceRead(ind);
+    else if ((ind->handle >= gGapSvc->startHdl) && (ind->handle <= gGapSvc->endHdl))
+    {
+        BleWifi_Ble_AppHandleGapServiceRead(ind);
     }
-	else if ((ind->handle >= gBwpSvc->startHdl) && (ind->handle <= gBwpSvc->endHdl))
-	{
-		BleWifi_Ble_AppHandleBwpServiceRead(ind);
+    else if ((ind->handle >= gBwpSvc->startHdl) && (ind->handle <= gBwpSvc->endHdl))
+    {
+        BleWifi_Ble_AppHandleBwpServiceRead(ind);
     }
-	else
-	{
-		LeGattAccessReadRsp(ind->conn_hdl, ind->handle, LE_ATT_ERR_READ_NOT_PERMITTED);
+    else
+    {
+        LeGattAccessReadRsp(ind->conn_hdl, ind->handle, LE_ATT_ERR_READ_NOT_PERMITTED);
     }
 }
 
 static void BleWifi_Ble_GattHandleAccessWrite(LE_GATT_MSG_ACCESS_WRITE_IND_T *ind)
 {
-	if ((ind->handle >= gGattSvc->startHdl) && (ind->handle <= gGattSvc->endHdl))
-	{
-		BleWifi_Ble_AppHandleGattServiceWrite(ind);
+    if ((ind->handle >= gGattSvc->startHdl) && (ind->handle <= gGattSvc->endHdl))
+    {
+        BleWifi_Ble_AppHandleGattServiceWrite(ind);
     }
-	else if ((ind->handle >= gGapSvc->startHdl) && (ind->handle <= gGapSvc->endHdl))
-	{
-		BleWifi_Ble_AppHandleGapServiceWrite(ind);
+    else if ((ind->handle >= gGapSvc->startHdl) && (ind->handle <= gGapSvc->endHdl))
+    {
+        BleWifi_Ble_AppHandleGapServiceWrite(ind);
     }
-	else if ((ind->handle >= gBwpSvc->startHdl) && (ind->handle <= gBwpSvc->endHdl))
-	{
-		BleWifi_Ble_AppHandleBwpServiceWrite(ind);
+    else if ((ind->handle >= gBwpSvc->startHdl) && (ind->handle <= gBwpSvc->endHdl))
+    {
+        BleWifi_Ble_AppHandleBwpServiceWrite(ind);
     }
-	else
-	{
-		LeGattAccessReadRsp(ind->conn_hdl, ind->handle, LE_ATT_ERR_WRITE_NOT_PERMITTED);
+    else
+    {
+        LeGattAccessReadRsp(ind->conn_hdl, ind->handle, LE_ATT_ERR_WRITE_NOT_PERMITTED);
     }
 }
 
@@ -360,7 +360,7 @@ static void BleWifi_Ble_ServerAppGattMsgHandler_InitCfm(TASK task, MESSAGEID id,
     BLEWIFI_INFO("APP-LE_GATT_MSG_INIT_CFM\r\n");
 
     // get the settings of BLE service UUID
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_BLE_SERVICE_UUID, 0, MW_FIM_GP11_BLE_SERVICE_UUID_SIZE, (uint8_t*)&tBleServiceUUID))
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_BLE_SERVICE_UUID, 0, MW_FIM_GP11_BLE_SERVICE_UUID_SIZE, (uint8_t*)&tBleServiceUUID))
     {
         // if fail, get the default value
         memcpy(&tBleServiceUUID, &g_tMwFimDefaultGp11BleServiceUUID, MW_FIM_GP11_BLE_SERVICE_UUID_SIZE);
@@ -441,21 +441,21 @@ static void BleWifi_Ble_ServerAppGattMsgHandler_OperationTimeout(TASK task, MESS
 
 void BleWifi_Ble_GattIndicateServiceChange(UINT16 conn_hdl)
 {
-	UINT16 len;
-	UINT16 val;
-	LE_ERR_STATE rc = LeGattGetAttrVal(gGattSvc, GATT_IDX_SERVICE_CHANGE_CFG, &len, &val);
+    UINT16 len;
+    UINT16 val;
+    LE_ERR_STATE rc = LeGattGetAttrVal(gGattSvc, GATT_IDX_SERVICE_CHANGE_CFG, &len, &val);
 
-	if (rc) return;
+    if (rc) return;
 
-	if (val == LE_GATT_CLIENT_CFG_INDICATION)
-	{
-		UINT16 handle[2];
+    if (val == LE_GATT_CLIENT_CFG_INDICATION)
+    {
+        UINT16 handle[2];
 
-		LeGattGetAttrVal(gGattSvc, GATT_IDX_SERVICE_CHANGE_VAL, &len, handle);
+        LeGattGetAttrVal(gGattSvc, GATT_IDX_SERVICE_CHANGE_VAL, &len, handle);
 
-		if (!handle[0] || !handle[1]) return;
+        if (!handle[0] || !handle[1]) return;
 
-		LeGattCharValIndicate(conn_hdl, LeGattGetAttrHandle(gGattSvc, GATT_IDX_SERVICE_CHANGE_VAL), 4, (UINT8 *)handle);
+        LeGattCharValIndicate(conn_hdl, LeGattGetAttrHandle(gGattSvc, GATT_IDX_SERVICE_CHANGE_VAL), 4, (UINT8 *)handle);
     }
 }
 

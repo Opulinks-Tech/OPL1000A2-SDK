@@ -16,7 +16,7 @@
 T_MwFim_GP12_AliyunDevice g_AliyunDevice;
 
 void Ali_Hal_Devive_init(){
-	
+    
     // get the settings of power saving
     if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP12_PROJECT_ALIYUN_DEVICE, 0, MW_FIM_GP12_ALIYUN_DEVICE_SIZE, (uint8_t*)&g_AliyunDevice))
     {
@@ -35,7 +35,7 @@ int HAL_SetProductKey(_IN_ char *product_key)
     }
     memset(g_AliyunDevice.ubaProductKey, 0x0, IOTX_PRODUCT_KEY_LEN + 1);
     strncpy(g_AliyunDevice.ubaProductKey, product_key, len);
-		
+        
     //MwFim_FileWrite(MW_FIM_IDX_GP12_PROJECT_ALIYUN_DEVICE, 0, MW_FIM_GP12_ALIYUN_DEVICE_SIZE, (uint8_t*)&g_AliyunDevice);
 #endif
     return len;
@@ -136,5 +136,5 @@ int HAL_GetDeviceSecret(_OU_ char *device_secret)
 
 uint32_t HAL_GetProductId()
 {
-	return g_AliyunDevice.ulProductId;
+    return g_AliyunDevice.ulProductId;
 }

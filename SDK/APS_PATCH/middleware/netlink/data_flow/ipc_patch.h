@@ -54,6 +54,7 @@ extern "C" {
  *                          Public Variables
  *************************************************************************
  */
+extern uint32_t g_u32IpcBleQueueCntAddr;
 extern uint32_t g_u32IpcSleepIoCfgAddr;
 
 /*

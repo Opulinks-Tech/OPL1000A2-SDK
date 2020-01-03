@@ -139,7 +139,7 @@ void __Patch_EntryPoint(void)
     // update the switch AT UART / dbg UART function
     at_cmd_switch_uart1_dbguart = Main_AtUartDbgUartSwitch;
     
-	Sys_SetUnsuedSramEndBound(0x440000);
+    Sys_SetUnsuedSramEndBound(0x440000);
     // application init
     Sys_AppInit = Main_AppInit_patch;
 }
@@ -225,7 +225,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	    
+        
 }
 
 /*************************************************************************
@@ -325,12 +325,12 @@ void App_Pin_InitConfig(void)
 
 void Internal_Module_Log_Config(char* module_name, bool on_off_set)
 {
-	  uint8_t log_level_set,i,module_index = TRACER_INT_TASK_NUM_MAX; 	
-	
+      uint8_t log_level_set,i,module_index = TRACER_INT_TASK_NUM_MAX;     
+    
     if(on_off_set == true) 
         log_level_set = LOG_ALL_LEVEL;
     else
-        log_level_set = LOG_NONE_LEVEL;	
+        log_level_set = LOG_NONE_LEVEL;    
     
     for (i = 0; i < TRACER_INT_TASK_NUM_MAX; i++) 
     {
@@ -366,10 +366,10 @@ void Main_AppInit_patch(void)
     // init the pin assignment
     App_Pin_InitConfig();
 
-    Internal_Module_Log_Config("opl_wifi_mac",true);			
+    Internal_Module_Log_Config("opl_wifi_mac",true);            
     Internal_Module_Log_Config("opl_controller_task",true);
-    Internal_Module_Log_Config("opl_event_loop",true);	
-	    
+    Internal_Module_Log_Config("opl_event_loop",true);    
+        
     // wifi init
     WifiAppInit();
 }

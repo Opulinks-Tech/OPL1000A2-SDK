@@ -43,7 +43,7 @@ Head Block of The File
 // Sec 1: Include File
 #include <stdint.h>
 #include "hal_pin_def.h"
-	
+    
 /* Select IO 0/1 UART mode. For switching UART use */
 #define HAL_PIN_0_1_UART_MODE       IO01_UART_MODE_AT       // IO01_UART_MODE_AT
                                                             // IO01_UART_MODE_DBG

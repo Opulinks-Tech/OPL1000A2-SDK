@@ -31,7 +31,7 @@ extern "C" {
 #define  TCP_RECV_TIMEOUT    180
 //Define following Macro to set LP mode; otherwise, OPL1000 would be in HP mode by default.
 //#define  __RF_LP_MODE__
-	
+    
 #define MAC2STR(a) (a)[0], (a)[1], (a)[2], (a)[3], (a)[4], (a)[5]
 #define MACSTR "%02x:%02x:%02x:%02x:%02x:%02x"
 

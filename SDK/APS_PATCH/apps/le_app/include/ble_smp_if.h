@@ -264,4 +264,6 @@ UINT8 LeSmpGetBondIdFromAddr(LE_BT_ADDR_T *peer_addr);
  * @}
  */
 
+UINT8 LeSmpGetIdAddrFromAddr(LE_BT_ADDR_T *peer_addr, LE_BT_ADDR_T *id_addr);
+
 #endif

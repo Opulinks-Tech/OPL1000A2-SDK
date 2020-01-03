@@ -65,16 +65,16 @@ void App_Entry(void *args)
         Hal_Pwm_Init();
         Hal_Pwm_ClockSourceSet(HAL_PWM_CLK_22M);
         mqtt_client();
-    }	
+    }    
 }
 
 void BleWifiAppInit(void)
 {
-	  osThreadDef_t tThreadDef;
+      osThreadDef_t tThreadDef;
     T_MwFim_SysMode tSysMode;
     T_MwFim_GP11_PowerSaving tPowerSaving;
     
-	gTheOta = 0;
+    gTheOta = 0;
 
 #if (SNTP_FUNCTION_EN == 1)
     g_ulSntpSecondInit = SNTP_SEC_2019;     // Initialize the Sntp Value
@@ -82,21 +82,21 @@ void BleWifiAppInit(void)
 #endif
 
     // get the settings of system mode
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP03_PATCH_SYS_MODE, 0, MW_FIM_SYS_MODE_SIZE, (uint8_t*)&tSysMode))
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP03_PATCH_SYS_MODE, 0, MW_FIM_SYS_MODE_SIZE, (uint8_t*)&tSysMode))
     {
         // if fail, get the default value
         memcpy(&tSysMode, &g_tMwFimDefaultSysMode, MW_FIM_SYS_MODE_SIZE);
     }
 
     // get the settings of power saving
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_POWER_SAVING, 0, MW_FIM_GP11_POWER_SAVING_SIZE, (uint8_t*)&tPowerSaving))
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_POWER_SAVING, 0, MW_FIM_GP11_POWER_SAVING_SIZE, (uint8_t*)&tPowerSaving))
     {
         // if fail, get the default value
         memcpy(&tPowerSaving, &g_tMwFimDefaultGp11PowerSaving, MW_FIM_GP11_POWER_SAVING_SIZE);
     }
 
     // get the mqtt data.
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP12_PROJECT_MQTT_DATA, 0, MW_FIM_GP12_MQTT_DATA_SIZE, (uint8_t*)&g_tGP12MqttData))
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP12_PROJECT_MQTT_DATA, 0, MW_FIM_GP12_MQTT_DATA_SIZE, (uint8_t*)&g_tGP12MqttData))
     {
         // if fail, get the default value
         memcpy(&g_tGP12MqttData, &g_tMwFimDefaultGp12MqttData, MW_FIM_GP12_MQTT_DATA_SIZE);
@@ -135,8 +135,8 @@ void BleWifiAppInit(void)
 
     // update the system mode
     BleWifi_Ctrl_SysModeSet(tSysMode.ubSysMode);
-		
-		// create app_entry thread.
+        
+        // create app_entry thread.
     tThreadDef.name = "APP_Entry";
     tThreadDef.pthread = App_Entry;
     tThreadDef.tpriority = OS_TASK_PRIORITY_APP;        // osPriorityNormal

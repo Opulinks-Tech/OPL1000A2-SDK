@@ -1,8 +1,8 @@
-# OPL1000A2-SDK (MP2.15)
+# OPL1000A2-SDK (MP2.16)
 - OPL1000A2-SDK is Opulinks official software development kit for OPL1000 A2 chip.
 - Provide 36 documents under "Doc" folder, includes Chinese and English version. Content covers DEVKIT use, SDK getting start and development, Chip boot mode, Flash use, Adaptive DTIM solution, API use introduction etc. 
 - Provide three sets of tools for Pin multiplexing Settings, firmware download and mass production. 
-- Provide 31 examples include WIFI, BLE, Peripheral, protocols and OTA examples. 
+- Provide 30 examples include WIFI, BLE, Peripheral, protocols and OTA examples. 
 - Provide 8 dedicate Demo for user to evaluate OPL1000 functions/features.    
 
 # Developing With the OPL1000A2-SDK

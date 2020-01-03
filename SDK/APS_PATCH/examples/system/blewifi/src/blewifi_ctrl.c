@@ -126,18 +126,18 @@ void BleWifi_Ctrl_EventStatusSet(uint32_t dwEventBit, uint8_t status)
         if (true == status)
         {
             // xHigherPriorityTaskWoken must be initialised to pdFALSE.
-    		xHigherPriorityTaskWoken = pdFALSE;
+            xHigherPriorityTaskWoken = pdFALSE;
 
             // Set bit in xEventGroup.
             xResult = xEventGroupSetBitsFromISR(g_tAppCtrlEventGroup, dwEventBit, &xHigherPriorityTaskWoken);
             if( xResult == pdPASS )
-    		{
-    			// If xHigherPriorityTaskWoken is now set to pdTRUE then a context
-    			// switch should be requested.  The macro used is port specific and
-    			// will be either portYIELD_FROM_ISR() or portEND_SWITCHING_ISR() -
-    			// refer to the documentation page for the port being used.
-    			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-    		}
+            {
+                // If xHigherPriorityTaskWoken is now set to pdTRUE then a context
+                // switch should be requested.  The macro used is port specific and
+                // will be either portYIELD_FROM_ISR() or portEND_SWITCHING_ISR() -
+                // refer to the documentation page for the port being used.
+                portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            }
         }
         else
             xEventGroupClearBitsFromISR(g_tAppCtrlEventGroup, dwEventBit);
@@ -234,14 +234,14 @@ void BleWifi_Ctrl_SysStatusChange(void)
         // if fail, get the default value
         memcpy(&tSysMode, &g_tMwFimDefaultSysMode, MW_FIM_SYS_MODE_SIZE);
     }
-		
+        
     // get the settings of power saving
     if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_POWER_SAVING, 0, MW_FIM_GP11_POWER_SAVING_SIZE, (uint8_t*)&tPowerSaving))
     {
         // if fail, get the default value
         memcpy(&tPowerSaving, &g_tMwFimDefaultGp11PowerSaving, MW_FIM_GP11_POWER_SAVING_SIZE);
     }
-		
+        
     // change from init to normal
     if (g_ubAppCtrlSysStatus == BLEWIFI_CTRL_SYS_INIT)
     {
@@ -250,7 +250,7 @@ void BleWifi_Ctrl_SysStatusChange(void)
         /* Power saving settings */
         if (tSysMode.ubSysMode == MW_FIM_SYS_MODE_USER) 
             ps_smart_sleep(tPowerSaving.ubPowerSaving);
-				
+                
 //        // start the sys timer
 //        osTimerStop(g_tAppCtrlSysTimer);
 //        osTimerStart(g_tAppCtrlSysTimer, BLEWIFI_COM_SYS_TIME_NORMAL);
@@ -428,7 +428,7 @@ static void BleWifi_Ctrl_TaskEvtHandler_WifiGotIpInd(uint32_t evt_type, void *da
 {
     BLEWIFI_INFO("BLEWIFI: MSG BLEWIFI_CTRL_MSG_WIFI_GOT_IP_IND \r\n");
     BleWifi_Wifi_SendStatusInfo(BLEWIFI_IND_IP_STATUS_NOTIFY);
-#if (SNTP_FUNCTION_EN == 1)		    
+#if (SNTP_FUNCTION_EN == 1)            
     BleWifi_SntpInit();
 #endif
     BleWifi_Wifi_UpdateBeaconInfo();
@@ -558,18 +558,18 @@ int BleWifi_Ctrl_MsgSend(int msg_type, uint8_t *data, int data_len)
 {
     xBleWifiCtrlMessage_t *pMsg = 0;
 
-	if (NULL == g_tAppCtrlQueueId)
-	{
+    if (NULL == g_tAppCtrlQueueId)
+    {
         BLEWIFI_ERROR("BLEWIFI: No queue \r\n");
         return -1;
-	}
+    }
 
     /* Mem allocate */
     pMsg = malloc(sizeof(xBleWifiCtrlMessage_t) + data_len);
     if (pMsg == NULL)
-	{
+    {
         BLEWIFI_ERROR("BLEWIFI: ctrl task pmsg allocate fail \r\n");
-	    goto error;
+        goto error;
     }
     
     pMsg->event = msg_type;
@@ -588,12 +588,12 @@ int BleWifi_Ctrl_MsgSend(int msg_type, uint8_t *data, int data_len)
     return 0;
 
 error:
-	if (pMsg != NULL)
-	{
-	    free(pMsg);
+    if (pMsg != NULL)
+    {
+        free(pMsg);
     }
-	
-	return -1;
+    
+    return -1;
 }
 
 void BleWifi_Ctrl_Init(void)
@@ -654,7 +654,7 @@ void BleWifi_Ctrl_Init(void)
     g_ulAppCtrlSysMode = MW_FIM_SYS_MODE_INIT;
 
     // get the settings of Wifi connect settings
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_WIFI_CONNECT_SETTINGS, 0, MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE, (uint8_t*)&g_tAppCtrlWifiConnectSettings))
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_WIFI_CONNECT_SETTINGS, 0, MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE, (uint8_t*)&g_tAppCtrlWifiConnectSettings))
     {
         // if fail, get the default value
         memcpy(&g_tAppCtrlWifiConnectSettings, &g_tMwFimDefaultGp11WifiConnectSettings, MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE);

@@ -276,50 +276,50 @@ end:
 
     if (ready_flag & BASIC_READY) {
 //        event_notify(BZ_EVENT_APINFO, &comboinfo, sizeof(comboinfo));
-			uint8_t *data;
-			int data_len;
-			uint8_t *pos;
-			int malloc_size = (sizeof(breeze_apinfo_t)+3);
+            uint8_t *data;
+            int data_len;
+            uint8_t *pos;
+            int malloc_size = (sizeof(breeze_apinfo_t)+3);
 
-			pos = data = malloc(malloc_size);
-			if (data == NULL) {
-				printf("malloc error\r\n");
-				return BZ_ENOMEM;
-			}
+            pos = data = malloc(malloc_size);
+            if (data == NULL) {
+                printf("malloc error\r\n");
+                return BZ_ENOMEM;
+            }
 
-			uint8_t len = strlen(comboinfo.ssid); //ap_list[i].ssid_length;
-			data_len = (pos - data);
+            uint8_t len = strlen(comboinfo.ssid); //ap_list[i].ssid_length;
+            data_len = (pos - data);
 
-			*pos++ = len;
-			memcpy(pos, comboinfo.ssid, len);
-			pos += len;
-			*pos++ = 6;
-			memcpy(pos, comboinfo.bssid,6);
-			pos += 6;
+            *pos++ = len;
+            memcpy(pos, comboinfo.ssid, len);
+            pos += len;
+            *pos++ = 6;
+            memcpy(pos, comboinfo.bssid,6);
+            pos += 6;
             
-			*pos++ = strlen(comboinfo.pw);
-			memcpy(pos, comboinfo.pw, strlen(comboinfo.pw));
-			pos += strlen(comboinfo.pw);
+            *pos++ = strlen(comboinfo.pw);
+            memcpy(pos, comboinfo.pw, strlen(comboinfo.pw));
+            pos += strlen(comboinfo.pw);
             
             *pos++ = comboinfo.apptoken_len;
             memcpy(pos, (const char*)(comboinfo.apptoken), comboinfo.apptoken_len);
             pos += comboinfo.apptoken_len;
-			data_len = (pos - data);
+            data_len = (pos - data);
             
            
 #ifdef ALI_OPL_DBG
             printf("Get apptoken data(%d):", comboinfo.apptoken_len);
-            for(int i=0;i<comboinfo.apptoken_len;i++){						
-                printf("0x%02x ", comboinfo.apptoken[i]);				
+            for(int i=0;i<comboinfo.apptoken_len;i++){                        
+                printf("0x%02x ", comboinfo.apptoken[i]);                
             }
             printf("\r\n");
 #endif            
             
-#ifdef ALI_BLE_WIFI_PROVISION		
-			BleWifi_Ctrl_MsgSend(BLEWIFI_CTRL_MSG_ALI_WIFI_CONNECT, data, data_len);
+#ifdef ALI_BLE_WIFI_PROVISION        
+            BleWifi_Ctrl_MsgSend(BLEWIFI_CTRL_MSG_ALI_WIFI_CONNECT, data, data_len);
 //            awss_set_token(comboinfo.apptoken);
 #endif
-			free(data);
+            free(data);
     }
 
     return err_code;
@@ -371,8 +371,8 @@ end:
 
 static void get_os_info(void)
 {
-	uint8_t suffix_len = 0;
-#ifdef BUILD_AOS	
+    uint8_t suffix_len = 0;
+#ifdef BUILD_AOS    
     uint8_t chip_code[4] = { 0 };
     uint8_t chip_id_str[8] = { 0 };
     const char *aostype = "AOS";

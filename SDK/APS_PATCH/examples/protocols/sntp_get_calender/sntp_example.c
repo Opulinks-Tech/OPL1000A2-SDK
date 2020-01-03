@@ -67,9 +67,9 @@ void user_wifi_app_entry(void *args)
                 continue;
             }
 
-			addr = &((struct sockaddr_in *)res->ai_addr)->sin_addr;
-			printf("... DNS lookup succeeded. IP=%s \r\n", inet_ntoa(*addr));
-			osDelay(1000);
+            addr = &((struct sockaddr_in *)res->ai_addr)->sin_addr;
+            printf("... DNS lookup succeeded. IP=%s \r\n", inet_ntoa(*addr));
+            osDelay(1000);
         }
         
         server.sin_family = AF_INET;
@@ -116,7 +116,7 @@ void user_wifi_app_entry(void *args)
            }
        }
        osDelay(5000);
-	   close(sockfd);
+       close(sockfd);
     }
 }
 
@@ -151,7 +151,7 @@ int wifi_connection(void)
     wifi_scan_list_t *p_scan_list = NULL;
     int i = 0;
     int isMatched = 0;
-		
+        
     p_scan_list = (wifi_scan_list_t *)malloc(sizeof(wifi_scan_list_t));
 
     if(p_scan_list == NULL)

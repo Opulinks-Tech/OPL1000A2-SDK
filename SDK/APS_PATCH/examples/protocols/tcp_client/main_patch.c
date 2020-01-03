@@ -131,12 +131,12 @@ void __Patch_EntryPoint(void)
     // update the flash layout
     MwFim_FlashLayoutUpdate = Main_FlashLayoutUpdate;
     // the initial of driver part for cold and warm boot
-    Sys_MiscModulesInit = Main_MiscModulesInit;  	
+    Sys_MiscModulesInit = Main_MiscModulesInit;      
     Sys_MiscDriverConfigSetup = Main_MiscDriverConfigSetup;
 
     // update the switch AT UART / dbg UART function
     at_cmd_switch_uart1_dbguart = Main_AtUartDbgUartSwitch;
-	 
+     
     
     Sys_SetUnsuedSramEndBound(0x440000);
     // application init
@@ -222,7 +222,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	  
+      
 }
 
 /*************************************************************************
@@ -313,12 +313,12 @@ static void Main_AtUartDbgUartSwitch(void)
 
 void Internal_Module_Log_Config(char* module_name, bool on_off_set)
 {
-	  uint8_t log_level_set,i,module_index = TRACER_INT_TASK_NUM_MAX; 	
-	
+      uint8_t log_level_set,i,module_index = TRACER_INT_TASK_NUM_MAX;     
+    
     if(on_off_set == true) 
         log_level_set = LOG_ALL_LEVEL;
     else
-        log_level_set = LOG_NONE_LEVEL;	
+        log_level_set = LOG_NONE_LEVEL;    
     
     for (i = 0; i < TRACER_INT_TASK_NUM_MAX; i++) 
     {
@@ -336,14 +336,14 @@ void Internal_Module_Log_Config(char* module_name, bool on_off_set)
 
 void Main_AppInit_patch(void)
 {
-	
+    
     // Enable APS Uart log information output 
     Hal_DbgUart_RxIntEn(1);   
     
     tracer_log_level_set_ext(2, LOG_ALL_LEVEL);
     tracer_log_level_set_ext(4, LOG_ALL_LEVEL);
-    tracer_log_level_set_ext(6, LOG_ALL_LEVEL);	
-	
+    tracer_log_level_set_ext(6, LOG_ALL_LEVEL);    
+    
     WifiAppInit();
 }
 

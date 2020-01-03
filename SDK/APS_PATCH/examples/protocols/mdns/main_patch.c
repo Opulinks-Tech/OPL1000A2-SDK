@@ -288,12 +288,12 @@ static void Main_AtUartDbgUartSwitch(void)
 
 void Internal_Module_Log_Config(char* module_name, bool on_off_set)
 {
-	  uint8_t log_level_set,i,module_index = TRACER_INT_TASK_NUM_MAX; 	
-	
+      uint8_t log_level_set,i,module_index = TRACER_INT_TASK_NUM_MAX;     
+    
     if(on_off_set == true) 
         log_level_set = LOG_ALL_LEVEL;
     else
-        log_level_set = LOG_NONE_LEVEL;	
+        log_level_set = LOG_NONE_LEVEL;    
     
     for (i = 0; i < TRACER_INT_TASK_NUM_MAX; i++) 
     {

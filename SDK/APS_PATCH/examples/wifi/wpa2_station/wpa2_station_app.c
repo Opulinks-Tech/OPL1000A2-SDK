@@ -62,7 +62,7 @@ int wifi_connection(void)
     wifi_scan_list_t *p_scan_list = NULL;
     int i = 0;
     int isMatched = 0;
-		
+        
     p_scan_list = (wifi_scan_list_t *)malloc(sizeof(wifi_scan_list_t));
 
     if(p_scan_list == NULL)
@@ -153,91 +153,91 @@ int wifi_event_handler_cb(wifi_event_id_t event_id, void *data, uint16_t length)
 void user_wifi_app_entry(void *args)
 {
 #if defined(__RF_LP_MODE__)
-  	unsigned char rf_level = 0x0F;
+      unsigned char rf_level = 0x0F;
 #endif
-	
+    
 #if 0
-	  u8 mac[WIFI_MAC_ADDRESS_LENGTH] = {0};
-		int ret = -1;
-		
+      u8 mac[WIFI_MAC_ADDRESS_LENGTH] = {0};
+        int ret = -1;
+        
 
-		//wpa_cli_getmac(&mac[0]);
-		ret = wifi_config_get_mac_address(WIFI_MODE_STA,&mac[0]);
-		if(ret != 0)
-			printf("\n Get mac address error!");
-		
-		printf(MACSTR, MAC2STR(mac));
+        //wpa_cli_getmac(&mac[0]);
+        ret = wifi_config_get_mac_address(WIFI_MODE_STA,&mac[0]);
+        if(ret != 0)
+            printf("\n Get mac address error!");
+        
+        printf(MACSTR, MAC2STR(mac));
 #endif
-		
+        
     /* Tcpip stack and net interface initialization,  dhcp client process initialization. */
     lwip_network_init(WIFI_MODE_STA);
 
     /* Waiting for connection & got IP from DHCP server */
     lwip_net_ready();
-	
-	  osDelay(500);
+    
+      osDelay(500);
 
 #if defined(__RF_LP_MODE__)
-	  //set to low power mode.
-	  set_rf_power_level(rf_level);
+      //set to low power mode.
+      set_rf_power_level(rf_level);
 #endif
 
     wifi_config_set_skip_dtim(DTIM_SKIP_COUNT, false);
-						
-		ps_smart_sleep(POWER_SAVE_EN);
-		
+                        
+        ps_smart_sleep(POWER_SAVE_EN);
+        
     printf("\n waiting for being connected...");
-	
+    
     while (1) {
         if(g_connect_flag == true )
-				{
-					printf("OPL1000 is connected to AP \r\n");
-				}
-				else 
-				{
-					printf("OPL1000 is not connected to AP \r\n");
-				}					
+                {
+                    printf("OPL1000 is connected to AP \r\n");
+                }
+                else 
+                {
+                    printf("OPL1000 is not connected to AP \r\n");
+                }                    
         osDelay(120000);
-				
+                
     }
 }
 
 #if defined(__UPDATE_MAC_ADDR_FLAG__)
 void MacAddrInit(void)
 {
-	  u8 mac[WIFI_MAC_ADDRESS_LENGTH] = {0};
-		int i = 0;
-		int ret = -1;
+      u8 mac[WIFI_MAC_ADDRESS_LENGTH] = {0};
+        int i = 0;
+        int ret = -1;
 //#if defined(__UPDATE_MAC_ADDR_FLAG__)
     u8 sta_mac_add[WIFI_MAC_ADDRESS_LENGTH] = OPL_STA_MAC_ADDR;
 //#endif
-		
-		//wpa_cli_getmac(&mac[0]);
-		ret = wifi_config_get_mac_address(WIFI_MODE_STA,&mac[0]);
-		if(ret != 0)
-			printf("\n Get mac address error!");
-		
-		printf(MACSTR, MAC2STR(mac));
-		for (i=0; i<WIFI_MAC_ADDRESS_LENGTH; i++)
+        
+        //wpa_cli_getmac(&mac[0]);
+        ret = wifi_config_get_mac_address(WIFI_MODE_STA,&mac[0]);
+        if(ret != 0)
+            printf("\n Get mac address error!");
+        
+        printf(MACSTR, MAC2STR(mac));
+        for (i=0; i<WIFI_MAC_ADDRESS_LENGTH; i++)
     {
       if(sta_mac_add[i] != mac[i])
       {
         //wpa_cli_setmac(sta_mac_add);
-        ret = wifi_config_set_mac_address(WIFI_MODE_STA,sta_mac_add);				
-		    if(ret != 0)
-			    printf("\n Set mac address error!");
-				
+        ret = wifi_config_set_mac_address(WIFI_MODE_STA,sta_mac_add);                
+            if(ret != 0)
+                printf("\n Set mac address error!");
+                
         printf("\n Mac address being set with:");
-				printf(MACSTR, MAC2STR(sta_mac_add));
-				printf("\n System would be reset within 3S...");
-				osDelay(3000);
-				//Hal_Sys_SwResetAll();
-				break;
-			}
-			else
-				continue;
-		}
-}	
+                printf(MACSTR, MAC2STR(sta_mac_add));
+                printf("\n System would be reset within 3S...");
+                osDelay(3000);
+                //Hal_Sys_SwResetAll();
+                break;
+            }
+            else
+                continue;
+        }
+}    
 #endif
 
 void WifiAppInit(void)

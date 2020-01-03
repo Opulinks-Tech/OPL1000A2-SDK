@@ -38,7 +38,7 @@ Head Block of The File
 *  gpio_int_test() is an example that generate the output pulses from one gpio
 *  to another, then the input side will be triggered the interrupt.
 *  - port: GPIO2(io2), GPIO3(io3), GPIO4(io4), GPIO5(io5)
-*--------------2019/1/9		GPIO6(io6), GPIO7(io7), GPIO16(io16), GPIO17(io17)
+*--------------2019/1/9        GPIO6(io6), GPIO7(io7), GPIO16(io16), GPIO17(io17)
 *  - interrupt: on
 *  - connection:
 *    connect GPIO2 with GPIO4
@@ -253,7 +253,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	  
+      
 }
 
 /*************************************************************************
@@ -462,7 +462,7 @@ static void Main_AppThread_2(void *argu)
     gpioIdx2 = Hal_Pinmux_GetIO(gpioPtr->pin);
     gpioPtr = &OPL1000_periph.gpio[4];
     gpioIdx3 = Hal_Pinmux_GetIO(gpioPtr->pin);
-	
+    
     while (1)
     {
         printf("Count = %d\n", ulCount);
@@ -478,7 +478,7 @@ static void Main_AppThread_2(void *argu)
           printf("GPIO7 is set to Low \n");
         else
           printf("GPIO7 is set to High \n");
-        Hal_Vic_GpioOutput(gpioIdx2, io_level);        			
+        Hal_Vic_GpioOutput(gpioIdx2, io_level);                    
 
         io_level = (E_GpioLevel_t)(ulCount % 2);
         if(io_level == GPIO_LEVEL_LOW)
@@ -486,7 +486,7 @@ static void Main_AppThread_2(void *argu)
         else
           printf("D1 LED is light up \n");
         Hal_Vic_GpioOutput(gpioIdx3, io_level);   
-				
+                
         ulCount++;
         
         osDelay(1000);      // delay 1000 ms

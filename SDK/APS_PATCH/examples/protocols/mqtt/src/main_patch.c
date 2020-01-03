@@ -318,7 +318,7 @@ static void Main_AppInit_patch(void)
 #ifdef __BLEWIFI_TRANSPARENT__
     // the blewifi init will be triggered by AT Cmd
 #else
-	  BleWifiAppInit();
+      BleWifiAppInit();
 #endif
 }
 
@@ -339,7 +339,7 @@ static void Main_AppInit_patch(void)
 #ifdef __BLEWIFI_TRANSPARENT__
 static int Main_BleWifiInit(void)
 {
-	  BleWifiAppInit();
+      BleWifiAppInit();
     
     return 0;
 }

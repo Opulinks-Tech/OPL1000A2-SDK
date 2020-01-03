@@ -108,16 +108,16 @@ static int ssl_client_start( void )
     mbedtls_ssl_context ssl;
     mbedtls_ssl_config conf;
     mbedtls_x509_crt cacert;
-	
-	static const int ciphersuite_preference[] =
+    
+    static const int ciphersuite_preference[] =
     {
         MBEDTLS_TLS_RSA_WITH_AES_256_CBC_SHA256,
         MBEDTLS_TLS_RSA_WITH_AES_256_CBC_SHA,
         MBEDTLS_TLS_RSA_WITH_AES_128_CBC_SHA256,
         MBEDTLS_TLS_RSA_WITH_AES_128_CBC_SHA,
     };
-	
-		mbedtls_ssl_setup_preference_ciphersuites(ciphersuite_preference);
+    
+        mbedtls_ssl_setup_preference_ciphersuites(ciphersuite_preference);
 
     LOG_I(TAG, "SSL client demonstration starts...\n");
 

@@ -29,20 +29,20 @@ extern "C" {
 
 typedef struct
 {
-	uint16_t proj_id;
-	uint16_t chip_id;
-	uint16_t fw_id;
-	uint32_t chksum;
-	uint32_t curr_chksum;
+    uint16_t proj_id;
+    uint16_t chip_id;
+    uint16_t fw_id;
+    uint32_t chksum;
+    uint32_t curr_chksum;
 
-	uint32_t total;
-	uint32_t curr;
-	uint16_t pkt_idx;
-	uint16_t rx_pkt;
-	uint16_t flag;
+    uint32_t total;
+    uint32_t curr;
+    uint16_t pkt_idx;
+    uint16_t rx_pkt;
+    uint16_t flag;
     
-	uint8_t  buf[300];
-	uint16_t idx;
+    uint8_t  buf[300];
+    uint16_t idx;
 } blewifi_ota_t;
 
 extern blewifi_ota_t *gTheOta;

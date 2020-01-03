@@ -39,30 +39,30 @@ static uint32_t g_ulRcvCount = 0;
 
 static void tcp_client(void)
 {
-	/*
+    /*
     struct addrinfo hints = {
         .ai_family = AF_INET,
         .ai_socktype = SOCK_STREAM,
     };
-  */		
+  */        
     int s;
     struct sockaddr_in serverAdd;  
-		char server_ip[32];
-		int server_port = TCP_SERVER_PORT; 
+        char server_ip[32];
+        int server_port = TCP_SERVER_PORT; 
     char recv_buf[256];
-	  int r;
-		
+      int r;
+        
     serverAdd.sin_family = AF_INET; 
-		serverAdd.sin_addr.s_addr = inet_addr(TCP_SERVER_ADDR);  
-		serverAdd.sin_port = htons(TCP_SERVER_PORT); 
+        serverAdd.sin_addr.s_addr = inet_addr(TCP_SERVER_ADDR);  
+        serverAdd.sin_port = htons(TCP_SERVER_PORT); 
 
-		strcpy(server_ip,TCP_SERVER_ADDR);
-		
-	  if (g_connection_flag == true) 
-	      printf("Opulinks-TEST-AP connected \r\n");
-	
-		printf("Connect %s at port %d \r\n", server_ip,server_port); 
-		
+        strcpy(server_ip,TCP_SERVER_ADDR);
+        
+      if (g_connection_flag == true) 
+          printf("Opulinks-TEST-AP connected \r\n");
+    
+        printf("Connect %s at port %d \r\n", server_ip,server_port); 
+        
     while (1) {
         s = socket(AF_INET, SOCK_STREAM, 0);
         if (s < 0) {
@@ -118,9 +118,9 @@ void user_wifi_app_entry(void *args)
 {
     g_connection_flag = false;
 #if defined(__RF_LP_MODE__)
-  	unsigned char rf_level = 0x0F;
+      unsigned char rf_level = 0x0F;
 #endif
-	
+    
     /* Tcpip stack and net interface initialization,  dhcp client process initialization. */
     lwip_network_init(WIFI_MODE_STA);
 
@@ -130,10 +130,10 @@ void user_wifi_app_entry(void *args)
     osDelay(500);
 
 #if defined(__RF_LP_MODE__)
-	  //set to low power mode.
-	  set_rf_power_level(rf_level);
+      //set to low power mode.
+      set_rf_power_level(rf_level);
 #endif
-	
+    
     wifi_config_set_skip_dtim(DTIM_SKIP_COUNT, false);
     
     //ps_smart_sleep(POWER_SAVE_EN);
@@ -172,7 +172,7 @@ int wifi_connection(void)
     wifi_scan_list_t *p_scan_list = NULL;
     int i = 0;
     int isMatched = 0;
-		
+        
     p_scan_list = (wifi_scan_list_t *)malloc(sizeof(wifi_scan_list_t));
 
     if(p_scan_list == NULL)
@@ -246,7 +246,7 @@ int wifi_event_handler_cb(wifi_event_id_t event_id, void *data, uint16_t length)
     case WIFI_EVENT_STA_GOT_IP:
         printf("\r\nWi-Fi Got IP \r\n");
         lwip_get_ip_info("st1");
-		    g_connection_flag = true;
+            g_connection_flag = true;
         break;
     case WIFI_EVENT_STA_CONNECTION_FAILED:
         printf("\r\nWi-Fi Connected failed\r\n");

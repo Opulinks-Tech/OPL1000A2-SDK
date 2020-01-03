@@ -128,7 +128,7 @@ void __Patch_EntryPoint(void)
     // update the flash layout
     MwFim_FlashLayoutUpdate = Main_FlashLayoutUpdate;
     // the initial of driver part for cold and warm boot
-	Sys_MiscModulesInit = Main_MiscModulesInit;   
+    Sys_MiscModulesInit = Main_MiscModulesInit;   
     Sys_MiscDriverConfigSetup = Main_MiscDriverConfigSetup;
 
     // update the switch AT UART / dbg UART function
@@ -218,7 +218,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	  
+      
 }
 
 /*************************************************************************

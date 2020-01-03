@@ -110,18 +110,18 @@ int Iot_Data_TxTask_MsgSend(int msg_type, uint8_t *data, int data_len)
 {
     xIotDataMessage_t *pMsg = 0;
 
-	if (NULL == g_tAppIotDataTxQueueId)
-	{
+    if (NULL == g_tAppIotDataTxQueueId)
+    {
         BLEWIFI_ERROR("BLEWIFI: No IoT Tx task queue \r\n");
         return -1;
-	}
+    }
 
     /* Mem allocate */
     pMsg = malloc(sizeof(xIotDataMessage_t) + data_len);
     if (pMsg == NULL)
-	{
+    {
         BLEWIFI_ERROR("BLEWIFI: IoT Tx task pmsg allocate fail \r\n");
-	    goto error;
+        goto error;
     }
     
     pMsg->event = msg_type;
@@ -140,12 +140,12 @@ int Iot_Data_TxTask_MsgSend(int msg_type, uint8_t *data, int data_len)
     return 0;
 
 error:
-	if (pMsg != NULL)
-	{
-	    free(pMsg);
+    if (pMsg != NULL)
+    {
+        free(pMsg);
     }
-	
-	return -1;
+    
+    return -1;
 }
 
 void Iot_Data_TxInit(void)

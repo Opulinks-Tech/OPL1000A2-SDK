@@ -57,7 +57,7 @@ int wifi_connection(void)
     wifi_scan_list_t *p_scan_list = NULL;
     int i = 0;
     int isMatched = 0;
-		
+        
     p_scan_list = (wifi_scan_list_t *)malloc(sizeof(wifi_scan_list_t));
 
     if(p_scan_list == NULL)
@@ -157,15 +157,15 @@ static void user_wifi_app_entry(void *args)
 
     while (1) {
         if(g_connect_flag == true )
-				{
-					printf("OPL1000 connected, set GPIO4 high \r\n");
-					Hal_Vic_GpioOutput(GPIO_IDX_04,GPIO_LEVEL_HIGH);
-				}
-				else 
-				{
-					printf("OPL1000 disconnected, set GPIO4 low \r\n");
-					Hal_Vic_GpioOutput(GPIO_IDX_04,GPIO_LEVEL_LOW);
-				}
+                {
+                    printf("OPL1000 connected, set GPIO4 high \r\n");
+                    Hal_Vic_GpioOutput(GPIO_IDX_04,GPIO_LEVEL_HIGH);
+                }
+                else 
+                {
+                    printf("OPL1000 disconnected, set GPIO4 low \r\n");
+                    Hal_Vic_GpioOutput(GPIO_IDX_04,GPIO_LEVEL_LOW);
+                }
         osDelay(2000);
     }
 }

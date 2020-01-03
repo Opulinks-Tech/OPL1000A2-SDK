@@ -259,7 +259,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	 
+     
 }
 
 /*************************************************************************
@@ -349,11 +349,11 @@ static void Main_AtUartDbgUartSwitch(void)
 *************************************************************************/
 void App_Pin_InitConfig(void)
 {
-	Hal_PinMux_Uart_Init(&OPL1000_periph.uart[0]);
-/*	  uint8_t i; 
-	  for (i=0;i<OPL1000_periph.uart_num;i++)
-	  {
-			Hal_PinMux_Uart_Init(&OPL1000_periph.uart[i]);
+    Hal_PinMux_Uart_Init(&OPL1000_periph.uart[0]);
+/*      uint8_t i; 
+      for (i=0;i<OPL1000_periph.uart_num;i++)
+      {
+            Hal_PinMux_Uart_Init(&OPL1000_periph.uart[i]);
     }
 */
 }
@@ -378,8 +378,8 @@ void Main_AppInit_patch(void)
     App_Pin_InitConfig();
     
     // Indicate UART test example is running 
-   	printf("UART Running \n");
-	
+       printf("UART Running \n");
+    
     // do the uart_int_test
     uart_int_test();
 }
@@ -402,7 +402,7 @@ static void Main_AppThread_1(void *argu)
 {
     osEvent tEvent;
     S_MessageQ *ptMsgPool;
-	  //uint32_t ulData = 0x4743;
+      //uint32_t ulData = 0x4743;
     
     while (1)
     {
@@ -413,7 +413,7 @@ static void Main_AppThread_1(void *argu)
             printf("To receive the message from AppMessageQ is fail.\n");
             continue;
         }
-			
+            
         // get the content of message
         ptMsgPool = (S_MessageQ *)tEvent.value.p;
         
@@ -426,7 +426,7 @@ static void Main_AppThread_1(void *argu)
                 
                 // write data to uart0
                 Hal_Uart_DataSend(UART_IDX_0, ptMsgPool->ulData);
-						    //Hal_Uart_DataSend(UART_IDX_1, ptMsgPool->ulData);
+                            //Hal_Uart_DataSend(UART_IDX_1, ptMsgPool->ulData);
                 break;
             
             default:
@@ -435,8 +435,8 @@ static void Main_AppThread_1(void *argu)
         
         // free the memory pool
         osPoolFree(g_tAppMemPoolId, ptMsgPool);
-				//osDelay(19);
-				
+                //osDelay(19);
+                
     }
 }
 
@@ -457,7 +457,7 @@ static void Main_AppThread_1(void *argu)
 static void Main_AppMessageQSend(uint32_t ulData)
 {
     S_MessageQ *ptMsgPool;
-	
+    
     // allocate the memory pool
     ptMsgPool = (S_MessageQ *)osPoolCAlloc(g_tAppMemPoolId);
     if (ptMsgPool == NULL)
@@ -479,7 +479,7 @@ static void Main_AppMessageQSend(uint32_t ulData)
         osPoolFree(g_tAppMemPoolId, ptMsgPool);
         goto done;
     }
-		
+        
 done:
     return;
 }

@@ -173,7 +173,7 @@ int write_fim_handle(uint32_t u32Type, uint8_t *u8aData, uint32_t u32DataLen, vo
        
        2. (ptParam->u16DataTotalLen - 1):
        If total length minus 1 is equal (ptParam->u16Resultindex) mean there is no comma at the rest of string.
-    */	
+    */    
     if((ptParam->u16Resultindex == (ptParam->u16DataTotalLen - 1)) && (ptParam->u32StringIndex >= AT_FIM_DATA_LENGTH))
     {
         ptParam->ResultBuf[ptParam->u16Resultindex] = (uint8_t)strtoul(ptParam->u8aReadBuf, NULL, 16);
@@ -185,7 +185,7 @@ int write_fim_handle(uint32_t u32Type, uint8_t *u8aData, uint32_t u32DataLen, vo
     /* Collect array data is equal to total lengh then write data to fim. */
     if(ptParam->u16Resultindex == ptParam->u16DataTotalLen)
     {
-       	if(MW_FIM_OK == MwFim_FileWrite(ptParam->u32Id, ptParam->u16Index, ptParam->u16DataTotalLen, ptParam->ResultBuf))
+           if(MW_FIM_OK == MwFim_FileWrite(ptParam->u32Id, ptParam->u16Index, ptParam->u16DataTotalLen, ptParam->ResultBuf))
         {
             msg_print_uart1("OK\r\n");
         }
@@ -234,7 +234,7 @@ int app_at_cmd_sys_write_fim(char *buf, int len, int mode)
         goto done;
     }
     memset(tAtFimParam, 0, sizeof(T_AtFimParam));
-		
+        
     if(!at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS))
     {
         goto done;
@@ -295,7 +295,7 @@ done:
         {
             if (tAtFimParam->ResultBuf != NULL)
             {
-		        free(tAtFimParam->ResultBuf);
+                free(tAtFimParam->ResultBuf);
             }
             free(tAtFimParam);
             tAtFimParam = NULL;

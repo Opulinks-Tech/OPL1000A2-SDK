@@ -37,11 +37,11 @@ RF Power
 :-----------------+----------------+----------------:
 | WIFI High power |  0xB0          | 0xFF           |
 :-----------------+----------------+----------------:
-| WIFI High power |  0xD0          | 				|
-|		+2 db     |				   |				|
+| WIFI High power |  0xD0          |                 |
+|        +2 db     |                   |                |
 :-----------------+----------------+----------------:
 | WIFI High power |  0xE0          |                |
-|   +3 DB         |                |				|
+|   +3 DB         |                |                |
 '-----------------'----------------'----------------'
 */
 #define BLEWIFI_COM_RF_POWER_SETTINGS   (0x20)
@@ -160,10 +160,10 @@ FIM version
 
 
 #ifdef ALI_BLE_WIFI_PROVISION
-		
+        
 /* AIS - Alibaba IoT Service*/
 /* UUIDs */
-#define BLE_UUID_AIS_SERVICE	0xFEB3 /* The UUID of the Alibaba IOT Service. */
+#define BLE_UUID_AIS_SERVICE    0xFEB3 /* The UUID of the Alibaba IOT Service. */
 #define BLE_UUID_AIS_RC         0xFED4 /* The UUID of the "Read Characteristics" Characteristic. */
 #define BLE_UUID_AIS_WC         0xFED5 /* The UUID of the "Write Characteristics" Characteristic. */
 #define BLE_UUID_AIS_IC         0xFED6 /* The UUID of the "Indicate Characteristics" Characteristic. */

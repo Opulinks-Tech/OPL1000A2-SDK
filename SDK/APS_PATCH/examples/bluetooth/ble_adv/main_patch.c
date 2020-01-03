@@ -218,7 +218,7 @@ static void Main_FlashLayoutUpdate(void)
 *************************************************************************/
 static void Main_MiscModulesInit(void)
 {
-	    
+        
 }
 
 /*************************************************************************
@@ -372,6 +372,6 @@ static void Main_ApsUartRxDectecCb(E_GpioIdx_t tGpioIdx)
 *************************************************************************/
 void Main_AppInit_patch(void)
 {
-	BleAppInit();
+    BleAppInit();
 }
 

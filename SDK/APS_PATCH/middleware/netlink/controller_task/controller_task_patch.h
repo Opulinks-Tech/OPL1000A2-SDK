@@ -41,7 +41,14 @@ extern "C" {
  *                          Typedefs and Structures
  *************************************************************************
  */
+typedef struct
+{
+    int8_t Counter_From_IPC_To_Ctrl_PUT;
+    int8_t Counter_From_IPC_To_Ctrl_GET;
+    int8_t Counter_From_Ctrl_To_Host_PUT;
+    int8_t Counter_From_Ctrl_To_Host_GET;
 
+} CTRL_BleQueueCounter_t;
 
 
 /*
@@ -49,6 +56,7 @@ extern "C" {
  *                          Public Variables
  *************************************************************************
  */
+extern CTRL_BleQueueCounter_t *le_ctrl_queue_ctr;
 
 
 /*

@@ -62,6 +62,7 @@ Head Block of The File
 #include "hal_dbg_uart.h"
 #include "hal_vic.h"
 #include "boot_sequence.h"
+#include "pwm_complex.h"
 //#include "hal_wdt.h"
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
@@ -91,7 +92,7 @@ extern T_Main_AppInit_fp Main_AppInit;
 Declaration of static Global Variables & Functions
 ***************************************************/
 // Sec 6: declaration of static global variable
-static osThreadId g_tAppThread;
+static osThreadId g_tAppThread_s,g_tAppThread_c;
 static E_IO01_UART_MODE g_eAppIO01UartMode;
 // Sec 7: declaration of static function prototype
 void __Patch_EntryPoint(void) __attribute__((section("ENTRY_POINT")));
@@ -99,7 +100,8 @@ void __Patch_EntryPoint(void) __attribute__((used));
 static void Main_PinMuxUpdate(void);
 static void Main_FlashLayoutUpdate(void);
 void Main_AppInit_patch(void);
-static void Main_AppThread(void *argu);
+static void Main_AppThread_s(void *argu);
+static void Main_AppThread_c(void *argu);
 static void pwm_test(void);
 
 
@@ -326,24 +328,28 @@ static void Main_AtUartDbgUartSwitch(void)
 void App_Pin_InitConfig(void)
 {
     uint8_t pwm_num = OPL1000_periph.pwm_num;
-	  uint8_t i,pwm_index_mask = 0, pwm_idx; 
-	
-	  if(pwm_num > 0) 
-		{	
-			Hal_Pinmux_Pwm_Init();
-			
-			// Disable all PWM output 
-			Hal_Pinmux_Pwm_Disable(HAL_PWM_IDX_ALL);
-			
-			for (i=0; i<pwm_num;i++)
-			{
-				pwm_idx = Hal_PinMux_Get_Index(OPL1000_periph.pwm[i].pin);
-				pwm_index_mask =  pwm_index_mask | pwm_idx;				
-				Hal_Pinmux_Pwm_Config(&OPL1000_periph.pwm[i]);
-			}
-			
-			Hal_Pinmux_Pwm_Enable(pwm_index_mask);
-	  }	
+      uint8_t i = 0,pwm_index_mask = 0, pwm_idx; 
+    
+      if(pwm_num > 0) //initialize the pwm pins in simple mode
+        {    
+            Hal_Pinmux_Pwm_Init();
+            
+            // Disable all PWM output 
+            Hal_Pinmux_Pwm_Disable(HAL_PWM_IDX_ALL);
+            
+            for (i=0; i<pwm_num;i++)
+            {
+                pwm_idx = Hal_PinMux_Get_Index(OPL1000_periph.pwm[i].pin);
+                pwm_index_mask =  pwm_index_mask | pwm_idx;                
+                Hal_Pinmux_Pwm_Config(&OPL1000_periph.pwm[i]);
+            }
+            
+            Hal_Pinmux_Pwm_Enable(pwm_index_mask);
+      }    
+        
+        //initialize complex mode.
+        pwm_complex_init();
+        
 }
 
 
@@ -367,16 +373,16 @@ void Main_AppInit_patch(void)
     App_Pin_InitConfig();
     
     printf("configuration is finished \r\n");
-	
+    
     pwm_test();
 }
 
 /*************************************************************************
 * FUNCTION:
-*   Main_AppThread
+*   Main_AppThread_s
 *
 * DESCRIPTION:
-*   the application thread 2
+*   the application thread used to verify PWM simple mode.
 *
 * PARAMETERS
 *   1. argu     : [In] the input argument
@@ -385,12 +391,43 @@ void Main_AppInit_patch(void)
 *   none
 *
 *************************************************************************/
-static void Main_AppThread(void *argu)
+static void Main_AppThread_s(void *argu)
 {
     while (1)
     {
         osDelay(1500);      // delay 500 ms
-		printf("PWM Running \r\n");
+        printf("PWM simple Running \r\n");
+    }
+}
+
+/*************************************************************************
+* FUNCTION:
+*   Main_AppThread_c
+*
+* DESCRIPTION:
+*   the application thread used to verify PWM complex mode.
+*
+* PARAMETERS
+*   1. argu     : [In] the input argument
+*
+* RETURNS
+*   none
+*
+*************************************************************************/
+static void Main_AppThread_c(void *argu)
+{
+      uint8_t duty = 0;
+    while (1)
+    {
+              if(pwm_complex_get_status()) //duty reached target once timer is stopped. Reverse it.
+                {
+                      duty = pwm_complex_get_duty_target();
+                      pwm_complex_set_duty_target(PWM_COMPLEX_PERIOD_DEF - duty);
+                      printf("PWM complex switched \r\n");
+                }
+                      
+        osDelay(15000);  
+            printf("PWM complex Running \r\n");
     }
 }
 
@@ -410,20 +447,31 @@ static void Main_AppThread(void *argu)
 *************************************************************************/
 static void pwm_test(void)
 {
-    osThreadDef_t tThreadDef;
+    osThreadDef_t tThreadDef_s,tThreadDef_c;
     
-    // create the thread for AppThread
-    tThreadDef.name = "App";
-    tThreadDef.pthread = Main_AppThread;
-    tThreadDef.tpriority = OS_TASK_PRIORITY_APP;        // osPriorityNormal
-    tThreadDef.instances = 0;                           // reserved, it is no used
-    tThreadDef.stacksize = OS_TASK_STACK_SIZE_APP;      // (512), unit: 4-byte, the size is 512*4 bytes
-    g_tAppThread = osThreadCreate(&tThreadDef, NULL);
-    if (g_tAppThread == NULL)
+    // create the AppThread for PWM simple mode.
+    tThreadDef_s.name = "App";
+    tThreadDef_s.pthread = Main_AppThread_s;
+    tThreadDef_s.tpriority = OS_TASK_PRIORITY_APP;        // osPriorityNormal
+    tThreadDef_s.instances = 0;                           // reserved, it is no used
+    tThreadDef_s.stacksize = OS_TASK_STACK_SIZE_APP;      // (512), unit: 4-byte, the size is 512*4 bytes
+    g_tAppThread_s = osThreadCreate(&tThreadDef_s, NULL);
+    if (g_tAppThread_s == NULL)
     {
-        printf("To create the thread for AppThread is fail.\n");
+        printf("Creating the thread for PWM simple mode failed.\n");
     }
-    
+
+    // create the AppThread for PWM complex mode.
+    tThreadDef_c.name = "App";
+    tThreadDef_c.pthread = Main_AppThread_c;
+    tThreadDef_c.tpriority = OS_TASK_PRIORITY_APP;        // osPriorityNormal
+    tThreadDef_c.instances = 0;                           // reserved, it is no used
+    tThreadDef_c.stacksize = OS_TASK_STACK_SIZE_APP;      // (512), unit: 4-byte, the size is 512*4 bytes
+    g_tAppThread_c = osThreadCreate(&tThreadDef_c, NULL);
+    if (g_tAppThread_c == NULL)
+    {
+        printf("Creating the thread for PWM complex mode failed.\n");
+    }
 }
 
 /*************************************************************************

@@ -113,9 +113,9 @@ static void do_encrypt(uint8_t *data, uint16_t len)
     uint8_t encrypt_data[ENCRYPT_DATA_SIZE];
 
     bytes_to_pad = (AES_BLK_SIZE - len % AES_BLK_SIZE) % AES_BLK_SIZE;
-#ifdef ALI_OPL_DBG	
-		printf("bytes_to_pad=%d\r\n", bytes_to_pad);
-#endif	
+#ifdef ALI_OPL_DBG    
+        printf("bytes_to_pad=%d\r\n", bytes_to_pad);
+#endif    
     if (bytes_to_pad) {
         memset(data + len, 0, bytes_to_pad);
         g_transport.tx.zeroes_padded = bytes_to_pad;
@@ -195,14 +195,14 @@ static ret_code_t send_fragment(uint8_t tx_type)
         len = MIN(bytes_left, pkt_payload_len);
         build_packet(g_transport.tx.data + g_transport.tx.bytes_sent, len);
         pkt_len = len + g_transport.tx.zeroes_padded + HEADER_SIZE;
-#ifdef ALI_OPL_DBG			
-				printf("pkt_len=%d\r\n", pkt_len);
-				printf("WriteToDevice: ");
-				for(int i=0;i<pkt_len;i++){
-					printf("0x%02X ", g_transport.tx.buff[i]);
-				}
-				printf("\r\n");
-#endif				
+#ifdef ALI_OPL_DBG            
+                printf("pkt_len=%d\r\n", pkt_len);
+                printf("WriteToDevice: ");
+                for(int i=0;i<pkt_len;i++){
+                    printf("0x%02X ", g_transport.tx.buff[i]);
+                }
+                printf("\r\n");
+#endif                
 //        ret = g_transport.tx.active_func(g_transport.tx.buff, pkt_len);
         ret = g_transport.tx.active_func(g_transport.tx.conn_hdl, g_transport.tx.hdl, pkt_len, g_transport.tx.buff); //Modify
         if (ret == BZ_SUCCESS) {
@@ -210,14 +210,14 @@ static ret_code_t send_fragment(uint8_t tx_type)
             g_transport.tx.frame_seq++;
             g_transport.tx.bytes_sent += len;
             bytes_left = tx_bytes_left();
-#ifdef ALI_OPL_DBG					
-						printf("bytes_left=%d\r\n", bytes_left);
-#endif					
+#ifdef ALI_OPL_DBG                    
+                        printf("bytes_left=%d\r\n", bytes_left);
+#endif                    
             pkt_sent++;
         }
  //       if (ret != BZ_SUCCESS ||
  //           g_transport.tx.active_func == ble_ais_send_indication) {
-				if (ret != BZ_SUCCESS || (tx_type == TX_INDICATION && true==g_Indi_flag)) {			
+                if (ret != BZ_SUCCESS || (tx_type == TX_INDICATION && true==g_Indi_flag)) {            
             break;
         }
     }  while (bytes_left > 0);
@@ -226,7 +226,7 @@ static ret_code_t send_fragment(uint8_t tx_type)
 //        os_timer_start(&g_transport.tx.timer);
     }
  //   if (g_transport.tx.active_func == ble_ais_send_notification) {
-		if (tx_type == TX_NOTIFICATION && true==g_noti_flag) {
+        if (tx_type == TX_NOTIFICATION && true==g_noti_flag) {
         transport_txdone(tx_type, pkt_sent);
     }
     return ret;
@@ -326,12 +326,12 @@ ret_code_t transport_tx(uint8_t tx_type, uint8_t cmd,
    
     if (tx_type == TX_NOTIFICATION) {
     g_transport.tx.active_func = active_func;
-		g_transport.tx.hdl=hdl;
-		g_transport.tx.conn_hdl=conn_hdl;	
+        g_transport.tx.hdl=hdl;
+        g_transport.tx.conn_hdl=conn_hdl;    
     } else if(tx_type == TX_INDICATION){
     g_transport.tx.active_func = active_func;
-		g_transport.tx.hdl=hdl;
-		g_transport.tx.conn_hdl=conn_hdl;	
+        g_transport.tx.hdl=hdl;
+        g_transport.tx.conn_hdl=conn_hdl;    
     }
 /*    if (tx_type == TX_NOTIFICATION) {
         g_transport.tx.active_func = ble_ais_send_notification;
@@ -435,9 +435,9 @@ void transport_txdone(uint8_t tx_type, uint16_t pkt_sent)
 
     g_transport.tx.pkt_cfm += pkt_sent;
     bytes_left = tx_bytes_left();
-#ifdef ALI_OPL_DBG	
-		printf("g_transport.tx.pkt_cfm=%d\r\n", g_transport.tx.pkt_cfm);
-#endif		
+#ifdef ALI_OPL_DBG    
+        printf("g_transport.tx.pkt_cfm=%d\r\n", g_transport.tx.pkt_cfm);
+#endif        
     if (bytes_left != 0) {
 //        send_fragment();
      send_fragment(tx_type);

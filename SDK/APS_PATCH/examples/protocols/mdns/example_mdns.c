@@ -37,11 +37,11 @@ static void srv_txt(struct mdns_service *service, void *txt_userdata)
     err_t res;
     LWIP_UNUSED_ARG(txt_userdata);
 
-	  res = mdns_resp_add_service_txtitem(service, "path=/foobar", 12);
+      res = mdns_resp_add_service_txtitem(service, "path=/foobar", 12);
     //change TXT item value
-    res = mdns_resp_add_service_txtitem(service, "u=user", 6);    	
+    res = mdns_resp_add_service_txtitem(service, "u=user", 6);        
     res = mdns_resp_add_service_txtitem(service, "p=password", 10);    
-    res = mdns_resp_add_service_txtitem(service, "board=DEVKIT", 12);	
+    res = mdns_resp_add_service_txtitem(service, "board=DEVKIT", 12);    
     LWIP_ERROR("mdns add service txt failed\n", (res == ERR_OK), return);
 }
 
@@ -93,7 +93,7 @@ int wifi_connection(void)
     wifi_scan_list_t *p_scan_list = NULL;
     int i = 0;
     int isMatched = 0;
-		
+        
     p_scan_list = (wifi_scan_list_t *)malloc(sizeof(wifi_scan_list_t));
 
     if(p_scan_list == NULL)
@@ -184,7 +184,7 @@ int wifi_event_handler_cb(wifi_event_id_t event_id, void *data, uint16_t length)
 
 void user_wifi_app_entry(void *args)
 {
-	  err_t ret;
+      err_t ret;
     /* Tcpip stack and net interface initialization,  dhcp client process initialization. */
     lwip_network_init(WIFI_MODE_STA);
 

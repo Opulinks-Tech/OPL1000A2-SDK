@@ -25,23 +25,23 @@ uint32_t g_ulSntpSecondInit;      // GMT Time Initialize
 
 void BleWifi_HexDump(const char *title, const uint8_t *buf, size_t len)
 {
-	size_t i;
+    size_t i;
 
-	printf("\n%s - hexdump(len=%lu):", title, (unsigned long)len);
-	if (buf == NULL)
-	{
-		printf(" [NULL]");
-	}
-	else
-	{
-		for (i = 0; i < len; i++)
-		{
+    printf("\n%s - hexdump(len=%lu):", title, (unsigned long)len);
+    if (buf == NULL)
+    {
+        printf(" [NULL]");
+    }
+    else
+    {
+        for (i = 0; i < len; i++)
+        {
             if (i%16 == 0)
                 printf("\n");
-			printf(" %02x", buf[i]);
-		}
-	}
-	printf("\n");
+            printf(" %02x", buf[i]);
+        }
+    }
+    printf("\n");
 
 }
 

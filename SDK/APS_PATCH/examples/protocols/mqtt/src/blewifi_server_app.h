@@ -17,15 +17,15 @@
 
 
 // Minimum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MIN_CONN_INTERVAL     	100
+#define DEFAULT_DESIRED_MIN_CONN_INTERVAL         100
 // Maximum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL     	200
+#define DEFAULT_DESIRED_MAX_CONN_INTERVAL         200
 // Maximum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_SLAVE_LATENCY			0
+#define DEFAULT_DESIRED_SLAVE_LATENCY            0
 // Maximum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_SUPERVERSION_TIMEOUT   	500
+#define DEFAULT_DESIRED_SUPERVERSION_TIMEOUT       500
 
-#define LE_GATT_DATA_OUT_BUF_SIZE				1024
+#define LE_GATT_DATA_OUT_BUF_SIZE                1024
 
 #define BLE_ADV_SCAN_BUF_SIZE                   31
 
@@ -33,11 +33,11 @@
 // the BLE state is used in the Le stack task
 enum
 {
-	APP_STATE_INIT = 0,
-	APP_STATE_IDLE,
-	APP_STATE_ADVERTISING,
-	APP_STATE_ADVERTISING_TIME_CHANGE,
-	APP_STATE_CONNECTED,
+    APP_STATE_INIT = 0,
+    APP_STATE_IDLE,
+    APP_STATE_ADVERTISING,
+    APP_STATE_ADVERTISING_TIME_CHANGE,
+    APP_STATE_CONNECTED,
 
     APP_STATE_TOP
 };
@@ -62,53 +62,53 @@ enum
 
 typedef struct
 {
-	UINT16		len;
-	UINT8		*data;
+    UINT16        len;
+    UINT8        *data;
 } BLEWIFI_MESSAGE_T;
 
 typedef struct
 {
-	UINT32			test_num;
-	UINT16			ridx;
-	UINT16			pidx;
-	UINT16			send_hdl;
-    UINT8			sending;
-    UINT8			*send_buf;
-	UINT8			buf[LE_GATT_DATA_OUT_BUF_SIZE];
+    UINT32            test_num;
+    UINT16            ridx;
+    UINT16            pidx;
+    UINT16            send_hdl;
+    UINT8            sending;
+    UINT8            *send_buf;
+    UINT8            buf[LE_GATT_DATA_OUT_BUF_SIZE];
 } BLEWIFI_DATA_OUT_STORE_T;
 
 typedef struct
 {
-	UINT16			len;
-	UINT8			buf[BLE_ADV_SCAN_BUF_SIZE];
+    UINT16            len;
+    UINT8            buf[BLE_ADV_SCAN_BUF_SIZE];
 } BLE_ADV_SCAN_T;
 
 typedef struct
 {
-	UINT16			interval_min;
-	UINT16			interval_max;
+    UINT16            interval_min;
+    UINT16            interval_max;
 } BLE_ADV_TIME_T;
 
 typedef struct
 {
-	TASKPACK		task;
-	UINT16			state;
-	UINT16			conn_hdl;
-	LE_BT_ADDR_T	bt_addr;
+    TASKPACK        task;
+    UINT16            state;
+    UINT16            conn_hdl;
+    LE_BT_ADDR_T    bt_addr;
 
-	UINT16			curr_mtu;
-	BOOL			encrypted;
-    BOOL			paired;
+    UINT16            curr_mtu;
+    BOOL            encrypted;
+    BOOL            paired;
 
-    UINT16			min_itvl;
-    UINT16			max_itvl;
-    UINT16			latency;
-    UINT16			sv_tmo;
+    UINT16            min_itvl;
+    UINT16            max_itvl;
+    UINT16            latency;
+    UINT16            sv_tmo;
 
-	BLEWIFI_DATA_OUT_STORE_T store;
+    BLEWIFI_DATA_OUT_STORE_T store;
     
-	BLE_ADV_SCAN_T	adv_data;
-    BLE_ADV_SCAN_T	scn_data;
+    BLE_ADV_SCAN_T    adv_data;
+    BLE_ADV_SCAN_T    scn_data;
     
 } BLE_APP_DATA_T;
 

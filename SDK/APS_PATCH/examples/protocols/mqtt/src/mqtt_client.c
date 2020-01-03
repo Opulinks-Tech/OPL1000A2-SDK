@@ -148,8 +148,8 @@ void mqtt_client(void )
     uint8_t ack_buf_len = 10;
     uint8_t ack_len = 0;
     uint16_t last_ping_time = 10;
-		uint8_t wifi_alive_count = 0;
-		uint8_t mqtt_pub_data_len = 0;
+        uint8_t wifi_alive_count = 0;
+        uint8_t mqtt_pub_data_len = 0;
     char full_topic_name[256] = {0};
     uint8_t macaddr[6] = {0};
     
@@ -185,112 +185,112 @@ void mqtt_client(void )
     {
         printf("... failed to set socket receiving timeout \n");
     }
-		
-		// build fixed data to be published here.
-		mqtt_pub_data_len = strlen(OPL1000_PUB_MSG);
-		if(mqtt_pub_data_len > (OPL1_PUB_MSG_MAX_LEN - 3))
-		{
-			  printf("[warn]: opl1000 publish too long! would be trimmed. \n");
-			  mqtt_pub_data_len = OPL1_PUB_MSG_MAX_LEN - 3;
-		}
-		strncpy(OPL1_PubData, OPL1000_PUB_MSG, mqtt_pub_data_len);
-		
+        
+        // build fixed data to be published here.
+        mqtt_pub_data_len = strlen(OPL1000_PUB_MSG);
+        if(mqtt_pub_data_len > (OPL1_PUB_MSG_MAX_LEN - 3))
+        {
+              printf("[warn]: opl1000 publish too long! would be trimmed. \n");
+              mqtt_pub_data_len = OPL1_PUB_MSG_MAX_LEN - 3;
+        }
+        strncpy(OPL1_PubData, OPL1000_PUB_MSG, mqtt_pub_data_len);
+        
     while(1)
     {
         if(MQTT_SocketStatus == 1) 
         {
             last_ping_time++;
-					  wifi_alive_count = 0; // clear the wifi connection count.
+                      wifi_alive_count = 0; // clear the wifi connection count.
             if(last_ping_time > 20)
             {            
                 last_ping_time = 0;// = millis();
                 rc = tcp_write_data(ping_buf, ping_len);
-							  printf("send ping\r\n");
+                              printf("send ping\r\n");
                 sprintf(MQTT_PubLightData,MQTT_PUB_Light_MSG,LightStatus);
                 MQTT_Publish(full_topic_name, MQTT_PubLightData);
-							  if(rc == 2)
-								{
-									  miss_ping_ack_count++;
-									  if(miss_ping_ack_count > 3)
-									  {
-										    printf("Missed ping ACK greater than 3.\r\n");
-										    MQTT_SocketStatus = 0;
-										    close(MQTT_Socket);
-									  }
-								}
+                              if(rc == 2)
+                                {
+                                      miss_ping_ack_count++;
+                                      if(miss_ping_ack_count > 3)
+                                      {
+                                            printf("Missed ping ACK greater than 3.\r\n");
+                                            MQTT_SocketStatus = 0;
+                                            close(MQTT_Socket);
+                                      }
+                                }
             }
             // update publish data by adding index count.
-						i++;
-						OPL1_PubData[mqtt_pub_data_len] = ' ';
-						OPL1_PubData[mqtt_pub_data_len + 1] = (uint8_t)((uint8_t)('0') + i%10);
-						OPL1_PubData[mqtt_pub_data_len + 2] = '\n';
-						
-						// publish OPL1000 data for testing.
-						MQTT_Publish(OPL1000_PUB_TOPIC, OPL1_PubData);
-						
-						do
-						{
-							tmp = MQTTPacket_read(MQTT_RevBuf, buflen,tcp_read_data);
-			        //printf("rev pack = %d, ping counter = %d\n", tmp, last_ping_time);
-							if(tmp == PUBLISH)
-							{               
-									rc = MQTTDeserialize_publish(&dup, &qos, &retained, &msgid, &receivedTopic, &payload_in, &payloadlen_in, MQTT_RevBuf, buflen);
-									if(rc == 1)
-									{
+                        i++;
+                        OPL1_PubData[mqtt_pub_data_len] = ' ';
+                        OPL1_PubData[mqtt_pub_data_len + 1] = (uint8_t)((uint8_t)('0') + i%10);
+                        OPL1_PubData[mqtt_pub_data_len + 2] = '\n';
+                        
+                        // publish OPL1000 data for testing.
+                        MQTT_Publish(OPL1000_PUB_TOPIC, OPL1_PubData);
+                        
+                        do
+                        {
+                            tmp = MQTTPacket_read(MQTT_RevBuf, buflen,tcp_read_data);
+                    //printf("rev pack = %d, ping counter = %d\n", tmp, last_ping_time);
+                            if(tmp == PUBLISH)
+                            {               
+                                    rc = MQTTDeserialize_publish(&dup, &qos, &retained, &msgid, &receivedTopic, &payload_in, &payloadlen_in, MQTT_RevBuf, buflen);
+                                    if(rc == 1)
+                                    {
                         //printf("topic:%s; message:\" %.*s\"   qos:%d  msgid:%d\n", receivedTopic.lenstring.data, payloadlen_in, payload_in, qos, msgid);
-											  printf("topic:%s\n", receivedTopic.lenstring.data);
-											  printf("message:\" %.*s\"   qos:%d  msgid:%d\n", payloadlen_in, payload_in, qos, msgid);
+                                              printf("topic:%s\n", receivedTopic.lenstring.data);
+                                              printf("message:\" %.*s\"   qos:%d  msgid:%d\n", payloadlen_in, payload_in, qos, msgid);
 
                         ConfigDeviceSettingParser((char *)payload_in);
-											if(qos)
-											{
-													ack_len = MQTTSerialize_puback(ack_buf, ack_buf_len, msgid);
-													rc = tcp_write_data(ack_buf, ack_len);
-													if(rc == ack_len)
-															printf("send puback ok\n\r");
-													else
-															printf("send Puback failed\n\r");
-											}
-									}
-									else
-									{
-											printf("message  err :%d",rc); 
-									}                
-							}
-							else if(tmp == PINGRESP)//13
-							{
-									printf("recv ping\r\n");
-									miss_ping_ack_count--;
-							}
-			        else
-			        {
-			            printf("other pack = %d skip it.\n", tmp);
-			        }
-						}
-						while(tmp != -1);
+                                            if(qos)
+                                            {
+                                                    ack_len = MQTTSerialize_puback(ack_buf, ack_buf_len, msgid);
+                                                    rc = tcp_write_data(ack_buf, ack_len);
+                                                    if(rc == ack_len)
+                                                            printf("send puback ok\n\r");
+                                                    else
+                                                            printf("send Puback failed\n\r");
+                                            }
+                                    }
+                                    else
+                                    {
+                                            printf("message  err :%d",rc); 
+                                    }                
+                            }
+                            else if(tmp == PINGRESP)//13
+                            {
+                                    printf("recv ping\r\n");
+                                    miss_ping_ack_count--;
+                            }
+                    else
+                    {
+                        printf("other pack = %d skip it.\n", tmp);
+                    }
+                        }
+                        while(tmp != -1);
         }
         else // MQTT_SocketStatus == 0
         {
             printf("Socket conn closed, retry connect\n");
-					  wifi_alive_count++;
-					  if(wifi_alive_count > 4) //if SocketStatus=0 for sometime, positively set g_connection_flag = false to indicate the wifi connection is broken.
-						{
-								if(true == BleWifi_Ctrl_EventStatusWait(BLEWIFI_CTRL_EVENT_BIT_GOT_IP,0xFFFFFFFF))
-								{
-										printf("... Got IP again\n");
-										wifi_alive_count = 0;
-								}					
-						}
+                      wifi_alive_count++;
+                      if(wifi_alive_count > 4) //if SocketStatus=0 for sometime, positively set g_connection_flag = false to indicate the wifi connection is broken.
+                        {
+                                if(true == BleWifi_Ctrl_EventStatusWait(BLEWIFI_CTRL_EVENT_BIT_GOT_IP,0xFFFFFFFF))
+                                {
+                                        printf("... Got IP again\n");
+                                        wifi_alive_count = 0;
+                                }                    
+                        }
             rc = MQTT_Connect();
-			if( rc == -1 )
-			{
-				printf("[ERR]: MQTT_Connect return fail.\n");
-				continue;
-			}
+            if( rc == -1 )
+            {
+                printf("[ERR]: MQTT_Connect return fail.\n");
+                continue;
+            }
             MQTT_Subscribe(full_topic_name);
             MQTT_Publish(full_topic_name, MQTT_PUB_MSG);
-			MQTT_Subscribe(OPL1000_SUB_TOPIC);
-			
+            MQTT_Subscribe(OPL1000_SUB_TOPIC);
+            
             if(MQTT_SocketStatus)
             {
                 if(setsockopt(MQTT_Socket, SOL_SOCKET, SO_RCVTIMEO, &receiving_timeout, sizeof(receiving_timeout)) < 0) 

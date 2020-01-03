@@ -57,13 +57,13 @@ typedef enum {
 } blewifi_scan_type_t;
 
 typedef struct {
-	uint8_t show_hidden;                 /**< enable/disable to scan AP whose SSID is hidden */
-	uint8_t scan_type;                   /**< scan type, active or passive */
+    uint8_t show_hidden;                 /**< enable/disable to scan AP whose SSID is hidden */
+    uint8_t scan_type;                   /**< scan type, active or passive */
 } blewifi_cmd_scan_t;
 
 typedef struct {
     uint8_t bssid[WIFI_MAC_ADDRESS_LENGTH];   /**< The MAC address of the target AP. */
-	uint8_t password_length;                  /**< The length of the password. */
+    uint8_t password_length;                  /**< The length of the password. */
     uint8_t password[WIFI_LENGTH_PASSPHRASE]; /**< The password of the target AP. */
 } blewifi_cmd_connect_t;
 
@@ -81,7 +81,7 @@ typedef struct {
 /** @brief This structure defines the information of device
 */
 typedef struct {
-	uint8_t  device_id[WIFI_MAC_ADDRESS_LENGTH];                /**< Stores the predefined device ID (MAC). */
+    uint8_t  device_id[WIFI_MAC_ADDRESS_LENGTH];                /**< Stores the predefined device ID (MAC). */
     uint8_t  name_len;                                          /**< Length of manufacturer . */
     uint8_t  manufacturer_name[BLEWIFI_MANUFACTURER_NAME_LEN];  /**< manufacturer name */
 }__attribute__((packed)) blewifi_device_info_t;
@@ -130,7 +130,7 @@ void BleWifi_Wifi_ReqConnectRetry(void);
 int BleWifi_Wifi_Rssi(int8_t *rssi);
 int BleWifi_Wifi_SetDTIM(uint32_t value);
 void BleWifi_Wifi_UpdateBeaconInfo(void);
-	
+    
 int BleWifi_Wifi_EventHandlerCb(wifi_event_id_t event_id, void *data, uint16_t length);
 void BleWifi_Wifi_Init(void);
 

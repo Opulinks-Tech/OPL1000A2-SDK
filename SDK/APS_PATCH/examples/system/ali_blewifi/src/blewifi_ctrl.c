@@ -177,18 +177,18 @@ void BleWifi_Ctrl_EventStatusSet(uint32_t dwEventBit, uint8_t status)
         if (true == status)
         {
             // xHigherPriorityTaskWoken must be initialised to pdFALSE.
-    		xHigherPriorityTaskWoken = pdFALSE;
+            xHigherPriorityTaskWoken = pdFALSE;
 
             // Set bit in xEventGroup.
             xResult = xEventGroupSetBitsFromISR(g_tAppCtrlEventGroup, dwEventBit, &xHigherPriorityTaskWoken);
             if( xResult == pdPASS )
-    		{
-    			// If xHigherPriorityTaskWoken is now set to pdTRUE then a context
-    			// switch should be requested.  The macro used is port specific and
-    			// will be either portYIELD_FROM_ISR() or portEND_SWITCHING_ISR() -
-    			// refer to the documentation page for the port being used.
-    			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-    		}
+            {
+                // If xHigherPriorityTaskWoken is now set to pdTRUE then a context
+                // switch should be requested.  The macro used is port specific and
+                // will be either portYIELD_FROM_ISR() or portEND_SWITCHING_ISR() -
+                // refer to the documentation page for the port being used.
+                portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            }
         }
         else
             xEventGroupClearBitsFromISR(g_tAppCtrlEventGroup, dwEventBit);
@@ -285,14 +285,14 @@ void BleWifi_Ctrl_SysStatusChange(void)
         // if fail, get the default value
         memcpy(&tSysMode, &g_tMwFimDefaultSysMode, MW_FIM_SYS_MODE_SIZE);
     }
-		
+        
     // get the settings of power saving
     if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_POWER_SAVING, 0, MW_FIM_GP11_POWER_SAVING_SIZE, (uint8_t*)&tPowerSaving))
     {
         // if fail, get the default value
         memcpy(&tPowerSaving, &g_tMwFimDefaultGp11PowerSaving, MW_FIM_GP11_POWER_SAVING_SIZE);
     }
-		
+        
     // change from init to normal
     if (g_ubAppCtrlSysStatus == BLEWIFI_CTRL_SYS_INIT)
     {
@@ -301,7 +301,7 @@ void BleWifi_Ctrl_SysStatusChange(void)
         /* Power saving settings */
         if (tSysMode.ubSysMode == MW_FIM_SYS_MODE_USER) 
             ps_smart_sleep(tPowerSaving.ubPowerSaving);
-				
+                
 //        // start the sys timer
 //        osTimerStop(g_tAppCtrlSysTimer);
 //        osTimerStart(g_tAppCtrlSysTimer, BLEWIFI_COM_SYS_TIME_NORMAL);
@@ -333,35 +333,35 @@ int BleWifi_Wifi_Get_BSsid(void)
     uint16_t apCount = 0;
     int8_t ubAppErr = 0;
     int32_t i = 0;
-	
+    
     wifi_scan_get_ap_num(&apCount);
-	
+    
     if(apCount == 0)
     {
         printf("No AP found\r\n");
         goto err;
-	}
-	printf("ap num = %d\n", apCount);
-	ap_list = (wifi_scan_info_t *)malloc(sizeof(wifi_scan_info_t) * apCount);
-	
-	if (!ap_list) {
+    }
+    printf("ap num = %d\n", apCount);
+    ap_list = (wifi_scan_info_t *)malloc(sizeof(wifi_scan_info_t) * apCount);
+    
+    if (!ap_list) {
         printf("malloc fail, ap_list is NULL\r\n");
-		ubAppErr = -1;
-		goto err;
-	}
-	
+        ubAppErr = -1;
+        goto err;
+    }
+    
     wifi_scan_get_ap_records(&apCount, ap_list);
-	
-	
+    
+    
     /* build blewifi ap list */
-	for (i = 0; i < apCount; ++i)
-	{
+    for (i = 0; i < apCount; ++i)
+    {
         if(!memcmp(ap_list[i].ssid, g_apInfo.ssid, sizeof(ap_list[i].ssid) ))
-		{
+        {
             memcpy(g_apInfo.bssid, ap_list[i].bssid, 6);
             break;
         }
-    }	
+    }    
 err:
     if (ap_list)
         free(ap_list);
@@ -374,24 +374,24 @@ err:
 void Ali_WiFi_Connect(uint8_t ssid_len, uint8_t bssid_len, uint8_t pwd_len)
 {
 
-	uint8_t *conn_data;
-	uint8_t conn_data_len=bssid_len+pwd_len+2;
+    uint8_t *conn_data;
+    uint8_t conn_data_len=bssid_len+pwd_len+2;
 
         BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_ALI_WIFI_PRO, true);
  
-	conn_data = malloc(sizeof(uint8_t)*conn_data_len);
+    conn_data = malloc(sizeof(uint8_t)*conn_data_len);
         if(conn_data==NULL)
         {
              printf("Ali_WiFi_Connect--malloc failed!\r");
              return;
         }
-	memset(conn_data, 0, sizeof(uint8_t)*conn_data_len);
-	memcpy(conn_data, g_apInfo.bssid, bssid_len);
-	*(conn_data+bssid_len) = 0;
-	*(conn_data+bssid_len+1) = pwd_len;
-	memcpy((conn_data+bssid_len+2), g_apInfo.pw, pwd_len);
-	BleWifi_Wifi_DoConnect(conn_data, conn_data_len);
-	free(conn_data);
+    memset(conn_data, 0, sizeof(uint8_t)*conn_data_len);
+    memcpy(conn_data, g_apInfo.bssid, bssid_len);
+    *(conn_data+bssid_len) = 0;
+    *(conn_data+bssid_len+1) = pwd_len;
+    memcpy((conn_data+bssid_len+2), g_apInfo.pw, pwd_len);
+    BleWifi_Wifi_DoConnect(conn_data, conn_data_len);
+    free(conn_data);
 }
 #endif
 
@@ -497,12 +497,12 @@ static void BleWifi_Ctrl_TaskEvtHandler_WifiScanDoneInd(uint32_t evt_type, void 
 #endif
             BleWifi_Wifi_SendScanReport();        
             BleWifi_Ble_SendResponse(BLEWIFI_RSP_SCAN_END, 0);
-#ifdef ALI_BLE_WIFI_PROVISION				
+#ifdef ALI_BLE_WIFI_PROVISION                
         }
         else
         {
-            BleWifi_Wifi_Get_BSsid();				
-            Ali_WiFi_Connect(strlen(g_apInfo.ssid),  6, strlen(g_apInfo.pw));		
+            BleWifi_Wifi_Get_BSsid();                
+            Ali_WiFi_Connect(strlen(g_apInfo.ssid),  6, strlen(g_apInfo.pw));        
         }
 #endif
     }
@@ -569,7 +569,7 @@ static void BleWifi_Ctrl_TaskEvtHandler_WifiDisconnectionInd(uint32_t evt_type, 
 static void BleWifi_Ctrl_TaskEvtHandler_WifiGotIpInd(uint32_t evt_type, void *data, int len)
 {
     BLEWIFI_INFO("BLEWIFI: MSG BLEWIFI_CTRL_MSG_WIFI_GOT_IP_IND \r\n");
-#if (SNTP_FUNCTION_EN == 1)		    
+#if (SNTP_FUNCTION_EN == 1)            
     BleWifi_SntpInit();
 #endif
     BleWifi_Wifi_UpdateBeaconInfo();
@@ -580,7 +580,7 @@ static void BleWifi_Ctrl_TaskEvtHandler_WifiGotIpInd(uint32_t evt_type, void *da
     if(g_Ali_wifi_provision==1)
     {
 #if ALI_TOKEN_FROM_DEVICE        
-        awss_cmp_local_init(AWSS_LC_INIT_SUC);			
+        awss_cmp_local_init(AWSS_LC_INIT_SUC);            
         awss_suc_notify_stop();
         awss_suc_notify();
 #else
@@ -588,7 +588,7 @@ static void BleWifi_Ctrl_TaskEvtHandler_WifiGotIpInd(uint32_t evt_type, void *da
         tx_func_indicate(BZ_CMD_STATUS, rsp, sizeof(rsp));
 
 #endif        
-        g_Ali_wifi_provision =0;				
+        g_Ali_wifi_provision =0;                
     }
     BleWifi_Ctrl_EventStatusSet(BLEWIFI_CTRL_EVENT_BIT_LINK_CONN, true);
     if (true == BleWifi_Ctrl_EventStatusGet(BLEWIFI_CTRL_EVENT_BIT_ALI_WIFI_PRO))
@@ -614,16 +614,16 @@ static void BleWifi_Ctrl_TaskEvtHandler_AliWifiConnect(uint32_t evt_type, void *
     uint8_t bssid_len=0;
     uint8_t apptoken_len=0;
     uint8_t*  ap_data = (uint8_t *)(data);
-				
+                
     memset(&g_apInfo,0,sizeof(g_apInfo));
-				
-			
+                
+            
     ssid_len = *(ap_data);
     memcpy(g_apInfo.ssid, (ap_data+1), ssid_len);
-				
+                
     bssid_len = *(ap_data+ssid_len+1);
     memcpy(g_apInfo.bssid, (ap_data+ssid_len+2), bssid_len);
-				
+                
     pw_len = *(ap_data+ssid_len+bssid_len+2);
     memcpy(g_apInfo.pw, (ap_data+ssid_len+bssid_len+3), pw_len);
 
@@ -633,8 +633,8 @@ static void BleWifi_Ctrl_TaskEvtHandler_AliWifiConnect(uint32_t evt_type, void *
     
 #ifdef ALI_OPL_DBG
     printf("AliWifiConnect::Send apptoken data(%d):", apptoken_len);
-    for(int i=0;i<apptoken_len;i++){						
-        printf("0x%02x ", g_apInfo.apptoken[i]);				
+    for(int i=0;i<apptoken_len;i++){                        
+        printf("0x%02x ", g_apInfo.apptoken[i]);                
     }
     printf("\r\n");
 #endif
@@ -642,8 +642,8 @@ static void BleWifi_Ctrl_TaskEvtHandler_AliWifiConnect(uint32_t evt_type, void *
     awss_set_token(g_apInfo.apptoken);
 
     uint8_t tmpdata[2];
-    tmpdata[0] = 1;	// Enable to scan AP whose SSID is hidden
-    tmpdata[1] = 2;	// mixed mode
+    tmpdata[0] = 1;    // Enable to scan AP whose SSID is hidden
+    tmpdata[1] = 2;    // mixed mode
     g_Ali_wifi_provision =1;
     BleWifi_Wifi_DoScan(tmpdata, 2);   
 }
@@ -764,18 +764,18 @@ int BleWifi_Ctrl_MsgSend(int msg_type, uint8_t *data, int data_len)
 {
     xBleWifiCtrlMessage_t *pMsg = 0;
 
-	if (NULL == g_tAppCtrlQueueId)
-	{
+    if (NULL == g_tAppCtrlQueueId)
+    {
         BLEWIFI_ERROR("BLEWIFI: No queue \r\n");
         return -1;
-	}
+    }
 
     /* Mem allocate */
     pMsg = malloc(sizeof(xBleWifiCtrlMessage_t) + data_len);
     if (pMsg == NULL)
-	{
+    {
         BLEWIFI_ERROR("BLEWIFI: ctrl task pmsg allocate fail \r\n");
-	    goto error;
+        goto error;
     }
     
     pMsg->event = msg_type;
@@ -794,16 +794,16 @@ int BleWifi_Ctrl_MsgSend(int msg_type, uint8_t *data, int data_len)
     return 0;
 
 error:
-	if (pMsg != NULL)
-	{
-	    free(pMsg);
+    if (pMsg != NULL)
+    {
+        free(pMsg);
     }
-	
-	return -1;
+    
+    return -1;
 }
 
 #ifdef ALI_BLE_WIFI_PROVISION
-#define OS_TASK_STACK_SIZE_ALI_BLEWIFI_CTRL		(512)
+#define OS_TASK_STACK_SIZE_ALI_BLEWIFI_CTRL        (512)
 #endif
 
 void BleWifi_Ctrl_Init(void)
@@ -815,11 +815,11 @@ void BleWifi_Ctrl_Init(void)
 
     /* Create ble-wifi task */
     task_def.name = "blewifi ctrl";
-#ifdef ALI_BLE_WIFI_PROVISION	
+#ifdef ALI_BLE_WIFI_PROVISION    
     task_def.stacksize = OS_TASK_STACK_SIZE_ALI_BLEWIFI_CTRL;
 #else
     task_def.stacksize = OS_TASK_STACK_SIZE_BLEWIFI_CTRL;
-#endif	
+#endif    
     task_def.tpriority = OS_TASK_PRIORITY_APP;
     task_def.pthread = BleWifi_Ctrl_Task;
     g_tAppCtrlTaskId = osThreadCreate(&task_def, (void*)NULL);
@@ -868,7 +868,7 @@ void BleWifi_Ctrl_Init(void)
     g_ulAppCtrlSysMode = MW_FIM_SYS_MODE_INIT;
 
     // get the settings of Wifi connect settings
-	if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_WIFI_CONNECT_SETTINGS, 0, MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE, (uint8_t*)&g_tAppCtrlWifiConnectSettings))
+    if (MW_FIM_OK != MwFim_FileRead(MW_FIM_IDX_GP11_PROJECT_WIFI_CONNECT_SETTINGS, 0, MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE, (uint8_t*)&g_tAppCtrlWifiConnectSettings))
     {
         // if fail, get the default value
         memcpy(&g_tAppCtrlWifiConnectSettings, &g_tMwFimDefaultGp11WifiConnectSettings, MW_FIM_GP11_WIFI_CONNECT_SETTINGS_SIZE);

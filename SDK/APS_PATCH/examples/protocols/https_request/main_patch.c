@@ -293,7 +293,7 @@ static void Main_AtUartDbgUartSwitch(void)
 *************************************************************************/
 static void Main_AppInit_patch(void)
 {
-	AppInit();
+    AppInit();
 }
 
 /*************************************************************************

@@ -212,6 +212,7 @@ INCDIR += -I ../../../../APS_PATCH/driver/chip/hal_pinmux
 #############   source    ##############
 M_SRC  = ./main_patch.c
 M_SRC += ./OPL1000_pin_mux_define.c
+M_SRC += ./pwm_complex.c
 M_SRC += ../../../../APS_PATCH/driver/chip/hal_pinmux/Hal_pinmux_common.c
 M_SRC += ../../../../APS_PATCH/driver/chip/hal_pinmux/Hal_pinmux_api.c
 M_SRC += ../../../../APS_PATCH/driver/chip/hal_pinmux/Hal_pinmux_pwm.c

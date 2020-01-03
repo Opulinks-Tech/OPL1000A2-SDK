@@ -249,7 +249,7 @@ void user_post_raw_data(void)
 
 int ali_linkkit_init(user_example_ctx_t *user_example_ctx)
 {
-	
+    
     iotx_linkkit_dev_meta_info_t    master_meta_info;
     
     HAL_GetProductKey(DEMO_PRODUCT_KEY);
@@ -272,8 +272,8 @@ int ali_linkkit_init(user_example_ctx_t *user_example_ctx)
     IOT_RegisterCallback(ITE_TRIGGER_EVENT_REPLY, user_trigger_event_reply_event_handler);
     IOT_RegisterCallback(ITE_TIMESTAMP_REPLY, user_timestamp_reply_event_handler);
     IOT_RegisterCallback(ITE_INITIALIZE_COMPLETED, user_initialized);
-					
-					
+                    
+                    
     /* Choose Login Server, domain should be configured before IOT_Linkkit_Open() */
 #if USE_CUSTOME_DOMAIN
     IOT_Ioctl(IOTX_IOCTL_SET_MQTT_DOMAIN, (void *)CUSTOME_DOMAIN_MQTT);
@@ -282,7 +282,7 @@ int ali_linkkit_init(user_example_ctx_t *user_example_ctx)
     int domain_type = IOTX_CLOUD_REGION_SHANGHAI;
     IOT_Ioctl(IOTX_IOCTL_SET_DOMAIN, (void *)&domain_type);
 #endif
-					
+                    
     /* Choose Login Method */
     int dynamic_register = 0;
     IOT_Ioctl(IOTX_IOCTL_SET_DYNAMIC_REGISTER, (void *)&dynamic_register);
