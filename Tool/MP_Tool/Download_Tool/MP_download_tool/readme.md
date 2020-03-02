@@ -1,33 +1,33 @@
-# �����ļ�˵��
-1. opl_mp_win10.exe  : Opulinks��������Win10�汾
-   opl_mp_winxp.exe  : Opulinks��������Win XP�汾 
-2. mp_multi_download.ini  : Opulinks���豸�̼����س��������ļ�
-3. OPL1000-multiple-dev-download-tool-user-guide.pdf�� ʹ��˵���ĵ�
-4. Mega2560_no_relay.pdf �� Arduino ���ư��·ͼ��ֱ��ʹ��PWM�����λ�źš�
-5. opl1000_ota.bin ������ʾ�����صĹ̼��ļ���ʵ��ʹ��ʱ�ÿͻ��Լ��Ĺ̼�Bin�ļ������޸�ini�ļ������file������
-6. mp_mega2560.pde�� Arduino Mega2560 �̼�����Ҫ��¼��Mega2560�����С�
-7. tupian.bin����Դ�ļ����ڱ�����ΪͼƬ�ļ������ڴ����Flash�С��û������Զ�����Դ�ļ���Ȼ����ini�����ļ��ж������ص�Flash�е���ʼ��ַ��
-8. ali_key.csv����Ų�ƷAli����Ԫ�����ļ��������豸�ɹ���¼ʹ�ù���Ali����Ԫ�������ļ���ɾ����
-9. ble_mac.csv: ���BLE MAC��ַ���ļ��������豸�ɹ���¼ʹ�ù���BLE MAC��ַ����ļ���ɾ����
-10. wifi_mac.csv: ���WIFI MAC��ַ���ļ��������豸�ɹ���¼ʹ�ù���WIFI MAC��ַ����ļ���ɾ����
-11. readme.md�� ��˵���ĵ�
+# 包含文件说明
+1. opl_mp_win10.exe  : Opulinks量产工具Win10版本
+   opl_mp_winxp.exe  : Opulinks量产工具Win XP版本 
+2. mp_multi_download.ini  : Opulinks多设备固件下载程序配置文件
+3. OPL1000-multiple-dev-download-tool-user-guide_UG1-09-1.pdf： 使用说明文档
+4. Mega2560_no_relay.pdf ： Arduino 控制板电路图，直接使用PWM输出复位信号。
+5. opl1000_ota.bin ：用于示例下载的固件文件，实际使用时用客户自己的固件Bin文件，并修改ini文件里面的file参数。
+6. mp_mega2560.pde： Arduino Mega2560 固件，需要烧录到Mega2560板子中。
+7. tupian.bin：资源文件，在本例中为图片文件，用于存放在Flash中。用户可以自定义资源文件，然后在ini配置文件中定义下载到Flash中的起始地址。
+8. ali_key.csv：存放产品Ali云五元组码文件。随着设备成功烧录使用过的Ali云五元组码会从文件中删除。
+9. ble_mac.csv: 存放BLE MAC地址的文件。随着设备成功烧录使用过的BLE MAC地址会从文件中删除。
+10. wifi_mac.csv: 存放WIFI MAC地址的文件。随着设备成功烧录使用过的WIFI MAC地址会从文件中删除。
+11. readme.md： 本说明文档
 
-# �޸������ļ�mp_multi_download.ini����
-1. �޸� file ���� �����̼��ļ�����·�����ļ�����
-2. �������ش��ڵĹ��������ʡ����ĸ����ʿ�ѡ���ֱ�Ϊ115200��1,2,4���� 
-3. ����ʵ�����Ӷ��� Arduino ���ư���ƴ��ںͼ�ش��ڱ�š�
-   ע����ƴ��ڲ����� control_baudrate �̶�Ϊ115200bps, ��ش��ڲ�����monitor_baudrate�̶�Ϊ9600bps��
-4. �����о��ϰ��ӵĴ��ڱ�źͶ�Ӧ�Ŀ���ͨ������ζ���ο���ʹ��˵���ĵ�����
-5. ����BLE_MAC ��WIFI_MAC ����Section MAC ��ʼ����ֹ��ַ�����߸������ BLE/WIFI MAC��ַ���ļ���
-6. ���Ҫ��¼Ali����Ԫ�飬����Ҫ��ini�ļ��и������Ali����Ԫ�����ļ�����
+# 修改配置文件mp_multi_download.ini参数
+1. 修改 file 参数 给出固件文件所在路径和文件名。
+2. 定义下载串口的工作波特率。有四个速率可选，分别为115200的1,2,4倍。 
+3. 根据实际连接定义 Arduino 控制板控制串口和监控串口编号。
+   注意控制串口波特率 control_baudrate 固定为115200bps, 监控串口波特率monitor_baudrate固定为9600bps。
+4. 给出夹具上板子的串口编号和对应的控制通道。如何定义参考“使用说明文档”。
+5. 定义BLE_MAC 和WIFI_MAC 两个Section MAC 起始和终止地址。或者给出存放 BLE/WIFI MAC地址的文件。
+6. 如果要烧录Ali云五元组，则需要在ini文件中给出存放Ali云五元组码文件名。
 
-# ƽ̨��ʹ���豸�������ӣ�
-1�� USB תUART ת�������Ƽ�ʹ�� USB ת4 UART ���ӡ����о߷���10���豸ʱ��Ҫ4��������ת�Ӱ塣
-    �Ա����ӣ�
+# 平台所使用设备购买链接：
+1． USB 转UART 转接器。推荐使用 USB 转4 UART 板子。当夹具放置10个设备时需要4个这样的转接板。
+    淘宝链接：
     https://item.taobao.com/item.htm?spm=a1z09.2.0.0.65192e8d1Ed2gW&id=547175165933&_u=k1pcde1d0b5
-2�� Arduino MEGA2560 ����
+2． Arduino MEGA2560 主板
     https://item.taobao.com/item.htm?spm=a230r.1.14.47.5855114bzW70xe&id=569798964993&ns=1&abbucket=14#detail
-3.  Arduino MEGA2560 ��չ��
+3.  Arduino MEGA2560 扩展板
     https://item.taobao.com/item.htm?spm=a1z09.2.0.0.53592e8dZUdsTh&id=529407009307&_u=51pcde1fa58
 
 
