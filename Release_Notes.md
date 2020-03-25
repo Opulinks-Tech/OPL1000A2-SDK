@@ -1,36 +1,30 @@
 ## Release Version:
-SDK Package: MP_2.16
-Patch_Lib : 4208
+SDK Package: MP_2.17
+Patch_Lib : 4243
 
-## Release Date: 2020/1/3
+## Release Date: 2020/3/25
 
 ## Function & Feature Update 
 1. Documents updating:
-   1.1 OPL1000-AT-instruction-set-and-examples,R05-v0.42,Add commands for AUXADC.
-   1.2 OPL1000-WIFI-BLE-API-guide.pdf,MP2.16, update document.
-   1.3 OPL1000_peripheral_PWM_application_notes.pdf, V0.4, add PWM example result in complex mode.
-   1.4 OPL1000-Power-Saving-Introduction, R01-V03, Update wake-up time and section 4.1
-   1.5 OPL1000-Demo-ota-wifi-guide.pdf, R01-V04, update http_server.exe user guide.
+   1.1 NONE
+   
 2. Tool version information and update:
-   2.1 pin-mux tool: v0.8
-   2.2 MP multi-dev download tool: update to v2.13.
+   2.1 NONE
+
 3. Demo update:
-   3.1 http_server.exe for OTA_WiFi demo, v1.2, add some options.
+   3.1 NONE
+   
 4. Examples update:
-   4.1 auxadc: update based on new HAL API.
-   4.2 awsIOT_blewifi: move it as a reference - OPL1000A2-Sensor-Device-Reference-Code-Aws-Cloud-with-MQTT.
-   4.3 pwm: realize duty cycle gradual change waveform with timer and complex mode.
-5. Added auto-calibrate method.
-6. OPL1000A2 setting of TX+2db adjustment.
-7. Add LE gain control function.
-8. Add at+tx command to transmit every packets with RF TX/RX switch.
+   4.1 NONE
+   
+5. [AUXADC] Enhanced AUXADC measurement accuracy.
+6. [AUXADC] Added 2 external GPIO points calibration mechanism
+7. [RFD] New setting for TX_HP+3db and TX_LP+2db
 
 
 ## Bug Fix List 
-1. fix "DebugUART wrong handler after warmboot".
-2. fix "Timer-sleep duration overflow issue".
-3. fix "memory leak in AT+CWMODE=4 command".
-4. fix "Device not awakened by expected timing".
+1. fix "DHCP failed in some APs.(信諾雲)".
+2. fix "Ali door reference will not enter sleep every 2092.8s".
 
 ## Notes List 
 

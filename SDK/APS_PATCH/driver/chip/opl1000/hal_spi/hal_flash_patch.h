@@ -29,13 +29,17 @@ extern "C" {
  *************************************************************************
  */
 #include "hal_flash.h"
+#include "hal_spi_patch.h"
 /*
  *************************************************************************
  *                          Definitions and Macros
  *************************************************************************
  */
+#define FLASH_CMD_READ_STATUS_REG       0x05
 
-
+#define FLASH_DR_DUMMY_VAL              0x00
+#define FLASH_POLLING_BUSY_TIMEOUT_MS   400 /* 400 ms for erasing 4K sector */
+#define FLASH_STATUS_BUSY               0x01
 /*
  *************************************************************************
  *                          Typedefs and Structures
@@ -56,7 +60,7 @@ extern "C" {
  *                          Public Functions
  *************************************************************************
  */
-
+void Hal_Flash_PatchInit(void);
 
 #ifdef __cplusplus
 }

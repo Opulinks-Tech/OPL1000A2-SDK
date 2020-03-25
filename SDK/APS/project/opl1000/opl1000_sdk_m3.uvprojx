@@ -382,6 +382,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\APS_PATCH\project\opl1000\startup\sys_init_patch.c</FilePath>
             </File>
+            <File>
+              <FileName>opl1000_it_patch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\APS_PATCH\project\opl1000\startup\opl1000_it_patch.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -411,6 +416,11 @@
               <FileName>hal_spi_patch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\APS_PATCH\driver\chip\opl1000\hal_spi\hal_spi_patch.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_flash_patch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\APS_PATCH\driver\chip\opl1000\hal_spi\hal_flash_patch.c</FilePath>
             </File>
             <File>
               <FileName>hal_dbg_uart_patch.c</FileName>
@@ -536,6 +546,11 @@
               <FileName>tcp_patch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\APS_PATCH\middleware\third_party\lwip-2.0.3\lwip\src\core\tcp_patch.c</FilePath>
+            </File>
+            <File>
+              <FileName>dhcp_patch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\APS_PATCH\middleware\third_party\lwip-2.0.3\lwip\src\core\ipv4\dhcp_patch.c</FilePath>
             </File>
           </Files>
         </Group>

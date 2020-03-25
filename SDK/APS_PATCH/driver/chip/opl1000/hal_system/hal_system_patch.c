@@ -418,7 +418,7 @@ typedef struct
 void Hal_SysPinMuxAppInit_patch(void);
 uint32_t Hal_Sys_RetRamTurnOff_patch(uint32_t u32RetRamIdxs);
 void Hal_Sys_ApsClkChangeApply_patch(void);
-
+uint32_t Hal_Sys_SwResetAll_patch(void);
 /*
  *************************************************************************
  *                          Public Variables
@@ -449,6 +449,9 @@ void Hal_Sys_PatchInit(void)
 
     /* Ret RAM relative*/
     Hal_Sys_RetRamTurnOff = Hal_Sys_RetRamTurnOff_patch;
+    
+    /* SW reset relative */
+    Hal_Sys_SwResetAll = Hal_Sys_SwResetAll_patch;
 }
 
 /**
@@ -591,4 +594,41 @@ void Hal_Sys_ApsClkChangeApply_patch(void)
     // WDT
     if (AOS->R_M3CLK_SEL & AOS_APS_CLK_EN_WDT_PCLK)
         Hal_Wdt_Feed(WDT_TIMEOUT_SECS * Hal_Sys_ApsPclkGet());
+}
+
+/*************************************************************************
+* FUNCTION:
+*  Hal_Sys_SwResetAll
+*
+* DESCRIPTION:
+*   1. Reset whole system
+*   2. Related reg.: sys_reg 0x010
+*   3. Before reset chip, it needs to switch APS clock to XTAL first
+*      If APS clock is from 0b'11(XTAL_X4/1p2g/DECI/EXT), it will hang after reset because 
+*      there is no clock to trigger glitch free clock mux.
+* CALLS
+*
+* PARAMETERS
+*   None
+*
+* RETURNS
+*   0: setting complete
+*   1: error
+* GLOBALS AFFECTED
+*
+*************************************************************************/
+uint32_t Hal_Sys_SwResetAll_patch(void)
+{
+    /* Switch to XTAL */
+    AOS->R_M3CLK_SEL = (AOS->R_M3CLK_SEL & ~AOS_APS_CLK_SRC_MASK) | AOS_APS_CLK_SRC_XTAL;
+    
+    while (1)
+    {   /* Wait switch clock finished */
+        if ((AOS->R_M3CLK_SEL & AOS_APS_CLK_SRC_MASK) == AOS_APS_CLK_SRC_XTAL)
+            break;
+    }
+    
+    /* Trigger reset */
+    SYS_REG->R_SW_RESET_EN |= SYS_SW_RESET_ALL;
+    return 0;
 }

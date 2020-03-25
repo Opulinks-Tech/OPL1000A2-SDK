@@ -62,6 +62,20 @@ extern "C" {
  */
 int sys_set_wifi_lowpower_tx_vdd_rf(uint8_t level);
 
+/**
+* @brief     Force periodic temperature calibration(TCA) mode for RF.
+  *
+  * @attention 1. API returns false if try to set Configuration which something error
+  *
+  * @param[in]   mode: The mode of TCA
+  *              - 0: off
+  *              - 1: on
+  *
+  * @return    0  : success
+  * @return    other : failed
+ */
+int sys_set_rf_temp_cal_mode(uint8_t mode);
+
 #ifdef __cplusplus
 }
 #endif

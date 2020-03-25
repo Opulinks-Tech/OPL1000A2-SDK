@@ -7170,3 +7170,4 @@ __heap_base = 0x00416480;
 __heap_limit = 0x004164a0;
 __initial_sp = 0x00450000;
 g_u32aMsqRfModeTable = 0X20604150;
+dhcp_pcb = 0x00402c48;

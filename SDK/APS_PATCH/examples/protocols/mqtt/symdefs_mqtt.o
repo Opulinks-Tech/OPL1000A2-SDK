@@ -7171,3 +7171,4 @@
 0x004164a0 D __heap_limit
 0x00450000 D __initial_sp
 0X20604150 D g_u32aMsqRfModeTable
+0x00402c48 D dhcp_pcb

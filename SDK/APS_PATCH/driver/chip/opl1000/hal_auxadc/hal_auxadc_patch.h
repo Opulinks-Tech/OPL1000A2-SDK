@@ -57,6 +57,13 @@ typedef enum
     HAL_AUX_SRC_MAX_PATCH
 } E_HalAux_Src_Patch_t;
 
+typedef enum
+{
+    HAL_AUX_CAL_PTS_L = 0,
+    HAL_AUX_CAL_PTS_H,
+    HAL_AUX_CAL_PTS_NUM
+} E_HalAux_CalIdx_t;
+
 typedef struct _sAuxadcCal
 {
     uint16_t u16MiniVolt;
@@ -66,8 +73,7 @@ typedef struct _sAuxadcCal
 typedef struct _sAuxadcCalTable
 {
     uint32_t      u32Header;    // Reserved for future used
-    S_AuxadcCal_t stIntSrc[ 2 ];
-    S_AuxadcCal_t stGpioSrc[ HAL_AUX_GPIO_NUM_MAX ][ 2 ];
+    S_AuxadcCal_t stIntSrc[ HAL_AUX_CAL_PTS_NUM ];
 }S_AuxadcCalTable_t;
 
 /*
@@ -78,6 +84,8 @@ typedef struct _sAuxadcCalTable
 extern char *pAuxadcSrcName[ HAL_AUX_SRC_MAX_PATCH ];
 extern S_AuxadcCalTable_t sAuxadcCalTable;
 extern uint8_t g_ubHalAux_Pu_WriteDirect; // Only enable for calibration
+extern uint32_t g_ulHalAux_AverageCount;
+extern uint32_t g_ulHalAux_SkipCount;
 
 /*
  *************************************************************************
@@ -91,12 +99,14 @@ void Hal_Aux_AdcUpdateCtrlReg(uint32_t u32Enable);
 void Hal_Aux_AdcCal_Init( void );
 
 uint32_t Hal_Aux_AdcCal_LoadDef( void );
-uint32_t Hal_Aux_AdcCal_LoadTable( void );
-uint32_t Hal_Aux_AdcCal_StoreTable( void );
+uint32_t Hal_Aux_AdcCal_LoadOtp( void );
+uint32_t Hal_Aux_AdcCal_LoadFlash( void );
+uint32_t Hal_Aux_AdcCal_EraseFlash( void );
+uint32_t Hal_Aux_AdcCal_StoreFlash( void );
 
-uint32_t Hal_Aux_AdcVbatInCal(uint16_t u16MiniVolt);
-uint32_t Hal_Aux_AdcGpioInCal(uint8_t u8GpioIdx, uint16_t u16MiniVolt);
-uint16_t Hal_Aux_AdcMiniVolt_Convert( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, uint32_t u32RawData);
+uint32_t Hal_Aux_AdcVbatInCal(uint16_t u16MiniVolt, uint8_t u8PtsIdx);
+uint32_t Hal_Aux_AdcGpioInCal(uint8_t u8GpioIdx, uint16_t u16MiniVolt, uint8_t u8PtsIdx);
+float Hal_Aux_AdcMiniVolt_Convert(uint32_t u32RawData);
 
 void Hal_Aux_PatchInit(void);
 

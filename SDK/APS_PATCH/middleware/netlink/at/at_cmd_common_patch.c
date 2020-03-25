@@ -353,9 +353,29 @@ done:
     return;
 }
 
+void msg_print_uart1_patch(char *fmt,...)
+{
+	va_list ap;
+    char string[256];
+    char *pt;
+
+	{
+		va_start(ap,fmt);
+    	vsprintf(string,fmt,ap);
+
+	    pt = &string[0];
+        while(*pt != '\0')
+        {
+            Hal_Uart_DataSend(UART_IDX_1, *pt++);
+        }
+
+    	va_end(ap);
+	}
+}
+
 void at_cmd_common_func_init_patch(void)
 {
     uart1_rx_int_do_at = uart1_rx_int_do_at_patch;
     uart1_rx_int_at_data_receive_app = uart1_rx_int_at_data_receive_app_patch;
+    msg_print_uart1 = msg_print_uart1_patch;
 }
-

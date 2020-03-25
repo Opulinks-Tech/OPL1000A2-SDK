@@ -121,7 +121,7 @@ int at_cmd_sys_gslp_patch(char *buf, int len, int mode)
 
 			if (argc == 3)
             {
-                Hal_Pin_ConfigSet(num, PIN_TYPE_GPIO_INPUT, PIN_DRIVING_HIGH);
+                Hal_Pin_ConfigSet(num, PIN_TYPE_GPIO_INPUT, PIN_DRIVING_FLOAT);
                 ps_set_wakeup_io((E_GpioIdx_t) num, 1, INT_TYPE_LEVEL, 0, at_cmd_sys_gslp_io_callback);
             }
 			ps_set_wakeup_cb(at_cmd_sys_gslp_wakeup_callback);
@@ -195,7 +195,7 @@ int at_cmd_sys_sleep_patch(char *buf, int len, int mode)
 				case 1:
 					if (argc == 3)
                     {
-                        Hal_Pin_ConfigSet(p1, PIN_TYPE_GPIO_INPUT, PIN_DRIVING_HIGH);
+                        Hal_Pin_ConfigSet(p1, PIN_TYPE_GPIO_INPUT, PIN_DRIVING_FLOAT);
                         ps_set_wakeup_io((E_GpioIdx_t) p1, 1, INT_TYPE_LEVEL, 0, at_cmd_sys_gslp_io_callback);
                     }
                     ps_set_wakeup_cb(at_cmd_sys_gslp_wakeup_callback);
@@ -206,7 +206,7 @@ int at_cmd_sys_sleep_patch(char *buf, int len, int mode)
 				case 2:
 					if (argc == 4)
                     {
-                        Hal_Pin_ConfigSet(p2, PIN_TYPE_GPIO_INPUT, PIN_DRIVING_HIGH);
+                        Hal_Pin_ConfigSet(p2, PIN_TYPE_GPIO_INPUT, PIN_DRIVING_FLOAT);
                         ps_set_wakeup_io((E_GpioIdx_t) p2, 1, INT_TYPE_LEVEL, 0, at_cmd_sys_gslp_io_callback);
                     }
 					ps_set_wakeup_cb(at_cmd_sys_gslp_wakeup_callback);
@@ -217,7 +217,7 @@ int at_cmd_sys_sleep_patch(char *buf, int len, int mode)
 				case 3:
 					if (argc == 3)
                     {
-                        Hal_Pin_ConfigSet(p1, PIN_TYPE_GPIO_INPUT, PIN_DRIVING_HIGH);
+                        Hal_Pin_ConfigSet(p1, PIN_TYPE_GPIO_INPUT, PIN_DRIVING_FLOAT);
                         ps_set_wakeup_io((E_GpioIdx_t) p1, 1, INT_TYPE_LEVEL, 0, NULL);
                     }
 					ps_deep_sleep();

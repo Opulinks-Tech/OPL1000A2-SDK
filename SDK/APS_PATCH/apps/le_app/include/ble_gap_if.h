@@ -369,7 +369,7 @@ LE_ERR_STATE LeGapAddToResolvingList(LE_BT_ADDR_T *bt_addr, UINT8 *irk);
  *         - SYS_ERR_SUCCESS: success.
  *         - others: refer to error code in ble_err.h.
  */
-LE_ERR_STATE LeGapRemoveFromWhiteList(LE_BT_ADDR_T *bt_addr);
+LE_ERR_STATE LeGapRemoveFromResolvingList(LE_BT_ADDR_T *bt_addr);
 
 /**
  * @brief    Read ADV channel txpower.
@@ -424,9 +424,9 @@ LE_ERR_STATE LeGapSetDataChannelPduLen(UINT16 conn_hdl, UINT16 tx_octets, UINT16
 LE_ERR_STATE LeGapSetRpaTimeout(UINT16 timeout);
 
 /**
- * @brief    Get owner device address.
+ * @brief    Get owner device public address.
  */
-void LeGapGetBtAddr(void);
+LE_ERR_STATE LeGapGetBdAddr(BD_ADDR addr);
 
 /**
  * @brief    Connection parameters update response.

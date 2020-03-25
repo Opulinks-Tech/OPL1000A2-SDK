@@ -40,3 +40,24 @@ int sys_set_wifi_lowpower_tx_vdd_rf(uint8_t level)
     else
         return -1;
 }
+
+int sys_set_rf_temp_cal_mode(uint8_t mode)
+{
+    int ret;
+    char strCmd[] = "at+rftm=5,00";    
+
+    if( mode == 1 ){
+        strCmd[11] = '7';
+    }
+    else if( mode == 2 ){
+        // 55 = 0x37
+        strCmd[10] = '5';
+        strCmd[11] = '5';
+    }
+
+    ret = at_cmd_rf_test_mode( strCmd, 0xB, 2);
+    if( ret )
+        return 0;
+    else
+        return -1;
+}

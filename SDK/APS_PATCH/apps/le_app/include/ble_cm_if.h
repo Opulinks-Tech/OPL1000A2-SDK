@@ -55,7 +55,7 @@ enum
 	LE_CM_MSG_CANCEL_CONNECTION_CFM,                   /**< cancel connection confirm */
 
 	LE_CM_MSG_READ_TX_POWER_CFM,                       /**< read tx power confirm */
-	LE_CM_MSG_READ_BD_ADDR_CFM,                        /**< read device address confirm */
+	LE_CM_MSG_READ_BD_ADDR_CFM,                        /**< no use */
     
 	LE_CM_MSG_READ_RSSI_CFM,                           /**< read RSSI confirm */
 	LE_CM_MSG_SET_RANDOM_ADDRESS_CFM,                  /**< set random address confirm */
@@ -78,15 +78,7 @@ enum
 	LE_CM_MSG_READ_RESOLVING_LIST_SIZE_CFM,            /**< read resolving list size confirm */
 	LE_CM_MSG_SET_RPA_TIMEOUT_CFM,                     /**< set resolving private address timeout confirm */
 
-#if 0
-	LE_CM_READ_AUTH_PAYLOAD_TIMEOUT_CFM,
-	LE_CM_WRITE_AUTH_PAYLOAD_TIMEOUT_CFM,
-#endif
-
     LE_CM_MSG_SIGNAL_UPDATE_REQ,                       /**< signal update request */
-#if 0
-    LE_CM_MSG_SIGNAL_UPDATE_RSP,
-#endif
     LE_CM_MSG_CONN_UPDATE_COMPLETE_IND,                /**< connection update complete indication */
     LE_CM_MSG_CONN_PARA_REQ,                           /**< connection parameters request */
 
@@ -98,11 +90,8 @@ enum
 	LE_CM_MSG_DIRECT_ADV_REPORT_IND,                   /**< direct advertising report indication */
     LE_CM_CONNECTION_COMPLETE_IND,                     /**< connection complete indication */
 
-	//LE_CM_READ_PEER_RESOLVABLE_ADDRESS_CFM,
 	LE_CM_MSG_READ_LOCAL_RPA_CFM,                      /**< read local resolving private address confirm */
 	
-	//LE_CM_SET_ADDRESS_RESOLUTION_ENABLE_CFM,
-
 	LE_CM_MSG_READ_PHY_CFM,
 	LE_CM_MSG_SET_DEFAULT_PHY_CFM,
 	LE_CM_MSG_SET_PHY_CFM,
@@ -164,12 +153,6 @@ typedef struct
     UINT16				conn_hdl;                      /**< connection handle */
     INT8				tx_power;                      /**< tx power */
 } LE_CM_MSG_READ_TX_POWER_CFM_T;
-
-typedef struct
-{
-	UINT16				status;                        /**< refer to LE_ERR_STATE in ble_err.h */
-    BD_ADDR				bd_addr;                       /**< */
-} LE_CM_MSG_READ_BD_ADDR_CFM_T;
 
 typedef struct
 {
@@ -290,14 +273,6 @@ typedef struct
     UINT16 				slave_latency;                 /**< slave latency */
     UINT32 				timeout_multiplier;            /**< */
 } LE_CM_MSG_SIGNAL_UPDATE_REQ_T;
-
-#if 0
-typedef struct
-{
-	UINT16				conn_hdl;                      /**< connection handle */
-	BOOL				accept;                        /**< accept */
-} LE_CM_MSG_SIGNAL_UPDATE_RSP_T;
-#endif
 
 typedef struct
 {

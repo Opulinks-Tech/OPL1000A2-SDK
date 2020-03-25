@@ -463,5 +463,6 @@ a lot of data that needs to be copied, this should be set high. */
 
 /* Opulinks options */
 #define OPL_LWIP               1
+#define OPL_DHCP               1
 
 #endif /* LWIP_LWIPOPTS_H */

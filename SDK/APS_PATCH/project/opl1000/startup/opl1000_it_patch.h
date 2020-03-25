@@ -43,6 +43,7 @@ extern "C" {
  */
 
 
+typedef void (*T_InterruptHandler)(void);
 
 /*
  *************************************************************************
@@ -50,6 +51,25 @@ extern "C" {
  *************************************************************************
  */
 
+extern T_InterruptHandler IPC0_IRQHandler_Entry;
+extern T_InterruptHandler IPC1_IRQHandler_Entry;
+extern T_InterruptHandler IPC2_IRQHandler_Entry;
+extern T_InterruptHandler IPC3_IRQHandler_Entry;
+extern T_InterruptHandler GPIO_IRQHandler_Entry;
+extern T_InterruptHandler SCRT_IRQHandler_Entry;
+extern T_InterruptHandler MSQ_IRQHandler_Entry;
+extern T_InterruptHandler UARTDBG_IRQHandler_Entry;
+extern T_InterruptHandler UART0_IRQHandler_Entry;
+extern T_InterruptHandler UART1_IRQHandler_Entry;
+extern T_InterruptHandler I2C_IRQHandler_Entry;
+extern T_InterruptHandler SPI0_IRQHandler_Entry;
+extern T_InterruptHandler SPI1_IRQHandler_Entry;
+extern T_InterruptHandler SPI2_IRQHandler_Entry;
+extern T_InterruptHandler TIM0_IRQHandler_Entry;
+extern T_InterruptHandler TIM1_IRQHandler_Entry;
+extern T_InterruptHandler WDT_IRQHandler_Entry;
+extern T_InterruptHandler JTAG_IRQHandler_Entry;
+extern T_InterruptHandler DMA_IRQHandler_Entry;
 
 /*
  *************************************************************************
@@ -57,7 +77,7 @@ extern "C" {
  *************************************************************************
  */
 
-
+void ISR_Pre_PatchInit(void);
 #ifdef __cplusplus
 }
 #endif

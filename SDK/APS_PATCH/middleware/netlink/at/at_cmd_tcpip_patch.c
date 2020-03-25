@@ -27,6 +27,7 @@
 #include "controller_wifi.h"
 
 #include "at_cmd_tcpip_patch.h"
+#include "at_cmd_common_patch.h"
 
 extern int at_trans_client_init_impl(at_nvm_trans_config_t *trans_cfg);
 extern int at_cmd_tcpip_savetranslink(char *buf, int len, int mode);
@@ -37,6 +38,7 @@ extern void at_create_tcpip_tx_task_impl(void);
 
 extern ping_result_t g_tPingResult;
 extern volatile uint8_t g_u8PingCmdDone;
+extern volatile bool ipd_info_enable;
 /******************************************************
  *                      Macros
  ******************************************************/
@@ -529,6 +531,7 @@ void at_cmd_ping_callback_patch(ping_result_t *ptResult)
     CtrlWifi_PsStateForce(STA_PS_NONE, 0);
     return;
 }
+
 
 /*-------------------------------------------------------------------------------------
  * Interface assignment

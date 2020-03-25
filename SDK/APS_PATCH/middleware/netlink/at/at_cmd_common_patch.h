@@ -54,6 +54,7 @@ extern uart1_rx_int_at_data_receive_app_fp_t uart1_rx_int_at_data_receive_app;
  *************************************************************************
  */
 void at_cmd_common_func_init_patch(void);
+void at_uart1_write_to_uart_normal(char *buf, int len);
 
 #ifdef __cplusplus
 }
