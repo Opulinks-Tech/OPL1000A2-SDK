@@ -104,9 +104,14 @@ uint32_t Hal_Aux_AdcCal_LoadFlash( void );
 uint32_t Hal_Aux_AdcCal_EraseFlash( void );
 uint32_t Hal_Aux_AdcCal_StoreFlash( void );
 
+// API changed, extra "uint8_t u8PtsIdx"
 uint32_t Hal_Aux_AdcVbatInCal(uint16_t u16MiniVolt, uint8_t u8PtsIdx);
 uint32_t Hal_Aux_AdcGpioInCal(uint8_t u8GpioIdx, uint16_t u16MiniVolt, uint8_t u8PtsIdx);
+
+uint8_t Hal_Aux_AdcRawData_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, uint32_t *pulRaw);
 float Hal_Aux_AdcMiniVolt_Convert(uint32_t u32RawData);
+uint8_t Hal_Aux_AdcMiniVolt_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, float *pfVbat);
+uint8_t Hal_Aux_AdcConvValue_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, uint32_t *pulValue);
 
 void Hal_Aux_PatchInit(void);
 

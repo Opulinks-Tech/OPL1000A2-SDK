@@ -127,11 +127,12 @@ int data_process_wifi_patch(char *pbuf, int len, int mode)
 
 int data_process_ble_patch(char *pbuf, int len, int mode)
 {
+    int ret = false;
+    
     if (strncasecmp(pbuf, "at+mpbleaddr", strlen("at+mpbleaddr"))==0)
     {
-        msg_print_uart1("\r\nOK\r\n");
-        at_cmd_mp_ble_addr_patch(pbuf, len, mode);
-        return true;
+        ret = at_cmd_mp_ble_addr_patch(pbuf, len, mode);
+        return ret;
     }
     else
     {

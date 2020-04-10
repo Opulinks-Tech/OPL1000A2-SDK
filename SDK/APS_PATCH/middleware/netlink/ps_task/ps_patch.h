@@ -65,6 +65,11 @@ typedef struct
 
     uint32_t app_timer_sleep_duration;
 
+    // for IO detect
+    uint32_t app_io_time;
+    uint8_t app_io_exist;
+    uint8_t gpio_lock;
+
 } t_ps_conf_patch;
 
 
@@ -84,6 +89,8 @@ typedef struct
 void ps_patch_init(void);
 
 int ps_sleep_patch(void);
+void ps_update_io_time(void);
+void ps_lock_gpio_apply(void);
 void ps_enable_timer_sleep_patch(uint32_t sleep_duration_ms);
 
 

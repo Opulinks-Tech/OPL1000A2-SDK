@@ -66,6 +66,7 @@ Head Block of The File
 
 #define RF_MODE_TABLE_IDX_CLK_GATE_CTRL     15          /* 48 */
 #define RF_MODE_TABLE_IDX_POWER_CTRL        20          /* 90 */
+#define RF_CORE_MODE_IDLE                   0
 #define RF_CORE_MODE_MAX                    8
 #define RF_CLK_GATE_CTRL_AUXADC             (1UL << 6)
 #define RF_POWER_CTRL_AUXADC                (1UL << 26)
@@ -215,6 +216,8 @@ char *pAuxadcSrcName[ HAL_AUX_SRC_MAX_PATCH ] =
 
 uint16_t u16LdoRf_MiniVol[4];
 S_AuxadcCalTable_t sAuxadcCalTable;
+float g_fSlope; // RawData/mv
+float g_fOffset;
 
 // Sec 5: declaration of global function prototype
 
@@ -273,6 +276,39 @@ void Hal_Aux_AdcUpdateCtrlReg(uint32_t u32Enable)
             RF->RG_CK_GATE_CTRL &= ~(0x1 << 6);
         }
     }
+}
+
+/* Regression function for AUXADC */
+void Hal_Aux_LseRegressUpdate(uint8_t u8Num, S_AuxadcCal_t *puStAdcCalPts)
+{
+    uint8_t u8Idx = 0;
+    float fAvgMiniVol = 0;
+    float fAvgAdcCode = 0;
+    float fTemp_diff_x = 0, fTemp_diff_y = 0;
+    float fTemp_den = 0, fTemp_num = 0;
+    
+    // LSE regression
+    // Step 1: compute AVG
+    for(u8Idx = 0; u8Idx<u8Num ; u8Idx++)
+    {
+        fAvgMiniVol += (float)puStAdcCalPts[ u8Idx ].u16MiniVolt;
+        fAvgAdcCode += (float)puStAdcCalPts[ u8Idx ].u16RawData;
+    }
+    fAvgMiniVol /= u8Num;
+    fAvgAdcCode /= u8Num;
+
+    // Step 2: compute slove and offset
+    for(u8Idx = 0; u8Idx<u8Num ; u8Idx++)
+    {
+        fTemp_diff_x = (float)puStAdcCalPts[ u8Idx ].u16MiniVolt - fAvgMiniVol;
+        fTemp_diff_y = (float)puStAdcCalPts[ u8Idx ].u16RawData  - fAvgAdcCode;
+        
+        fTemp_den += fTemp_diff_x * fTemp_diff_y;
+        fTemp_num += fTemp_diff_x * fTemp_diff_x;
+    }
+    
+    g_fSlope  = fTemp_den/fTemp_num; // RawData/mv
+    g_fOffset = fAvgAdcCode - g_fSlope*fAvgMiniVol;
 }
 
 /*************************************************************************
@@ -382,14 +418,16 @@ uint8_t Hal_Aux_AdcValueGet_patch(uint32_t *pulValue)
     volatile uint32_t i;
     uint8_t ubRet = HAL_AUX_FAIL;
 
-    uint32_t ulAdcValue;
-    uint32_t ulAdcCurrent;
-    uint32_t ulRepeatCount;
-    uint32_t j;
+    uint32_t ulAdcValue = 0;
+    uint32_t ulAdcDiff = 0;
+    uint32_t ulAdcPrevious = 0;
+    uint32_t ulAdcCurrent = 0;
+    uint32_t ulRepeatCount = 0;
+    uint32_t j = 0;
     uint32_t AUXEqualZeroCounter = 0;
 
-    uint32_t ulCurrentTick;
-    uint32_t ulDiffTick;
+    uint32_t ulCurrentTick = 0;
+    uint32_t ulDiffTick = 0;
     uint32_t ulEscapeTime = HAL_AUX_ADC_READ_ERROR_TIME * Hal_Tick_PerMilliSec();
 
     Hal_Aux_AdcUpdateCtrlReg(1);
@@ -433,17 +471,24 @@ uint8_t Hal_Aux_AdcValueGet_patch(uint32_t *pulValue)
 
     ulAdcValue = 0;
     ulRepeatCount = g_ulHalAux_AverageCount;
+
+    while(RF->PU_VAL != g_u32aMsqRfModeTable[RF_CORE_MODE_IDLE][RF_MODE_TABLE_IDX_POWER_CTRL])
+    {
+        // wait fro RF_IDLE
+        osDelay(1);
+    }
+
     for (j=0; j<ulRepeatCount; j++)
     {
-        // Trigger
-        tmp = RF->AUX_ADC_CK_GEN_CTL;
-        tmp &= ~(0x1 << 0);
-        tmp |= (0x1 << 0);
-        RF->AUX_ADC_CK_GEN_CTL = tmp;
-
         ulCurrentTick = Hal_Tick_Diff(0);
         do
         {
+            // Trigger
+            tmp = RF->AUX_ADC_CK_GEN_CTL;
+            tmp &= ~(0x1 << 0);
+            tmp |= (0x1 << 0);
+            RF->AUX_ADC_CK_GEN_CTL = tmp;
+
             // get the ADC value
             i = 0;
             while (RF->RG_AUX_ADC_ECL_OUT & RF_RG_EOCB)
@@ -453,7 +498,12 @@ uint8_t Hal_Aux_AdcValueGet_patch(uint32_t *pulValue)
                 i++;
             }
             ulAdcCurrent = RF->RG_AUX_ADC_ECL_OUT & 0x03FF;
-            ulAdcValue = ulAdcValue + ulAdcCurrent;
+
+            // Idle (non-trigger)
+            tmp = RF->AUX_ADC_CK_GEN_CTL;
+            tmp &= ~(0x1 << 0);
+            tmp |= (0x0 << 0);
+            RF->AUX_ADC_CK_GEN_CTL = tmp;
 
             // error handle if always zero
             ulDiffTick = Hal_Tick_Diff(ulCurrentTick);
@@ -465,9 +515,32 @@ uint8_t Hal_Aux_AdcValueGet_patch(uint32_t *pulValue)
 
         } while (ulAdcCurrent == 0);
 
+        // Time-out, always got zero
         if (ulAdcCurrent == 0)
             AUXEqualZeroCounter++;
 
+        // workaround 2: compare diff with previous, small than 10
+        if(ulAdcPrevious == 0)
+        {
+            // init case
+            ulAdcValue += ulAdcCurrent;
+     	    ulAdcPrevious = ulAdcCurrent;
+        }
+        else
+        {
+            if( ulAdcPrevious > ulAdcCurrent )
+                ulAdcDiff = ulAdcPrevious - ulAdcCurrent;
+            else
+                ulAdcDiff = ulAdcCurrent - ulAdcPrevious;
+            
+            if( ulAdcDiff <= 10 )
+            {
+                ulAdcValue += ulAdcCurrent;
+                ulAdcPrevious = ulAdcCurrent;
+            }else{
+            	AUXEqualZeroCounter++;
+            }
+        }
 #if 0
         // !!! ADC value should be not zero, the DC offset is not zero
         if (ulAdcCurrent == 0)
@@ -477,12 +550,6 @@ uint8_t Hal_Aux_AdcValueGet_patch(uint32_t *pulValue)
                 ulRepeatCount++;
         }
 #endif
-
-        // Idle (non-trigger)
-        tmp = RF->AUX_ADC_CK_GEN_CTL;
-        tmp &= ~(0x1 << 0);
-        tmp |= (0x0 << 0);
-        RF->AUX_ADC_CK_GEN_CTL = tmp;
     }
 
     // Disable AUXADC
@@ -521,9 +588,11 @@ uint8_t Hal_Aux_AdcValueGet_patch(uint32_t *pulValue)
 
     Hal_Aux_AdcUpdateCtrlReg(0);
 
-    *pulValue = (ulAdcValue + ((g_ulHalAux_AverageCount - AUXEqualZeroCounter) / 2)) / (g_ulHalAux_AverageCount - AUXEqualZeroCounter);
-    ubRet = HAL_AUX_OK;
-
+    if(g_ulHalAux_AverageCount != AUXEqualZeroCounter)
+    {    
+        *pulValue = (ulAdcValue + ((g_ulHalAux_AverageCount - AUXEqualZeroCounter) / 2)) / (g_ulHalAux_AverageCount - AUXEqualZeroCounter);
+        ubRet = HAL_AUX_OK;
+    }
 done:
     return ubRet;
 }
@@ -553,7 +622,10 @@ uint32_t Hal_Aux_AdcCal_LoadFlash( void )
         return HAL_AUX_FAIL;
 
     u32Res = Hal_Flash_AddrRead(SPI_IDX_0, AUXADC_FLASH_START_ADDR, 0, sizeof(sAuxadcCalTable), (uint8_t *)&sAuxadcCalTable);
-    
+
+    // Updated slope and offset
+    Hal_Aux_LseRegressUpdate(2, sAuxadcCalTable.stIntSrc);
+
     if( u32Res != 0)
         return HAL_AUX_FAIL;
     else
@@ -672,8 +744,11 @@ uint32_t Hal_Aux_AdcCal_LoadDef( void )
     sAuxadcCalTable.stIntSrc[ 1 ].u16MiniVolt = u16LdoRf_MiniVol[ u8Idx ];
     sAuxadcCalTable.stIntSrc[ 1 ].u16RawData  = u32Temp;
 
+    // Updated slope and offset
+    Hal_Aux_LseRegressUpdate(2, sAuxadcCalTable.stIntSrc);
+
     return HAL_AUX_OK;
-    }
+}
 
 /*************************************************************************
 * FUNCTION:
@@ -692,20 +767,29 @@ uint32_t Hal_Aux_AdcCal_LoadDef( void )
 *************************************************************************/
 uint32_t Hal_Aux_AdcCal_LoadOtp( void )
 {
-    uint32_t u32Otp_0p5 = 0;
-    uint32_t u32Otp_2p5 = 0;
+    uint8_t u8Idx = 0;
+    uint32_t u32Otp_temp;
+    S_AuxadcCal_t stOtpRef[5];
 
-    Hal_Sys_OtpRead(0x140, (uint8_t *)&u32Otp_0p5, 4);
-    Hal_Sys_OtpRead(0x150, (uint8_t *)&u32Otp_2p5, 4);
+    for(u8Idx = 0; u8Idx<5; u8Idx++)
+    {
+        Hal_Sys_OtpRead((0x140 + 4*u8Idx), (uint8_t *)&u32Otp_temp, 4);
+        
+        stOtpRef[ u8Idx ].u16MiniVolt = (u8Idx + 1)*500;
+        stOtpRef[ u8Idx ].u16RawData = u32Otp_temp;
+    }
 
-    if( u32Otp_0p5 == u32Otp_2p5 )
+    if(  stOtpRef[ 0 ].u16RawData ==  stOtpRef[ 4 ].u16RawData )
         return HAL_AUX_FAIL;
 
-    sAuxadcCalTable.stIntSrc[ 0 ].u16MiniVolt = 500;
-    sAuxadcCalTable.stIntSrc[ 0 ].u16RawData  = u32Otp_0p5;
+    sAuxadcCalTable.stIntSrc[ 0 ].u16MiniVolt = stOtpRef[ 0 ].u16MiniVolt;
+    sAuxadcCalTable.stIntSrc[ 0 ].u16RawData  = stOtpRef[ 0 ].u16RawData;
     
-    sAuxadcCalTable.stIntSrc[ 1 ].u16MiniVolt = 2500;
-    sAuxadcCalTable.stIntSrc[ 1 ].u16RawData  = u32Otp_2p5;
+    sAuxadcCalTable.stIntSrc[ 1 ].u16MiniVolt = stOtpRef[ 4 ].u16MiniVolt;
+    sAuxadcCalTable.stIntSrc[ 1 ].u16RawData  = stOtpRef[ 4 ].u16RawData;
+    
+    // Updated slope and offset
+    Hal_Aux_LseRegressUpdate(5, stOtpRef);
 
     return HAL_AUX_OK;
 }
@@ -726,6 +810,7 @@ uint32_t Hal_Aux_AdcCal_LoadOtp( void )
 *************************************************************************/
 void Hal_Aux_AdcCal_Init( void )
 {
+    uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
     if(g_ubHalAux_Cal)
         return;
 
@@ -737,11 +822,13 @@ void Hal_Aux_AdcCal_Init( void )
         {
         // Load from OTP
             }
-            else
-            {
+    else
+    {
         // Load from internal sources
-                Hal_Aux_AdcCal_LoadDef();
-            }
+        g_ubHalAux_Pu_WriteDirect = 1;
+        Hal_Aux_AdcCal_LoadDef();
+        g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
+    }
     g_ubHalAux_Cal = 1;
 }
 
@@ -764,6 +851,7 @@ void Hal_Aux_AdcCal_Init( void )
 *************************************************************************/
 uint32_t Hal_Aux_AdcGpioInCal(uint8_t u8GpioIdx, uint16_t u16MiniVolt, uint8_t u8PtsIdx)
 {
+    uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
     uint32_t u32Temp = 0;
     uint32_t u32Res = 0;
 
@@ -774,17 +862,16 @@ uint32_t Hal_Aux_AdcGpioInCal(uint8_t u8GpioIdx, uint16_t u16MiniVolt, uint8_t u
         return HAL_AUX_FAIL;
 
     // Get ADC raw-data
-    u32Res = Hal_Aux_SourceSelect( HAL_AUX_SRC_GPIO, u8GpioIdx );
-    if(u32Res == HAL_AUX_FAIL)
-        return HAL_AUX_FAIL;
-    u32Temp = 0;
-    u32Res = Hal_Aux_AdcValueGet(&u32Temp);
+    g_ubHalAux_Pu_WriteDirect = 1;
+    u32Res = Hal_Aux_AdcRawData_Get( (E_HalAux_Src_Patch_t)HAL_AUX_SRC_GPIO, u8GpioIdx, &u32Temp);
+    g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
     if(u32Res == HAL_AUX_FAIL)
         return HAL_AUX_FAIL;
 
     // Update table
     sAuxadcCalTable.stIntSrc[ u8PtsIdx ].u16MiniVolt = u16MiniVolt;
     sAuxadcCalTable.stIntSrc[ u8PtsIdx ].u16RawData = u32Temp;
+    Hal_Aux_LseRegressUpdate(2, sAuxadcCalTable.stIntSrc);
 
     return HAL_AUX_OK;
 }
@@ -807,6 +894,7 @@ uint32_t Hal_Aux_AdcGpioInCal(uint8_t u8GpioIdx, uint16_t u16MiniVolt, uint8_t u
 *************************************************************************/
 uint32_t Hal_Aux_AdcVbatInCal(uint16_t u16MiniVolt, uint8_t u8PtsIdx)
 {
+    uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
     uint32_t u32Temp = 0;
     uint32_t u32Res = 0;
 
@@ -815,19 +903,66 @@ uint32_t Hal_Aux_AdcVbatInCal(uint16_t u16MiniVolt, uint8_t u8PtsIdx)
         return HAL_AUX_FAIL;
 
     // Get ADC raw-data
-    u32Res = Hal_Aux_SourceSelect( HAL_AUX_SRC_VBAT, 0 );
-    if(u32Res == HAL_AUX_FAIL)
-        return HAL_AUX_FAIL;
-    u32Temp = 0;
-    u32Res = Hal_Aux_AdcValueGet(&u32Temp);
+    g_ubHalAux_Pu_WriteDirect = 1;
+    u32Res = Hal_Aux_AdcRawData_Get( (E_HalAux_Src_Patch_t)HAL_AUX_SRC_VBAT, 0, &u32Temp);
+    g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
     if(u32Res == HAL_AUX_FAIL)
         return HAL_AUX_FAIL;
 
     // Update table
     sAuxadcCalTable.stIntSrc[ u8PtsIdx ].u16MiniVolt = u16MiniVolt;
     sAuxadcCalTable.stIntSrc[ u8PtsIdx ].u16RawData = u32Temp;
+    Hal_Aux_LseRegressUpdate(2, sAuxadcCalTable.stIntSrc);
 
     return HAL_AUX_OK;
+}
+
+/*************************************************************************
+* FUNCTION:
+*   Hal_Aux_AdcRawData_Get
+*
+* DESCRIPTION:
+*   Got AUXADC raw-data
+*
+* PARAMETERS
+*   1. tSrc      : [In] the source type of AUXADC
+*   2. ubGpioIdx : [In] the index of GPIO
+*   3. pulRaw  : [Out] the ADC rawData 
+*
+* RETURNS
+*   1. HAL_AUX_OK   : success
+*   2. HAL_AUX_FAIL : fail
+*
+*************************************************************************/
+uint8_t Hal_Aux_AdcRawData_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, uint32_t *pulRaw)
+{
+    uint32_t ulRegTemp = 0;
+    uint8_t ubRet = HAL_AUX_FAIL;
+
+    // check init
+    if(g_ubHalAux_Init != 1)
+        return ubRet;
+
+    // wait the semaphore
+    osSemaphoreWait(g_taHalAux_SemaphoreId, osWaitForever);
+
+    // wait for m0 AUXADC idle
+    do{
+        Hal_Sys_SpareRegRead(SPARE_0, &ulRegTemp);
+    }while( ulRegTemp & IPC_SPARE0_AUXADC_M0_ACT);
+
+    if( HAL_AUX_OK != Hal_Aux_SourceSelect( (E_HalAux_Src_t)tSrc, ubGpioIdx) )
+        goto done;
+
+    if( HAL_AUX_OK != Hal_Aux_AdcValueGet(pulRaw) )
+        goto done;
+
+    ubRet = HAL_AUX_OK;
+
+done:
+    // release the semaphore
+    osSemaphoreRelease(g_taHalAux_SemaphoreId);
+    return ubRet;
 }
 
 /*************************************************************************
@@ -838,9 +973,7 @@ uint32_t Hal_Aux_AdcVbatInCal(uint16_t u16MiniVolt, uint8_t u8PtsIdx)
 *   Convert given AUXADC raw-data to mVolt
 *
 * PARAMETERS
-*   1. tSrc      : [In] the source type of AUXADC
-*   2. ubGpioIdx : [In] the index of GPIO
-*   3. u32RawData: [In]
+*   1. u32RawData: [In] the given ADC rawData 
 *
 * RETURNS
 *   1. float : mVolt
@@ -848,36 +981,76 @@ uint32_t Hal_Aux_AdcVbatInCal(uint16_t u16MiniVolt, uint8_t u8PtsIdx)
 *************************************************************************/
 float Hal_Aux_AdcMiniVolt_Convert(uint32_t u32RawData)
 {
-    uint16_t u16MiniVot[2];
-    uint16_t u16RawData[2];
-
-    uint8_t u8Idx_H = 0;
-    uint8_t u8Idx_L = 0;
-
-    // Check Low/High points
-    if( sAuxadcCalTable.stIntSrc[ 0 ].u16MiniVolt < sAuxadcCalTable.stIntSrc[ 1 ].u16MiniVolt )
-    {
-        u8Idx_L = 0;
-        u8Idx_H = 1;
-    }else{
-        u8Idx_L = 1;
-        u8Idx_H = 0;
-    }
-    u16MiniVot[ u8Idx_L ] = sAuxadcCalTable.stIntSrc[ u8Idx_L ].u16MiniVolt;
-    u16RawData[ u8Idx_L ] = sAuxadcCalTable.stIntSrc[ u8Idx_L ].u16RawData;
-    u16MiniVot[ u8Idx_H ] = sAuxadcCalTable.stIntSrc[ u8Idx_H ].u16MiniVolt;
-    u16RawData[ u8Idx_H ] = sAuxadcCalTable.stIntSrc[ u8Idx_H ].u16RawData;
-
-    // Compute the slope and offeset
-    float fSlope; // RawData/mv
-    float fOffset;
-
-    fSlope = (float)(u16RawData[ u8Idx_H ] - u16RawData[ u8Idx_L ]) / (float)(u16MiniVot[ u8Idx_H ] - u16MiniVot[ u8Idx_L ]); 
-    fOffset = (float)u16RawData[ u8Idx_L ] - (float)u16MiniVot[ u8Idx_L ]*fSlope;
-
-    return ((float)u32RawData - fOffset)/fSlope;
+    return ((float)u32RawData - g_fOffset)/g_fSlope;
 }
 
+/*************************************************************************
+* FUNCTION:
+*   Hal_Aux_AdcMiniVolt_Get
+*
+* DESCRIPTION:
+*   Got AUXADC voltage in mVolt
+*
+* PARAMETERS
+*   1. tSrc      : [In] the source type of AUXADC
+*   2. ubGpioIdx : [In] the index of GPIO
+*   3. pfVbat    : [Out] the mVolt of the source
+*
+* RETURNS
+*   1. HAL_AUX_OK   : success
+*   2. HAL_AUX_FAIL : fail
+*
+*************************************************************************/
+uint8_t Hal_Aux_AdcMiniVolt_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, float *pfVbat)
+{
+    uint32_t ulAdcValue = 0;
+
+    if( HAL_AUX_OK != Hal_Aux_AdcRawData_Get(tSrc, ubGpioIdx, &ulAdcValue) )
+        return HAL_AUX_FAIL;
+
+    // Convert RawData to mVlot
+    *pfVbat = (float)Hal_Aux_AdcMiniVolt_Convert(ulAdcValue)/(float)1000;
+    if(*pfVbat < 0)
+    {
+        *pfVbat = 0;
+    }
+
+    return HAL_AUX_OK;
+}
+
+/*************************************************************************
+* FUNCTION:
+*   Hal_Aux_AdcConvValue_Get
+*
+* DESCRIPTION:
+*   Got the converted ADC value (map 0x000~0x3FF to 0 ~ 3000 mV)
+*
+* PARAMETERS
+*   1. tSrc      : [In] the source type of AUXADC
+*   2. ubGpioIdx : [In] the index of GPIO
+*   3. pulValue  : [Out] the converted ADC value
+*
+* RETURNS
+*   1. HAL_AUX_OK   : success
+*   2. HAL_AUX_FAIL : fail
+*
+*************************************************************************/
+uint8_t Hal_Aux_AdcConvValue_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, uint32_t *pulValue)
+{
+    float fAdcVol = 0;
+
+    if( HAL_AUX_OK != Hal_Aux_AdcMiniVolt_Get(tSrc, ubGpioIdx, &fAdcVol) )
+        return HAL_AUX_FAIL;
+
+    // mVlot convert to ideal ADC code
+    *pulValue = (uint32_t)( (fAdcVol * 1023) + 3/2 ) / 3;
+    if( *pulValue >0x3FF)
+    {
+        *pulValue = 0x3FF;
+    }
+
+    return HAL_AUX_OK;
+}
 /*************************************************************************
 * FUNCTION:
 *   Hal_Aux_VbatGet
@@ -895,36 +1068,10 @@ float Hal_Aux_AdcMiniVolt_Convert(uint32_t u32RawData)
 *************************************************************************/
 uint8_t Hal_Aux_VbatGet_patch(float *pfVbat)
 {
-    uint32_t ulAdcValue;
-    uint32_t ulRegTemp;
-    uint8_t ubRet = HAL_AUX_FAIL;
-
-    // check init
-    if (g_ubHalAux_Init != 1)
-        return ubRet;
-
-    // wait the semaphore
-    osSemaphoreWait(g_taHalAux_SemaphoreId, osWaitForever);
-
-    // wait for m0 AUXADC idle
-    do{
-        Hal_Sys_SpareRegRead(SPARE_0, &ulRegTemp);
-    }while( ulRegTemp & IPC_SPARE0_AUXADC_M0_ACT);
-
-    if (HAL_AUX_OK != Hal_Aux_SourceSelect(HAL_AUX_SRC_VBAT, 0))
-        goto done;
-
-    if (HAL_AUX_OK != Hal_Aux_AdcValueGet(&ulAdcValue))
-        goto done;
-
-    *pfVbat = (float)Hal_Aux_AdcMiniVolt_Convert(ulAdcValue)/(float)1000;
-
-    ubRet = HAL_AUX_OK;
-
-done:
-    // release the semaphore
-    osSemaphoreRelease(g_taHalAux_SemaphoreId);
-    return ubRet;
+    if( HAL_AUX_OK != Hal_Aux_AdcMiniVolt_Get( (E_HalAux_Src_Patch_t)HAL_AUX_SRC_VBAT, 0, pfVbat) )
+        return HAL_AUX_FAIL;
+    else
+        return HAL_AUX_OK;
 }
 
 /*************************************************************************
@@ -945,40 +1092,10 @@ done:
 *************************************************************************/
 uint8_t Hal_Aux_IoVoltageGet_patch(uint8_t ubGpioIdx, float *pfVoltage)
 {
-    uint32_t ulAdcValue;
-    uint32_t ulRegTemp;
-    uint8_t ubRet = HAL_AUX_FAIL;
-
-    // check init
-    if (g_ubHalAux_Init != 1)
-        return ubRet;
-
-    // wait the semaphore
-    osSemaphoreWait(g_taHalAux_SemaphoreId, osWaitForever);
-
-    // check IO number
-    if (ubGpioIdx >= HAL_AUX_GPIO_NUM_MAX)
-        goto done;
-
-    // wait for m0 AUXADC idle
-    do{
-        Hal_Sys_SpareRegRead(SPARE_0, &ulRegTemp);
-    }while( ulRegTemp & IPC_SPARE0_AUXADC_M0_ACT);
-
-    if (HAL_AUX_OK != Hal_Aux_SourceSelect(HAL_AUX_SRC_GPIO, ubGpioIdx))
-        goto done;
-
-    if (HAL_AUX_OK != Hal_Aux_AdcValueGet(&ulAdcValue))
-        goto done;
-
-    *pfVoltage = (float)Hal_Aux_AdcMiniVolt_Convert(ulAdcValue)/(float)1000;
-
-    ubRet = HAL_AUX_OK;
-
-done:
-    // release the semaphore
-    osSemaphoreRelease(g_taHalAux_SemaphoreId);
-    return ubRet;
+    if( HAL_AUX_OK != Hal_Aux_AdcMiniVolt_Get((E_HalAux_Src_Patch_t)HAL_AUX_SRC_GPIO, ubGpioIdx, pfVoltage) )
+        return HAL_AUX_FAIL;
+    else
+        return HAL_AUX_OK;
 }
 
 /*************************************************************************
@@ -1002,6 +1119,10 @@ void Hal_Aux_PatchInit(void)
 
     // Statistic result (HW recommnad)
     g_ulHalAux_VssOffset = 11;
+
+    // for calibration
+    g_fSlope = 300; // RawData/mv
+    g_fOffset = 64;
 
     // Here set via AOS document
     u16LdoRf_MiniVol[0] = 1000; // 1 V

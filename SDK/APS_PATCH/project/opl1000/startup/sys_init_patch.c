@@ -69,6 +69,8 @@
 
 #define DEV_32K_SRC_SEL_32K_XTAL    0   /* Default */
 #define DEV_32K_SRC_SEL_32K_RC      IPC_SPARE0_SEQ_32K_SRC_SEL
+
+#define IRQ_PRIORITY_IPC3_PATCH     0x0A
 /*
  *************************************************************************
  *                          Typedefs and Structures
@@ -292,6 +294,7 @@ void Sys_DriverInit_patch(void)
     Hal_Vic_IpcIntEn(IPC_IDX_1, 1);
     Hal_Vic_IpcIntEn(IPC_IDX_2, 1);
     Hal_Vic_IpcIntEn(IPC_IDX_3, 1);
+    NVIC_SetPriority(IPC3_IRQn, IRQ_PRIORITY_IPC3_PATCH);   // NOTE: for sleep IO detect
 
     // Init DBG_UART
     Hal_DbgUart_Init(115200);

@@ -1,4 +1,35 @@
 ## Release Version:
+SDK Package: MP_2.18
+Patch_Lib : 4278
+
+## Release Date: 2020/04/10
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 NONE
+   
+2. Tool version information and update:
+   2.1 NONE
+
+3. Demo update:
+   3.1 NONE
+   
+4. Examples update:
+   4.1 NONE
+   
+5. [AUXADC] Added API for converted ADC code
+
+
+
+## Bug Fix List 
+1. fix "安博盒子開啟並觀看節目時, 會斷線無法連接".
+2. fix "斷線重連一段時間(1~12 hrs, 不等)後會不再做連線動作".
+
+
+## Notes History 
+
+*****
+## Release Version:
 SDK Package: MP_2.17
 Patch_Lib : 4243
 
@@ -26,9 +57,7 @@ Patch_Lib : 4243
 1. fix "DHCP failed in some APs.(信諾雲)".
 2. fix "Ali door reference will not enter sleep every 2092.8s".
 
-## Notes List 
-
-*****
+## Notes History 
 
 ## Release Version:
 SDK Package: MP_2.15

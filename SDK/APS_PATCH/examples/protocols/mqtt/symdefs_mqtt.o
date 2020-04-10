@@ -932,6 +932,7 @@
 0x0003d63f T at_build_fd_sets_impl
 0x0003d689 T at_clear_uart_buffer_impl
 0x0003d695 T at_close_client_impl
+0x0003d6bd T at_cmd_UtilGetAddrFromStr                
 0x0003d791 T at_cmd_app_func_preinit
 0x0003d7f5 T at_cmd_at_slp_tmr
 0x0003d879 T at_cmd_at_switch_to_dbg

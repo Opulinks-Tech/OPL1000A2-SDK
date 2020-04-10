@@ -24,6 +24,7 @@
 #include "hal_wdt.h"
 #include "hal_system_patch.h"
 #include "hal_vic_patch.h"
+#include "ps_patch.h"
 /*
  *************************************************************************
  *                          Definitions and Macros
@@ -46,6 +47,8 @@
 *************************************************************************
 */
 void ISR_SetupHardfaultPatch(void);
+void IPC3_IRQHandler_Entry_patch(void);
+void GPIO_IRQHandler_Entry_patch(void);
 void WDT_IRQHandler_Entry_patch(void);
 void HardFault_Handler_patch(void);
 /*
@@ -79,6 +82,8 @@ void HardFault_Handler_patch(void);
 
 void ISR_Pre_PatchInit(void)
 {
+    IPC3_IRQHandler_Entry    = IPC3_IRQHandler_Entry_patch;
+    GPIO_IRQHandler_Entry    = GPIO_IRQHandler_Entry_patch;
     WDT_IRQHandler_Entry     = WDT_IRQHandler_Entry_patch;
     
     
@@ -131,6 +136,24 @@ void ExceptionDumpStack(uint32_t u32RegPsp, uint32_t u32RegMsp, uint32_t u32RegL
     tracer_drct_printf("1C: 0x%08X 0x%08X\n", *(uint32_t*)(u32RegPsp+0x1C), *(uint32_t*)(u32RegMsp+0x1C));
 
     tracer_drct_printf("Current task: %s\n\n\n", pcTaskGetName(osThreadGetId()));
+}
+
+
+void IPC3_IRQHandler_Entry_patch(void)
+{
+    // Clear interrupt
+    Hal_Vic_IpcIntClear(IPC_IDX_3);
+
+    ps_lock_gpio_apply();
+}
+
+
+void GPIO_IRQHandler_Entry_patch(void)
+{
+    ps_update_io_time();
+
+    void GPIO_IRQHandler_Entry_impl(void);
+    GPIO_IRQHandler_Entry_impl();
 }
 
 

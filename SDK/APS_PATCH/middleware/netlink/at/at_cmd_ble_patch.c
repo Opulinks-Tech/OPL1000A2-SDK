@@ -74,15 +74,13 @@ C Functions
  */
 int at_cmd_mp_ble_addr_patch(char *buf, int len, int mode)
 {
-    char orig_cmd[len];
+    le_cfg_t tCfg;
     int iRet = 0;
     int argc = 0;
     char *argv[AT_MAX_CMD_ARGS] = {0};
     uint8_t i = 0;
     uint8_t bd_addr[6] = {0};
-
-    // copy the original command before it got modified
-    at_strcpy(orig_cmd, buf);
+    uint8_t type = 0;
     
     if (!at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS))
     {
@@ -92,6 +90,7 @@ int at_cmd_mp_ble_addr_patch(char *buf, int len, int mode)
     if (!at_strncmp("?", &(argv[0][12]), 13))
     {
         get_ble_bd_addr(bd_addr);
+        at_output("\r\nOK\r\n");
         at_output("+MPBLEADDR:\"");
         for (i = 0; i < 6; i++)
         {
@@ -100,15 +99,28 @@ int at_cmd_mp_ble_addr_patch(char *buf, int len, int mode)
             else
                 at_output("%02X:", bd_addr[i]);
         }
+        iRet = 1;
     }
     else 
     {
-        extern int at_cmd_mp_ble_addr(char *buf, int len, int mode);
-        return at_cmd_mp_ble_addr(orig_cmd, len, mode);
+        if (type == 0)
+        {
+            extern uint8_t at_cmd_UtilGetAddrFromStr(uint8_t *addr_str, uint8_t *addr);
+            if (!at_cmd_UtilGetAddrFromStr((uint8_t *)argv[2], bd_addr)) goto done;
+            
+            // write to flash
+            set_ble_bd_addr(bd_addr);
+            
+            // read from flash and check if addr is match
+            le_read_cfg_from_flash(&tCfg);
+            if (memcmp(bd_addr, &tCfg.bd_addr, 6) == 0)
+            {
+                at_output("\r\nOK\r\n");
+                iRet = 1;
+            }
+        }
     }
     
-    iRet = 1;
-
 done:
     if (!iRet)
     {

@@ -502,6 +502,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\APS_PATCH\middleware\netlink\at\at_cmd_ble_patch.c</FilePath>
             </File>
+            <File>
+              <FileName>at_cmd_rf_patch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\APS_PATCH\middleware\netlink\at\at_cmd_rf_patch.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -551,6 +556,11 @@
               <FileName>dhcp_patch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\APS_PATCH\middleware\third_party\lwip-2.0.3\lwip\src\core\ipv4\dhcp_patch.c</FilePath>
+            </File>
+            <File>
+              <FileName>etharp_patch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\APS_PATCH\middleware\third_party\lwip-2.0.3\lwip\src\core\ipv4\etharp_patch.c</FilePath>
             </File>
           </Files>
         </Group>

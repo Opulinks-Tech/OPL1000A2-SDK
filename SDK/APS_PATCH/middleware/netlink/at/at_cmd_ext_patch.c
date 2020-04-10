@@ -22,6 +22,7 @@
 
 #include "at_cmd_ext_patch.h"
 #include "at_cmd_task_patch.h"
+#include "at_cmd_rf_patch.h"
 #include "le_ctrl_patch.h"
 #include "hal_auxadc_patch.h"
 #include "hal_auxadc_internal.h"
@@ -33,12 +34,12 @@ int at_cmd_ext_crlf_term(char *buf, int len, int mode)
     int iRet = 0;
     int argc = 0;
     char *argv[AT_MAX_CMD_ARGS] = {0};
-    
+
     if(!at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS))
     {
         goto done;
     }
-    
+
     switch(mode)
     {
         case AT_CMD_MODE_READ:
@@ -74,7 +75,7 @@ done:
     {
         msg_print_uart1("ERROR\r\n");
     }
-    
+
     return iRet;
 }
 
@@ -143,7 +144,7 @@ int at_cmd_ext_le_gain(char *buf, int len, int mode)
     return iRet;
 }
 
-int at_cmd_ext_auxadc(char *buf, int len, int mode)
+int at_cmd_ext_auxadcdbg(char *buf, int len, int mode)
 {
     int iRet = 0;
     uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
@@ -151,15 +152,15 @@ int at_cmd_ext_auxadc(char *buf, int len, int mode)
     uint8_t ubGpioIdx = 0;
     uint32_t u32Res = 0;
     uint32_t u32Temp = 0;
-    
+
     int argc = 0;
     char *argv[AT_MAX_CMD_ARGS] = {0};
 
     at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS);
-    
+
     if (argc >= 2)
         ubSrc = atoi(argv[1]);
-    
+
     if(argc >= 3)
         ubGpioIdx = atoi(argv[2]);
 
@@ -175,8 +176,8 @@ int at_cmd_ext_auxadc(char *buf, int len, int mode)
         goto done;
 
     msg_print_uart1("Ref points (mV, Data) = ");
-        msg_print_uart1("(%d, 0x%X) and ", sAuxadcCalTable.stIntSrc[ 0 ].u16MiniVolt, sAuxadcCalTable.stIntSrc[ 0 ].u16RawData); 
-        msg_print_uart1("(%d, 0x%X)\n\r", sAuxadcCalTable.stIntSrc[ 1 ].u16MiniVolt, sAuxadcCalTable.stIntSrc[ 1 ].u16RawData);
+    msg_print_uart1("(%d, 0x%X) and ", sAuxadcCalTable.stIntSrc[ 0 ].u16MiniVolt, sAuxadcCalTable.stIntSrc[ 0 ].u16RawData);
+    msg_print_uart1("(%d, 0x%X)\n\r", sAuxadcCalTable.stIntSrc[ 1 ].u16MiniVolt, sAuxadcCalTable.stIntSrc[ 1 ].u16RawData);
     if(ubSrc == HAL_AUX_SRC_GPIO)
         msg_print_uart1("Auxadc(gpio = %d)", ubGpioIdx);
     else
@@ -195,36 +196,39 @@ done:
     return iRet;
 }
 
-int at_cmd_ext_adccalvbat(char *buf, int len, int mode)
+int at_cmd_ext_auxadc(char *buf, int len, int mode)
 {
     int iRet = 0;
     uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
-    uint16_t u16MiniVlot = 0;
-    uint8_t u8PtxIdx = 1;
+    uint8_t ubSrc = 0;
+    uint8_t ubGpioIdx = 0;
     uint32_t u32Res = 0;
+    uint32_t u32Temp = 0;
 
     int argc = 0;
     char *argv[AT_MAX_CMD_ARGS] = {0};
 
     at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS);
-    
-    if(argc >= 2)
-    {
-        u16MiniVlot = atoi(argv[1]);
-        if(argc >= 3)
-            u8PtxIdx = atoi(argv[2]);
 
-        Hal_Aux_Init();
-        Hal_Aux_AdcCal_Init();
-        // Force-enable
-        g_ubHalAux_Pu_WriteDirect = 1;
-        u32Res = Hal_Aux_AdcVbatInCal(u16MiniVlot, u8PtxIdx);
-        msg_print_uart1("Cal from Vbat (%d mV, Pt_Idx = %d)\r\n", u16MiniVlot, u8PtxIdx);
-        if(u32Res == HAL_AUX_FAIL)
-            goto done;
-    }else{
-        iRet = 0;
-    }
+    if (argc >= 2)
+        ubSrc = atoi(argv[1]);
+
+    if(argc >= 3)
+        ubGpioIdx = atoi(argv[2]);
+
+    Hal_Aux_Init();
+    Hal_Aux_AdcCal_Init();
+    // Force-enable
+    g_ubHalAux_Pu_WriteDirect = 1;
+    u32Res = Hal_Aux_AdcConvValue_Get( (E_HalAux_Src_Patch_t)ubSrc, ubGpioIdx, &u32Temp);
+    if(u32Res == HAL_AUX_FAIL)
+        goto done;
+
+    if(ubSrc == HAL_AUX_SRC_GPIO)
+        msg_print_uart1("Auxadc(gpio = %d)", ubGpioIdx);
+    else
+        msg_print_uart1("Auxadc(tSrc = %s)", pAuxadcSrcName[ ubSrc ]);
+    msg_print_uart1("value = 0x%04X\r\n", u32Temp);
 
     iRet = 1;
 done:
@@ -238,10 +242,47 @@ done:
     return iRet;
 }
 
+int at_cmd_ext_adccalvbat(char *buf, int len, int mode)
+{
+    int iRet = 0;
+    uint16_t u16MiniVlot = 0;
+    uint8_t u8PtxIdx = 1;
+    uint32_t u32Res = 0;
+
+    int argc = 0;
+    char *argv[AT_MAX_CMD_ARGS] = {0};
+
+    at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS);
+
+    if(argc >= 2)
+    {
+        u16MiniVlot = atoi(argv[1]);
+        if(argc >= 3)
+            u8PtxIdx = atoi(argv[2]);
+
+        Hal_Aux_Init();
+        Hal_Aux_AdcCal_Init();
+        u32Res = Hal_Aux_AdcVbatInCal(u16MiniVlot, u8PtxIdx);
+        msg_print_uart1("Cal from Vbat (%d mV, Pt_Idx = %d)\r\n", u16MiniVlot, u8PtxIdx);
+        if(u32Res == HAL_AUX_FAIL)
+            goto done;
+    }else{
+        iRet = 0;
+    }
+
+    iRet = 1;
+done:
+    if(iRet)
+        msg_print_uart1("OK\r\n");
+    else
+        msg_print_uart1("ERROR\r\n");
+
+    return iRet;
+}
+
 int at_cmd_ext_adccalgpio(char *buf, int len, int mode)
 {
     int iRet = 0;
-    uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
     uint8_t ubGpioIdx = 0;
     uint16_t u16MiniVlot = 0;
     uint8_t u8PtxIdx = 1;
@@ -251,7 +292,7 @@ int at_cmd_ext_adccalgpio(char *buf, int len, int mode)
     char *argv[AT_MAX_CMD_ARGS] = {0};
 
     at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS);
-    
+
     if(argc >= 3)
     {
         ubGpioIdx = atoi(argv[1]);
@@ -261,8 +302,6 @@ int at_cmd_ext_adccalgpio(char *buf, int len, int mode)
 
         Hal_Aux_Init();
         Hal_Aux_AdcCal_Init();
-        // Force-enable
-        g_ubHalAux_Pu_WriteDirect = 1;
         u32Res = Hal_Aux_AdcGpioInCal(ubGpioIdx, u16MiniVlot, u8PtxIdx);
         msg_print_uart1("Cal from GPIO_%d (%d mV, Pt_Idx = %d)\r\n", ubGpioIdx, u16MiniVlot, u8PtxIdx);
         if(u32Res == HAL_AUX_FAIL)
@@ -273,8 +312,6 @@ int at_cmd_ext_adccalgpio(char *buf, int len, int mode)
 
     iRet = 1;
 done:
-    // Remove Force-enable
-    g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
     if(iRet == HAL_AUX_OK)
         msg_print_uart1("OK\r\n");
     else
@@ -288,7 +325,7 @@ int at_cmd_ext_adcdef(char *buf, int len, int mode)
     int iRet = 0;
 
     iRet = Hal_Aux_AdcCal_LoadDef();
-    
+
     if(iRet == HAL_AUX_OK)
         msg_print_uart1("OK\r\n");
     else
@@ -373,7 +410,7 @@ int at_cmd_ext_adcgpio(char *buf, int len, int mode)
 
     if(argc >= 2)
         ubGpioIdx = atoi(argv[1]);
-    
+
     Hal_Aux_Init();
     Hal_Aux_AdcCal_Init();
     g_ubHalAux_Pu_WriteDirect = 1;
@@ -394,15 +431,17 @@ at_command_t gAtCmdTbl_Ext[] =
     { "at+crlfterm",            at_cmd_ext_crlf_term,     "Enable/disable CRLF termination"},
     { "at+leinfo",              at_cmd_ext_le_info,       "Dump BLE packet info statistics"},
     { "at+legain",              at_cmd_ext_le_gain,       "Configure LE Rx AGC gain"},
-    { "at+auxadc",              at_cmd_ext_auxadc,        "Auxadc raw-data (for debug)"},
-    { "at+adccalvbat",          at_cmd_ext_adccalvbat,    "Auxadc cal. from VBAT"}, 
-    { "at+adccalgpio",          at_cmd_ext_adccalgpio,    "Auxadc cal. from GPIO"}, 
-    { "at+adcdef",              at_cmd_ext_adcdef,        "Auxadc re-cal all via int. src."}, 
+    { "at+auxadcdbg",           at_cmd_ext_auxadcdbg,     "Auxadc raw-data (for debug)"},
+    { "at+auxadc",              at_cmd_ext_auxadc,        "Auxadc value"},
+    { "at+adccalvbat",          at_cmd_ext_adccalvbat,    "Auxadc cal. from VBAT"},
+    { "at+adccalgpio",          at_cmd_ext_adccalgpio,    "Auxadc cal. from GPIO"},
+    { "at+adcdef",              at_cmd_ext_adcdef,        "Auxadc re-cal all via int. src."},
     { "at+adcerase",            at_cmd_ext_adcerase,      "Erase adc-cal result"},
-    { "at+adcstore",            at_cmd_ext_adcstore,      "Store adc-cal result"}, 
-    { "at+adcreload",           at_cmd_ext_adcreload,     "Load adc-cal from flash"}, 
+    { "at+adcstore",            at_cmd_ext_adcstore,      "Store adc-cal result"},
+    { "at+adcreload",           at_cmd_ext_adcreload,     "Load adc-cal from flash"},
     { "at+adcvbat",             at_cmd_ext_adcvbat,       "Volt from Vbat"},
     { "at+adcgpio",             at_cmd_ext_adcgpio,       "Volt from GPIO"},
+    { "at+come",                at_cmd_rf_come,           "Parameters for AT+RX"},
     { NULL,                     NULL,                     NULL},
 };
 
