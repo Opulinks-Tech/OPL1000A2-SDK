@@ -20,6 +20,20 @@
 #include "controller_wifi_com_patch.h"
 #include "wpa_cli_patch.h"
 
+static int wpa_cli_connect_patch(struct wpa_config * conf)
+{
+    if (conf == NULL) return FALSE;
+    if (conf->ssid == NULL) return FALSE;
+    
+    scan_info_t *pInfo = NULL;
+    pInfo = get_target_ap_record(conf->ssid->bssid, (char*)conf->ssid->ssid);
+    if (pInfo == NULL) return FALSE;
+    if (!target_ap_security_mode_chk(pInfo)) return FALSE;
+    if (!wpa_driver_netlink_connect(conf)) return FALSE;
+    
+    return TRUE;
+}
+
 static int wpa_cli_scan_by_cfg_patch(void *cfg)
 {
     if (cfg == NULL) return FALSE;
@@ -59,5 +73,6 @@ static int wpa_cli_scan_by_cfg_patch(void *cfg)
 
 void wpa_cli_func_init_patch(void)
 {
+    wpa_cli_connect            = wpa_cli_connect_patch;
     wpa_cli_scan_by_cfg        = wpa_cli_scan_by_cfg_patch;
 }

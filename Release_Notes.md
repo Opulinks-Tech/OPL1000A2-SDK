@@ -1,3 +1,31 @@
+﻿## Release Version:
+SDK Package: MP_2.19
+Patch_Lib : 4345
+
+## Release Date: 2020/06/05
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 NONE
+   
+2. Tool version information and update:
+   2.1 NONE
+
+3. Demo update:
+   3.1 NONE
+   
+4. Examples update:
+   4.1 NONE
+   
+
+## Bug Fix List 
+1. fix "跟AP做WPA連線,但是故意不打密碼, DUT會reboot"
+2. fix "配網過程出現持續電流在15~16mA, 時間超過55分鐘"
+3. fix "門磁在安博盒子開啟並觀看節目時, 會斷線無法連接"
+4. fix "Apple手機和OPL1000 HID時隔兩天半後藍牙無法自動連線"
+5. fix "LWIP create socket source port no. must be random"
+
+
 ## Release Version:
 SDK Package: MP_2.18
 Patch_Lib : 4278

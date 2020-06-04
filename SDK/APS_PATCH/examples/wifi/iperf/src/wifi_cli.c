@@ -99,7 +99,7 @@ int wifi_cmd_data_rate(int argc, char **argv)
     wifi_config_set_mac_tx_data_rate(data_rate);
     
     LOGI_DRCT(TAG, "current setting : %d", data_rate);
-    LOGI_DRCT(TAG, "  0:DTO, 1:1M, 2:2M, 3:5.5M, 4:11M");
+    LOGI_DRCT(TAG, "  0:DTO, 1:1M, 2:2M, 3:5.5M, 4:11M, 12:RvR");
     
     return 0;
 }

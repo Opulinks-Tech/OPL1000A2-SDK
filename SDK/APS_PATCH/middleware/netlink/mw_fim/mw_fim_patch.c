@@ -26,6 +26,7 @@ Head Block of The File
 #include "boot_sequence.h"
 
 #include "mw_fim_patch.h"
+#include "hal_vic.h"
 
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
@@ -569,10 +570,234 @@ done:
     return ubRet;    
 }
 
+/*************************************************************************
+* FUNCTION:
+*   MwFim_FileRead
+*
+* DESCRIPTION:
+*   read the file data from flash
+*
+* PARAMETERS
+*   1. ulFileId    : [In] the file ID
+*   2. uwRecIdx    : [In] the index of record
+*   3. uwFileSize  : [In] the data size of file
+*   4. pubFileData : [Out] the pointer of file data
+*
+* RETURNS
+*   1. MW_FIM_OK   : success
+*   2. MW_FIM_FAIL : fail
+*
+*************************************************************************/
+uint8_t MwFim_FileRead_patch(uint32_t ulFileId, uint16_t uwRecIdx, uint16_t uwFileSize, uint8_t *pubFileData)
+{
+    T_MwFimFileInfo *ptFileTable;
+    uint8_t ubRet = MW_FIM_FAIL;
+    
+    // check init
+    if (g_ubMwFimInit != 1)
+        return ubRet;
+    
+    // wait the semaphore
+    osSemaphoreWait(g_tMwFimSemaphoreId, osWaitForever);
+
+    Hal_Vic_IntMask(GPIO_IRQn, 1);
+
+    // search the file table by file ID
+    if (MW_FIM_OK != MwFim_FileTableSearch(ulFileId, &ptFileTable))
+        goto done;
+
+    // check the index of record
+    if (uwRecIdx >= ptFileTable->uwRecordMax)
+        goto done;
+
+    // check the size of file
+    if (uwFileSize != ptFileTable->uwDataSize)
+        goto done;
+    
+    // check the data is exist or not
+    if (ptFileTable->pulDataAddr[uwRecIdx] == 0xFFFFFFFF)
+        goto done;
+    
+    // read the file data from flash
+    if (0 != Hal_Flash_AddrRead(SPI_IDX_0, ptFileTable->pulDataAddr[uwRecIdx], 0, uwFileSize, pubFileData))
+    {
+        //printf("FIM: #01\n");
+        goto done;
+    }
+
+    ubRet = MW_FIM_OK;
+    
+done:
+    Hal_Vic_IntMask(GPIO_IRQn, 0);
+
+    // release the semaphore
+    osSemaphoreRelease(g_tMwFimSemaphoreId);
+    return ubRet;
+}
+
+/*************************************************************************
+* FUNCTION:
+*   MwFim_FileWrite
+*
+* DESCRIPTION:
+*   write the file data into flash
+*
+* PARAMETERS
+*   1. ulFileId    : [In] the file ID
+*   2. uwRecIdx    : [In] the index of record
+*   3. uwFileSize  : [In] the data size of file
+*   4. pubFileData : [In] the pointer of file data
+*
+* RETURNS
+*   1. MW_FIM_OK   : success
+*   2. MW_FIM_FAIL : fail
+*
+*************************************************************************/
+uint8_t MwFim_FileWrite_patch(uint32_t ulFileId, uint16_t uwRecIdx, uint16_t uwFileSize, uint8_t *pubFileData)
+{
+    uint8_t ubRet = MW_FIM_FAIL;
+
+    // check init
+    if (g_ubMwFimInit != 1)
+        return ubRet;
+    
+    // wait the semaphore
+    osSemaphoreWait(g_tMwFimSemaphoreId, osWaitForever);
+
+    Hal_Vic_IntMask(GPIO_IRQn, 1);
+    
+    // do the behavior
+    if (MW_FIM_OK != MwFim_FileWriteDo(ulFileId, uwRecIdx, uwFileSize, pubFileData))
+        goto done;
+    
+    ubRet = MW_FIM_OK;
+    
+done:
+    Hal_Vic_IntMask(GPIO_IRQn, 0);
+
+    // release the semaphore
+    osSemaphoreRelease(g_tMwFimSemaphoreId);
+    return ubRet;
+}
+
+/*************************************************************************
+* FUNCTION:
+*   MwFim_FileWriteDefault
+*
+* DESCRIPTION:
+*   write the default file data into flash
+*
+* PARAMETERS
+*   1. ulFileId    : [In] the file ID
+*   2. uwRecIdx    : [In] the index of record
+*
+* RETURNS
+*   1. MW_FIM_OK   : success
+*   2. MW_FIM_FAIL : fail
+*
+*************************************************************************/
+uint8_t MwFim_FileWriteDefault_patch(uint32_t ulFileId, uint16_t uwRecIdx)
+{
+    T_MwFimFileInfo *ptFileTable;
+    uint8_t ubRet = MW_FIM_FAIL;
+    
+    // check init
+    if (g_ubMwFimInit != 1)
+        return ubRet;
+    
+    // wait the semaphore
+    osSemaphoreWait(g_tMwFimSemaphoreId, osWaitForever);
+
+    Hal_Vic_IntMask(GPIO_IRQn, 1);
+    
+    // search the file table by file ID
+    if (MW_FIM_OK != MwFim_FileTableSearch(ulFileId, &ptFileTable))
+        goto done;
+    
+    // write the default value
+    if (MW_FIM_OK != MwFim_FileWriteDo(ulFileId, uwRecIdx, ptFileTable->uwDataSize, ptFileTable->pubDefaultValue))
+        goto done;
+    
+    ubRet = MW_FIM_OK;
+    
+done:
+    Hal_Vic_IntMask(GPIO_IRQn, 0);
+
+    // release the semaphore
+    osSemaphoreRelease(g_tMwFimSemaphoreId);
+    return ubRet;
+}
+
+/*************************************************************************
+* FUNCTION:
+*   MwFim_FileDelete
+*
+* DESCRIPTION:
+*   delete the file data
+*
+* PARAMETERS
+*   1. ulFileId    : [In] the file ID
+*   2. uwRecIdx    : [In] the index of record
+*
+* RETURNS
+*   1. MW_FIM_OK   : success
+*   2. MW_FIM_FAIL : fail
+*
+*************************************************************************/
+uint8_t MwFim_FileDelete_patch(uint32_t ulFileId, uint16_t uwRecIdx)
+{
+    T_MwFimFileInfo *ptFileTable;
+    uint8_t ubRet = MW_FIM_FAIL;
+    
+    uint32_t ulZoneIdx;
+    uint32_t ulGroupIdx;
+    
+    // check init
+    if (g_ubMwFimInit != 1)
+        return ubRet;
+    
+    // wait the semaphore
+    osSemaphoreWait(g_tMwFimSemaphoreId, osWaitForever);
+
+    Hal_Vic_IntMask(GPIO_IRQn, 1);
+    
+    // search the file table by file ID
+    if (MW_FIM_OK != MwFim_FileTableSearch(ulFileId, &ptFileTable))
+        goto done;
+    
+    // check the index of record
+    if (uwRecIdx >= ptFileTable->uwRecordMax)
+        goto done;
+    
+    // get the zone and group index
+    ulZoneIdx = (ulFileId >> 24) & 0xFF;
+    ulGroupIdx = (ulFileId >> 16) & 0xFF;
+    
+    // reset the data address of record
+    ptFileTable->pulDataAddr[uwRecIdx] = 0xFFFFFFFF;
+        
+    // do the swap behavior
+    if (MW_FIM_OK != MwFim_GroupSwap(ulZoneIdx, ulGroupIdx))
+        goto done;
+    
+    ubRet = MW_FIM_OK;
+    
+done:
+    Hal_Vic_IntMask(GPIO_IRQn, 0);
+
+    // release the semaphore
+    osSemaphoreRelease(g_tMwFimSemaphoreId);
+    return ubRet;
+}
+
 void MwFim_PreInit_patch(void)
 {
     MwFim_FileDataDefaultFill   = MwFim_FileDataDefaultFill_impl;
     MwFim_FileWriteDo           = MwFim_FileWriteDo_patch;
     MwFim_GroupHeaderCheck      = MwFim_GroupHeaderCheck_patch;
+    MwFim_FileRead              = MwFim_FileRead_patch;
+    MwFim_FileWrite             = MwFim_FileWrite_patch;
+    MwFim_FileWriteDefault      = MwFim_FileWriteDefault_patch;
+    MwFim_FileDelete            = MwFim_FileDelete_patch;
 }
 

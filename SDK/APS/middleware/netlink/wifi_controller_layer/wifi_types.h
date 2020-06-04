@@ -198,6 +198,8 @@ typedef enum {
     WIFI_MAC_DATA_RATE_2M,          /**< Fix Mac Tx data rate in 2 Mbps */
     WIFI_MAC_DATA_RATE_5_5M,        /**< Fix Mac Tx data rate in 5.5 Mbps */
     WIFI_MAC_DATA_RATE_11M,         /**< Fix Mac Tx data rate in 11 Mbps */
+    WIFI_MAC_DATA_RATE_RVR = 12,    /**< For RvR test */
+    WIFI_MAX_DATA_RATE_MAX,
 } wifi_mac_data_rate_t;
 /**
 * @}

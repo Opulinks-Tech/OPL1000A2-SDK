@@ -143,6 +143,8 @@ extern int dhcp_does_arp_check_flag;
 #define ETHARP_SET_HINT(netif, hint)  (etharp_cached_entry = (hint))
 #endif /* LWIP_NETIF_HWADDRHINT */
 
+extern struct eth_addr dhcp_svr_hwaddr;
+
 
 /**
  * Responds to ARP requests to us. Upon ARP replies to us, add entry to cache
@@ -207,9 +209,26 @@ void etharp_input_patch(struct pbuf *p, struct netif *netif)
          can result in directly sending the queued packets for this host.
      ARP message not directed to us?
       ->  update the source IP address in the cache, if present */
+
+  LWIP_DEBUGF(ETHARP_DEBUG, ("etharp_input: gateway: %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
+    ip4_addr1_16(netif_ip4_gw(netif)),
+    ip4_addr2_16(netif_ip4_gw(netif)),
+    ip4_addr3_16(netif_ip4_gw(netif)),
+    ip4_addr4_16(netif_ip4_gw(netif))));
+
+  LWIP_DEBUGF(ETHARP_DEBUG, ("etharp_input: src ipaddr:%"U16_F".%"U16_F".%"U16_F".%"U16_F" - src hwaddr: %02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F"\n",
+  ip4_addr1_16(&sipaddr), ip4_addr2_16(&sipaddr), ip4_addr3_16(&sipaddr), ip4_addr4_16(&sipaddr),
+  (u16_t)(hdr->shwaddr.addr[0]), (u16_t)hdr->shwaddr.addr[1], (u16_t)hdr->shwaddr.addr[2],
+  (u16_t)hdr->shwaddr.addr[3], (u16_t)hdr->shwaddr.addr[4], (u16_t)hdr->shwaddr.addr[5]));
+#if 0
+  LWIP_DEBUGF(ETHARP_DEBUG, ("etharp_input: dst ipaddr:%"U16_F".%"U16_F".%"U16_F".%"U16_F" - dst hwaddr: %02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F"\n",
+  ip4_addr1_16(&dipaddr), ip4_addr2_16(&dipaddr), ip4_addr3_16(&dipaddr), ip4_addr4_16(&dipaddr),
+  (u16_t)(hdr->dhwaddr.addr[0]), (u16_t)hdr->dhwaddr.addr[1], (u16_t)hdr->dhwaddr.addr[2],
+  (u16_t)hdr->dhwaddr.addr[3], (u16_t)hdr->dhwaddr.addr[4], (u16_t)hdr->dhwaddr.addr[5]));
+#endif
 #if OPL_LWIP_ARP
   if ( (memcmp(netif_ip4_gw(netif), &sipaddr, sizeof(ip4_addr_t)) == 0) &&
-       (memcmp(&p_bss_info->bssid, &hdr->shwaddr, ETH_HWADDR_LEN-1)!=0) )
+       (memcmp(&dhcp_svr_hwaddr, &hdr->shwaddr, ETH_HWADDR_LEN-1)!=0) )
   {
     // check if source IP address is gateway IP and it's hwaddr is not gateway addr
     // if yes, we filter duplicated gateway IP which have different hw address when updating lwip ARP entry

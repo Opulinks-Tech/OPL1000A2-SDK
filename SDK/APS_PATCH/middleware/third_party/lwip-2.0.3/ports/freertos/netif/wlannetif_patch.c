@@ -102,7 +102,7 @@ low_level_init_patch(struct netif *netif)
   memcpy(netif->hwaddr, gsta_cfg_mac, MAC_ADDR_LEN);
   
   /* maximum transfer unit */
-  netif->mtu = 1500;
+  netif->mtu = 576; //1500;
 
   /* device capabilities */
   /* don't set NETIF_FLAG_ETHARP if this device is not an ethernet one */
@@ -135,7 +135,6 @@ low_level_output_patch(struct netif *netif, struct pbuf *p)
 {
     struct ethernetif *ethernetif = netif->state;
     struct pbuf *q;
-    int full_count = 0;
     
     LWIP_UNUSED_ARG(ethernetif);
 
@@ -150,17 +149,7 @@ low_level_output_patch(struct netif *netif, struct pbuf *p)
             dump_buffer(q->payload, q->len, 1);
         #endif
         
-        while (TX_QUEUE_FULL == wifi_mac_tx_start(q->payload, q->len)) {
-            
-            sys_msleep(1);
-            
-            if (full_count == 50) {
-                //printf("__packet_tx_task: retry times reach full count. \n");
-                break;
-            }
-            
-            full_count++;
-        }
+        wifi_mac_tx_start(q->payload, q->len);
     }
     else {
         q = pbuf_alloc(PBUF_RAW_TX, p->tot_len, PBUF_RAM);
@@ -177,17 +166,7 @@ low_level_output_patch(struct netif *netif, struct pbuf *p)
             dump_buffer(q->payload, q->len, 1);
         #endif
 
-        while (TX_QUEUE_FULL == wifi_mac_tx_start(q->payload, q->len)) {
-            
-            sys_msleep(1);
-            
-            if (full_count == 50) {
-                //printf("__packet_tx_task: retry times reach full count. \n");
-                break;
-            }
-            
-            full_count++;
-        }
+        wifi_mac_tx_start(q->payload, q->len);
 
         pbuf_free(q);
     }

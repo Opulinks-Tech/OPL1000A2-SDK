@@ -102,6 +102,40 @@ extern uint32_t g_dhcp_retry_interval;
 #include DHCP_GLOBAL_XID_HEADER /* include optional starting XID generation prototypes */
 #endif
 
+
+/** Option handling: options are parsed in dhcp_parse_reply
+ * and saved in an array where other functions can load them from.
+ * This might be moved into the struct dhcp (not necessarily since
+ * lwIP is single-threaded and the array is only used while in recv
+ * callback). */
+enum dhcp_option_idx {
+  DHCP_OPTION_IDX_OVERLOAD = 0,
+  DHCP_OPTION_IDX_MSG_TYPE,
+  DHCP_OPTION_IDX_SERVER_ID,
+  DHCP_OPTION_IDX_LEASE_TIME,
+  DHCP_OPTION_IDX_T1,
+  DHCP_OPTION_IDX_T2,
+  DHCP_OPTION_IDX_SUBNET_MASK,
+  DHCP_OPTION_IDX_ROUTER,
+#if LWIP_DHCP_PROVIDE_DNS_SERVERS
+  DHCP_OPTION_IDX_DNS_SERVER,
+  DHCP_OPTION_IDX_DNS_SERVER_LAST = DHCP_OPTION_IDX_DNS_SERVER + LWIP_DHCP_PROVIDE_DNS_SERVERS - 1,
+#endif /* LWIP_DHCP_PROVIDE_DNS_SERVERS */
+#if LWIP_DHCP_GET_NTP_SRV
+  DHCP_OPTION_IDX_NTP_SERVER,
+  DHCP_OPTION_IDX_NTP_SERVER_LAST = DHCP_OPTION_IDX_NTP_SERVER + LWIP_DHCP_MAX_NTP_SERVERS - 1,
+#endif /* LWIP_DHCP_GET_NTP_SRV */
+  DHCP_OPTION_IDX_MAX
+};
+
+/** Holds the decoded option values, only valid while in dhcp_recv.
+    @todo: move this into struct dhcp? */
+extern u32_t dhcp_rx_options_val[DHCP_OPTION_IDX_MAX];
+/** Holds a flag which option was received and is contained in dhcp_rx_options_val,
+    only valid while in dhcp_recv.
+    @todo: move this into struct dhcp? */
+extern u8_t  dhcp_rx_options_given[DHCP_OPTION_IDX_MAX];
+
 /** DHCP_OPTION_MAX_MSG_SIZE is set to the MTU
  * MTU is checked to be big enough in dhcp_start */
 #define DHCP_MAX_MSG_LEN(netif)        (netif->mtu)
@@ -143,7 +177,17 @@ static u8_t dhcp_discover_request_options[] = {
 #endif /* LWIP_DHCP_GET_NTP_SRV */
   };
 
+
+#define dhcp_option_given(dhcp, idx)          (dhcp_rx_options_given[idx] != 0)
+#define dhcp_got_option(dhcp, idx)            (dhcp_rx_options_given[idx] = 1)
+#define dhcp_clear_option(dhcp, idx)          (dhcp_rx_options_given[idx] = 0)
+#define dhcp_clear_all_options(dhcp)          (memset(dhcp_rx_options_given, 0, sizeof(dhcp_rx_options_given)))
+#define dhcp_get_option_value(dhcp, idx)      (dhcp_rx_options_val[idx])
+#define dhcp_set_option_value(dhcp, idx, val) (dhcp_rx_options_val[idx] = (val))
+
+
 extern struct udp_pcb *dhcp_pcb;
+extern LWIP_RETDATA int dhcp_does_arp_check_flag;
 
 /*
  * Set the DHCP state of a DHCP client.
@@ -226,9 +270,140 @@ dhcp_discover_patch(struct netif *netif)
   return result;
 }
 
+extern struct eth_addr src_hwaddr;
+extern struct eth_addr dhcp_svr_hwaddr;
+
+static void dhcp_recv_patch(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr, u16_t port)
+{
+  struct netif *netif = ip_current_input_netif();
+  struct dhcp *dhcp = netif_dhcp_data(netif);
+  struct dhcp_msg *reply_msg = (struct dhcp_msg *)p->payload;
+  u8_t msg_type;
+  u8_t i;
+
+  LWIP_UNUSED_ARG(arg);
+
+  /* Caught DHCP message from netif that does not have DHCP enabled? -> not interested */
+  if ((dhcp == NULL) || (dhcp->pcb_allocated == 0)) {
+    goto free_pbuf_and_return;
+  }
+
+  LWIP_ASSERT("invalid server address type", IP_IS_V4(addr));
+
+  LWIP_DEBUGF(DHCP_DEBUG, ("etharp_input: - src hwaddr: %02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F":%02"X16_F"\n",
+  (u16_t)(src_hwaddr.addr[0]), (u16_t)src_hwaddr.addr[1], (u16_t)src_hwaddr.addr[2],
+  (u16_t)src_hwaddr.addr[3], (u16_t)src_hwaddr.addr[4], (u16_t)src_hwaddr.addr[5]));
+
+
+  LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("dhcp_recv(pbuf = %p) from DHCP server %"U16_F".%"U16_F".%"U16_F".%"U16_F" port %"U16_F"\n", (void*)p,
+    ip4_addr1_16(ip_2_ip4(addr)), ip4_addr2_16(ip_2_ip4(addr)), ip4_addr3_16(ip_2_ip4(addr)), ip4_addr4_16(ip_2_ip4(addr)), port));
+  LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("pbuf->len = %"U16_F"\n", p->len));
+  LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("pbuf->tot_len = %"U16_F"\n", p->tot_len));
+  /* prevent warnings about unused arguments */
+  LWIP_UNUSED_ARG(pcb);
+  LWIP_UNUSED_ARG(addr);
+  LWIP_UNUSED_ARG(port);
+
+  LWIP_ASSERT("reply wasn't freed", dhcp->msg_in == NULL);
+
+  if (p->len < DHCP_MIN_REPLY_LEN) {
+    LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING, ("DHCP reply message or pbuf too short\n"));
+    goto free_pbuf_and_return;
+  }
+
+  if (reply_msg->op != DHCP_BOOTREPLY) {
+    LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING, ("not a DHCP reply message, but type %"U16_F"\n", (u16_t)reply_msg->op));
+    goto free_pbuf_and_return;
+  }
+  /* iterate through hardware address and match against DHCP message */
+  for (i = 0; i < netif->hwaddr_len && i < NETIF_MAX_HWADDR_LEN && i < DHCP_CHADDR_LEN; i++) {
+    if (netif->hwaddr[i] != reply_msg->chaddr[i]) {
+      LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING,
+        ("netif->hwaddr[%"U16_F"]==%02"X16_F" != reply_msg->chaddr[%"U16_F"]==%02"X16_F"\n",
+        (u16_t)i, (u16_t)netif->hwaddr[i], (u16_t)i, (u16_t)reply_msg->chaddr[i]));
+      goto free_pbuf_and_return;
+    }
+  }
+  /* match transaction ID against what we expected */
+  if (lwip_ntohl(reply_msg->xid) != dhcp->xid) {
+    LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING,
+      ("transaction id mismatch reply_msg->xid(%"X32_F")!=dhcp->xid(%"X32_F")\n",lwip_ntohl(reply_msg->xid),dhcp->xid));
+    goto free_pbuf_and_return;
+  }
+  /* option fields could be unfold? */
+  if (dhcp_parse_reply(dhcp, p) != ERR_OK) {
+    LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_SERIOUS,
+      ("problem unfolding DHCP message - too short on memory?\n"));
+    goto free_pbuf_and_return;
+  }
+
+  LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("searching DHCP_OPTION_MESSAGE_TYPE\n"));
+  /* obtain pointer to DHCP message type */
+  if (!dhcp_option_given(dhcp, DHCP_OPTION_IDX_MSG_TYPE)) {
+    LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING, ("DHCP_OPTION_MESSAGE_TYPE option not found\n"));
+    goto free_pbuf_and_return;
+  }
+
+  /* read DHCP message type */
+  msg_type = (u8_t)dhcp_get_option_value(dhcp, DHCP_OPTION_IDX_MSG_TYPE);
+
+  LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("DHCP msg type %d\n", msg_type));
+
+
+  /* message type is DHCP ACK? */
+  if (msg_type == DHCP_ACK) {
+
+    dhcp_svr_hwaddr = src_hwaddr;
+    LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("DHCP_ACK received\n"));
+    /* in requesting state? */
+    if (dhcp->state == DHCP_STATE_REQUESTING) {
+      dhcp_handle_ack(netif);
+#if DHCP_DOES_ARP_CHECK
+      if ((netif->flags & NETIF_FLAG_ETHARP) != 0 && (dhcp_does_arp_check_flag == 1)) {
+        /* check if the acknowledged lease address is already in use */
+        dhcp_check(netif);
+      } else {
+        /* bind interface to the acknowledged lease address */
+        dhcp_bind(netif);
+      }
+#else
+      /* bind interface to the acknowledged lease address */
+      dhcp_bind(netif);
+#endif
+    }
+    /* already bound to the given lease address? */
+    else if ((dhcp->state == DHCP_STATE_REBOOTING) || (dhcp->state == DHCP_STATE_REBINDING) ||
+             (dhcp->state == DHCP_STATE_RENEWING)) {
+      dhcp_handle_ack(netif);
+      dhcp_bind(netif);
+    }
+  }
+  /* received a DHCP_NAK in appropriate state? */
+  else if ((msg_type == DHCP_NAK) &&
+    ((dhcp->state == DHCP_STATE_REBOOTING) || (dhcp->state == DHCP_STATE_REQUESTING) ||
+     (dhcp->state == DHCP_STATE_REBINDING) || (dhcp->state == DHCP_STATE_RENEWING  ))) {
+    LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("DHCP_NAK received\n"));
+    dhcp_handle_nak(netif);
+  }
+  /* received a DHCP_OFFER in DHCP_STATE_SELECTING state? */
+  else if ((msg_type == DHCP_OFFER) && (dhcp->state == DHCP_STATE_SELECTING)) {
+    LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("DHCP_OFFER received in DHCP_STATE_SELECTING state\n"));
+    dhcp->request_timeout = 0;
+    /* remember offered lease */
+    dhcp_handle_offer(netif);
+  }
+
+free_pbuf_and_return:
+  if (dhcp != NULL) {
+    dhcp->msg_in = NULL;
+  }
+  pbuf_free(p);
+}
+
 void lwip_load_interface_dhcp_patch(void)
 {
     dhcp_discover_adpt  =  dhcp_discover_patch;
+    dhcp_recv_adpt      =  dhcp_recv_patch;
 }
 
 #endif /* LWIP_IPV4 && LWIP_DHCP */

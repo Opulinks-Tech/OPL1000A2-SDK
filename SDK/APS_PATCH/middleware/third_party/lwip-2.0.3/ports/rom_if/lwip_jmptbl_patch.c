@@ -17,6 +17,8 @@ extern void lwip_load_interface_tcp_patch(void);
 extern void lwip_load_interface_lwip_helper_patch(void);
 extern void lwip_load_interface_dhcp_patch(void);
 extern void lwip_load_interface_etharp_patch(void);
+extern void lwip_load_interface_ethernet_patch(void);
+extern void lwip_load_interface_timeouts_patch(void);
 
 void lwip_module_interface_init_patch(void)
 {
@@ -26,4 +28,6 @@ void lwip_module_interface_init_patch(void)
     lwip_load_interface_tcp_patch();
     lwip_load_interface_dhcp_patch();
     lwip_load_interface_etharp_patch();
+    lwip_load_interface_ethernet_patch();
+    lwip_load_interface_timeouts_patch();
 }

@@ -30,7 +30,7 @@ static int commands_help(int argc, char** argv)
     LOGI_DRCT(TAG, "  disconnect                      Disconnect the link with AP");
     LOGI_DRCT(TAG, "  query                           Query Wifi States");
     LOGI_DRCT(TAG, "  wifi_data_rate [TYPE]           Set Tx Data rate.");
-    LOGI_DRCT(TAG, "        [TYPE]                    - 0:DTO, 1:1M, 2:2M, 3:5.5M, 4:11M");
+    LOGI_DRCT(TAG, "        [TYPE]                    - 0:DTO, 1:1M, 2:2M, 3:5.5M, 4:11M, 12:RvR");
     LOGI_DRCT(TAG, "  wifi_tx_power  [INT]            Set transmit power");
     LOGI_DRCT(TAG, "        [INT]                     - 0:Tx low power, 240:Tx high power");
     LOGI_DRCT(TAG, "                                  After set, device will reboot.");
