@@ -1,0 +1,19 @@
+#! armcc -E
+        
+#define SCT_PATCH_START 0x004164a0
+#define SCT_PATCH_LEN   0x00029B60
+
+LR_IROM1 SCT_PATCH_START SCT_PATCH_LEN
+{
+    RW_IRAM1_EntryPoint +0
+    {
+        .ANY (ENTRY_POINT)
+    }
+    RW_IRAM1 +0 
+    {
+       .ANY (+RO)
+       .ANY (+RW +ZI)
+    }
+}
+ScatterAssert(ImageLength(LR_IROM1) <= SCT_PATCH_LEN)
+
