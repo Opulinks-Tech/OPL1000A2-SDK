@@ -10,9 +10,9 @@
  *
  *******************************************************************************
  * @file sys_init_patch.c
- * 
+ *
  * @brief Patch for Sys init patch
- *  
+ *
  *******************************************************************************/
 
 /*
@@ -45,6 +45,7 @@
 #include "ipc_patch.h"
 #include "agent_patch.h"
 #include "wifi_service_func_init_patch.h"
+#include "wifi_mac_tx_data_patch.h"
 #include "lwip_jmptbl_patch.h"
 #include "le_ctrl_patch.h"
 #include "ble_host_patch_init.h"
@@ -53,7 +54,7 @@
 #include "mw_fim_default_group01_patch.h"
 #include "sys_cfg_patch.h"
 #include "opl1000_it_patch.h"
-
+#include "events_netlink_patch.h"
 
 /*
  *************************************************************************
@@ -225,15 +226,15 @@ void Sys_SwitchTo32kRC(void)
 
     if (Boot_CheckWarmBoot())
         return;
-    
+
     while (1) {
         Hal_Sys_SpareRegRead(SPARE_0, &u32SpareReg);
-        
+
         /* Wait MSQ get load patch done finished, avoid data corruption */
         if ((u32SpareReg & IPC_SPARE0_LOAD_PATCH_READY) == 0)
             break;
-    } 
-    
+    }
+
     u32SpareReg |= DEV_32K_SRC_SEL_32K_RC;
     Hal_Sys_SpareRegWrite(SPARE_0, u32SpareReg);
 }
@@ -312,7 +313,7 @@ void Sys_DriverInit_patch(void)
 
     // Init UART1
     Sys_UartInit();
-    
+
     // for APP patch only. Do NOT patch it!!!
     // Other modules' init
     Sys_MiscModulesInit();
@@ -414,7 +415,7 @@ void Sys_PostInit_patch(void)
     extern void Sys_PostInit_impl(void);
 
     sys_cfg_rf_init_patch(NULL);
- 
+
     Sys_PostInit_impl();
 }
 
@@ -438,7 +439,7 @@ void SysInit_EntryPoint(void)
   #else
     memset(Image$$RW_IRAM1$$ZI$$Base, 0, (unsigned int)&Image$$RW_IRAM1$$ZI$$Length);
   #endif
-    
+
     // 0. Tracer
 
     // 1. hal patch
@@ -451,20 +452,21 @@ void SysInit_EntryPoint(void)
     Sys_RomVersion = Sys_RomVersion_patch;
     Sys_ServiceInit = Sys_ServiceInit_patch;
     Sys_PostInit = Sys_PostInit_patch;
-    
+
     // 4. IPC
     Ipc_PreInit_patch();
 
     // 5. Control task
     controller_task_func_init_patch();
-    
+
     // 6. Wifi
     wifi_ctrl_init_patch();
     wifi_service_func_init_patch();
-    
+    wifi_mac_txdata_func_init_patch();
+
     // 7. le_ctrl
     le_ctrl_pre_patch_init();
-    
+
     // 8. le_host
     LeHostPatchAssign();
 
@@ -474,10 +476,11 @@ void SysInit_EntryPoint(void)
     // 10. WPAS
     wpa_cli_func_init_patch();
     wpa_driver_func_init_patch();
+    wpa_events_func_init_patch();
     
     // 11. AT
     at_func_init_patch();
-    
+
     // 12. SCRT
 
     // 13. HAL driver API
@@ -502,7 +505,7 @@ void SysInit_EntryPoint(void)
 
     // 18. DIAG
     Diag_PatchInit();
-    
+
     // 19. FIM
     MwFim_PreInit_patch();
     MwFim_Group01_patch();
@@ -515,11 +518,11 @@ void SysInit_EntryPoint(void)
 
     // 23. Agent
     agent_pre_init_patch();
-    
+
     // 24. OTA
-    
+
     // 25. System Common
-    
+
     // 26. SYS config
     sys_cfg_pre_init_patch();
 

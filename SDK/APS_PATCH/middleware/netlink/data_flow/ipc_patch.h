@@ -45,12 +45,35 @@ extern "C" {
 
 #define IPC_DBG_TRX_PARAM_LEN_EXT    sizeof(S_TRX_DBG_EXT)
 
+#define IPC_RB_WRITE_GET(rb, buf, idx) \
+{ \
+    buf = rb->pdwaBuf[(*(rb->pdwWrite) + idx) & rb->dwMask]; \
+}
+
+#define IPC_RB_RESERVE_DONE_BY_NUM(rb, num) \
+{ \
+    *(rb->pdwWrite) += num; \
+}
+
+#define IPC_RB_PROCESS_DONE_BY_NUM(rb, num) \
+{ \
+    *(rb->pdwRead) += num; \
+}
+
 /*
  *************************************************************************
  *                          Typedefs and Structures
  *************************************************************************
  */
-
+typedef struct
+{
+    uint32_t dwNum;
+    uint32_t dwMask;
+    uint32_t dwBufSize;
+    uint32_t *pdwWrite;
+    uint32_t *pdwRead;
+    uint32_t *pdwaBuf[32];
+} T_IpcWifiApsTxRb;
 
 
 /*
@@ -70,6 +93,20 @@ extern uint32_t g_u32IpcApsRxDataLen;
  *************************************************************************
  */
 void Ipc_PreInit_patch(void);
+
+uint32_t ipc_aps_tx_rb_num_get(void);
+
+#ifdef IPC_MSQ
+void *ipc_aps_tx_read_buf_get_by_idx(uint32_t u32Idx);
+int ipc_aps_tx_read_buf_get_done(uint32_t u32Num);
+#else
+void *ipc_aps_tx_write_buf_get_by_idx(uint32_t u32Idx);
+int ipc_aps_tx_write_buf_get_done(uint32_t u32Num);
+
+extern T_IpcCommonFp ipc_lock;
+extern T_IpcCommonFp ipc_unlock;
+#endif
+
 
 #ifdef __cplusplus
 }

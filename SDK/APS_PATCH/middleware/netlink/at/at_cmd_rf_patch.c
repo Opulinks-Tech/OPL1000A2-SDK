@@ -91,3 +91,83 @@ done:
 ignore:
     return iRet;
 }
+
+int at_cmd_rf_dcoc(char *buf, int len, int mode)
+{
+    int iRet = 0;
+    char *argv[AT_MAX_CMD_ARGS] = {0};
+    int argc = 0;
+
+    if(g_u8RfCmdRun)
+    {
+        at_output("RF cmd is running\r\nERROR\r\n");
+        goto ignore;
+    }
+
+    if(!at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS))
+    {
+        goto done;
+    }
+
+    if(rf_cmd_param_alloc(argc, argv))
+    {
+        goto done;
+    }
+
+    g_tRfCmd.u32Type = RF_EVT_DCOC;
+    g_u8RfCmdRun = 1;
+    IPC_CMD_SEND(RF_CMD_EVT, (void*)&g_tRfCmd, sizeof(g_tRfCmd));
+
+    iRet = 1;
+
+done:
+    if(!iRet)
+    {
+        rf_cmd_param_free();
+
+        at_output("ERROR\r\n");
+    }
+
+ignore:
+    return iRet;
+}
+
+int at_cmd_rf_dcth(char *buf, int len, int mode)
+{
+    int iRet = 0;
+    char *argv[AT_MAX_CMD_ARGS] = {0};
+    int argc = 0;
+
+    if(g_u8RfCmdRun)
+    {
+        at_output("RF cmd is running\r\nERROR\r\n");
+        goto ignore;
+    }
+
+    if(!at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS))
+    {
+        goto done;
+    }
+
+    if(rf_cmd_param_alloc(argc, argv))
+    {
+        goto done;
+    }
+
+    g_tRfCmd.u32Type = RF_EVT_DCTH;
+    g_u8RfCmdRun = 1;
+    IPC_CMD_SEND(RF_CMD_EVT, (void*)&g_tRfCmd, sizeof(g_tRfCmd));
+
+    iRet = 1;
+
+done:
+    if(!iRet)
+    {
+        rf_cmd_param_free();
+
+        at_output("ERROR\r\n");
+    }
+
+ignore:
+    return iRet;
+}

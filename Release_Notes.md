@@ -1,4 +1,30 @@
 ﻿## Release Version:
+SDK Package: MP_2.19.2
+Patch_Lib : 4371
+
+## Release Date: 2020/06/19
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 NONE
+   
+2. Tool version information and update:
+   2.1 NONE
+
+3. Demo update:
+   3.1 NONE
+   
+4. Examples update:
+   4.1 NONE
+   
+
+## Bug Fix List 
+1. Enabled  "[MAC] Support fragmentation"
+2. Enhanced "check the status code in Auth/Assoc stage"
+3. Disabled "re-connect action in auto connect mechanism"
+
+
+## Release Version:
 SDK Package: MP_2.19
 Patch_Lib : 4345
 

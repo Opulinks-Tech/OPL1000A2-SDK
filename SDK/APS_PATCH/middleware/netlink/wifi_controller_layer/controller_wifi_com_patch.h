@@ -37,20 +37,33 @@ extern "C" {
 #define SCAN_PROBE_REQ_COUNTERS_DEF   1
 #define SCAN_MIN_DURATION_TIME        10
 
+#define CONNECT_AP_ERR_AUTH_FAILED    203
+#define CONNECT_AP_ERR_ASSOC_FAILED   204
+
+#define CTRL_WIFI_ACT_AUTO  1
+
+#define CTRL_WIFI_ACT_BIT_SET(x, bit) (x |= (1 << bit))
+#define CTRL_WIFI_ACT_BIT_GET(x, bit) ((x >> bit) & 1)
+#define CTRL_WIFI_ACT_BIT_CLR(x, bit) (x &= ~(1 << bit))
+
 /*
  *************************************************************************
  *                          Typedefs and Structures
  *************************************************************************
  */
-
-
+typedef void (*T_Ctrl_Wifi_EvtHandler_Fp)(uint32_t evt_type, void *data, int len);
+typedef struct
+{
+    uint32_t ulEventId;
+    T_Ctrl_Wifi_EvtHandler_Fp fpFunc;
+} T_Ctrl_Wifi_EvtHandlerTbl;
 
 /*
  *************************************************************************
  *                          Public Variables
  *************************************************************************
  */
-
+extern uint32_t ctrl_wifi_act;
 
 /*
  *************************************************************************

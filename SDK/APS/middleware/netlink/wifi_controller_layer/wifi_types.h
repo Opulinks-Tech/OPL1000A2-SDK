@@ -152,7 +152,9 @@ typedef enum {
     
     WIFI_REASON_CODE_AUTO_CONNECT_FAILED = 200,          /**<  200  Auto connect failed. */
     WIFI_REASON_CODE_CONNECT_NOT_FOUND,                  /**<  201  The target AP is not found. */
-    WIFI_REASON_CODE_CONNECT_TIMEOUT,                    /**<  202  Connect to AP timeout. */    
+    WIFI_REASON_CODE_CONNECT_TIMEOUT,                    /**<  202  Connect to AP timeout. */
+    WIFI_REASON_CODE_AUTH_FAILED,                        /**<  203  Connect to AP failed due to something wrong. */
+    WIFI_REASON_CODE_ASSOC_FAILED,                       /**<  204  Connect to AP failed due to not supporting the AP option. */
 } wifi_reason_code_t;
 
 /** @brief This enumeration defines the wireless STA scan type

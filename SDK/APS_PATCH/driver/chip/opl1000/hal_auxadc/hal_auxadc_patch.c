@@ -197,7 +197,6 @@ extern E_HalAux_Src_t g_tHalAux_CurrentType;
 extern uint8_t g_ubHalAux_CurrentGpioIdx;
 extern osSemaphoreId g_taHalAux_SemaphoreId;
 
-uint32_t g_ulHalAux_VssOffset;
 uint8_t g_ubHalAux_Cal;
 uint8_t g_ubHalAux_Pu_WriteDirect;
 
@@ -623,13 +622,15 @@ uint32_t Hal_Aux_AdcCal_LoadFlash( void )
 
     u32Res = Hal_Flash_AddrRead(SPI_IDX_0, AUXADC_FLASH_START_ADDR, 0, sizeof(sAuxadcCalTable), (uint8_t *)&sAuxadcCalTable);
 
-    // Updated slope and offset
-    Hal_Aux_LseRegressUpdate(2, sAuxadcCalTable.stIntSrc);
-
-    if( u32Res != 0)
+    if( u32Res != 0 )
+    {
+        // Error happen
         return HAL_AUX_FAIL;
-    else
+    }else{
+        // No error, updated slope and offset
+        Hal_Aux_LseRegressUpdate(2, sAuxadcCalTable.stIntSrc);
         return HAL_AUX_OK;
+    }
 }
 
 /*************************************************************************
@@ -705,47 +706,14 @@ uint32_t Hal_Aux_AdcCal_StoreFlash( void )
 *************************************************************************/
 uint32_t Hal_Aux_AdcCal_LoadDef( void )
 {
-    uint8_t u8Idx = 0;
-    uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
-    uint32_t u32Temp = 0;
-    uint32_t u32Res = 0;
-
-    // source VSS
-    u32Res =Hal_Aux_SourceSelect( (E_HalAux_Src_t)HAL_AUX_SRC_VSS, 0 );
-    if( u32Res == HAL_AUX_FAIL )
-        return HAL_AUX_FAIL;
-    u32Temp = 0;
-    // Force-En
-    g_ubHalAux_Pu_WriteDirect = 1;
-    u32Res = Hal_Aux_AdcValueGet(&u32Temp);
-    // Remove Force-En
-    g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
-    if( u32Res == HAL_AUX_FAIL )
-        return HAL_AUX_FAIL;
     sAuxadcCalTable.stIntSrc[ 0 ].u16MiniVolt = 0;
-    if( u32Temp > g_ulHalAux_VssOffset)
-        sAuxadcCalTable.stIntSrc[ 0 ].u16RawData  = u32Temp - g_ulHalAux_VssOffset;
-    else
-        sAuxadcCalTable.stIntSrc[ 0 ].u16RawData  = 0;
+    sAuxadcCalTable.stIntSrc[ 0 ].u16RawData  = 0;
 
-    // Source LDO_RF
-    u32Res = Hal_Aux_SourceSelect( HAL_AUX_SRC_LDO_RF, 0 );
-    if( u32Res == HAL_AUX_FAIL )
-        return HAL_AUX_FAIL;
-    u32Temp = 0;
-    // Force-En
-    g_ubHalAux_Pu_WriteDirect = 1;
-    u32Res = Hal_Aux_AdcValueGet(&u32Temp);
-    // Remove Force-En
-    g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
-    if( u32Res == HAL_AUX_FAIL )
-        return HAL_AUX_FAIL;
-    u8Idx = ( reg_read(0x4000108c) & 0x00000180 ) >> 7;
-    sAuxadcCalTable.stIntSrc[ 1 ].u16MiniVolt = u16LdoRf_MiniVol[ u8Idx ];
-    sAuxadcCalTable.stIntSrc[ 1 ].u16RawData  = u32Temp;
+    sAuxadcCalTable.stIntSrc[ 1 ].u16MiniVolt = 0;
+    sAuxadcCalTable.stIntSrc[ 1 ].u16RawData  = 0;
 
-    // Updated slope and offset
-    Hal_Aux_LseRegressUpdate(2, sAuxadcCalTable.stIntSrc);
+    g_fSlope = 0.3; // RawData/mv
+    g_fOffset = 64;
 
     return HAL_AUX_OK;
 }
@@ -810,7 +778,6 @@ uint32_t Hal_Aux_AdcCal_LoadOtp( void )
 *************************************************************************/
 void Hal_Aux_AdcCal_Init( void )
 {
-    uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
     if(g_ubHalAux_Cal)
         return;
 
@@ -825,9 +792,7 @@ void Hal_Aux_AdcCal_Init( void )
     else
     {
         // Load from internal sources
-        g_ubHalAux_Pu_WriteDirect = 1;
         Hal_Aux_AdcCal_LoadDef();
-        g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
     }
     g_ubHalAux_Cal = 1;
 }
@@ -1117,12 +1082,7 @@ void Hal_Aux_PatchInit(void)
     g_ubHalAux_Cal = 0;
     g_ubHalAux_Pu_WriteDirect = 0;
 
-    // Statistic result (HW recommnad)
-    g_ulHalAux_VssOffset = 11;
-
-    // for calibration
-    g_fSlope = 300; // RawData/mv
-    g_fOffset = 64;
+    Hal_Aux_AdcCal_LoadDef();
 
     // Here set via AOS document
     u16LdoRf_MiniVol[0] = 1000; // 1 V

@@ -442,6 +442,8 @@ at_command_t gAtCmdTbl_Ext[] =
     { "at+adcvbat",             at_cmd_ext_adcvbat,       "Volt from Vbat"},
     { "at+adcgpio",             at_cmd_ext_adcgpio,       "Volt from GPIO"},
     { "at+come",                at_cmd_rf_come,           "Parameters for AT+RX"},
+    { "at+dcoc",                at_cmd_rf_dcoc,           "Trigger DCOC"},
+    { "at+dcth",                at_cmd_rf_dcth,           "Set/Got DCOC threshold"},
     { NULL,                     NULL,                     NULL},
 };
 

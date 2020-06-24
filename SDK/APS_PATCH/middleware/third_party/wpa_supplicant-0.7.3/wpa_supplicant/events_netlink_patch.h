@@ -56,6 +56,7 @@ extern "C" {
  *                          Public Functions
  *************************************************************************
  */
+void wpa_events_func_init_patch(void);
 
 
 #ifdef __cplusplus
