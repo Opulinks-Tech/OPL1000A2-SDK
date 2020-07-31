@@ -1,4 +1,29 @@
 ﻿## Release Version:
+SDK Package: MP_2.19.3
+Patch_Lib : 4392
+
+## Release Date: 2020/07/31
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 NONE
+   
+2. Tool version information and update:
+   2.1 NONE
+
+3. Demo update:
+   3.1 NONE
+   
+4. Examples update:
+   4.1 NONE
+   
+
+## Bug Fix List 
+1. Enabled “Support short preamble”
+2. Fixed “Skip_DTIM change upwards/downwards bug"
+3. Fixed “Hidden AP issue in auto connection mode” 
+
+## Release Version:
 SDK Package: MP_2.19.2
 Patch_Lib : 4371
 

@@ -21,15 +21,20 @@
 
 void at_func_init_patch(void)
 {
+#if !defined(SDK_LITE)
     at_cmd_app_func_preinit_patch();
+#endif
     at_cmd_sys_func_init_patch();
     at_task_func_init_patch();
+#if !defined(SDK_LITE)
     at_cmd_tcpip_api_preinit_patch();
     at_cmd_wifi_func_init_patch();
     at_cmd_func_init_patch();
+#endif
     at_cmd_common_func_init_patch();
+#if !defined(SDK_LITE)
     at_msg_ext_init_patch();
-
+#endif
     // add new at command table
     at_cmd_ext_tbl_reg(gAtCmdTbl_Ext);
 }

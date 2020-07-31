@@ -168,7 +168,7 @@ Boolean wpa_driver_netlink_connect_patch(struct wpa_config * conf)
         
         if (hap_temp->hap_en) {
             hap_temp->hap_ap_info = malloc(sizeof(auto_conn_info_t));
-            wifi_sta_join_for_hiddenap();
+            wifi_sta_join_for_hiddenap_impl();
             goto done;
         }
         

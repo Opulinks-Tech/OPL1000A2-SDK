@@ -429,18 +429,24 @@ int at_cmd_ext_adcgpio(char *buf, int len, int mode)
 at_command_t gAtCmdTbl_Ext[] =
 {
     { "at+crlfterm",            at_cmd_ext_crlf_term,     "Enable/disable CRLF termination"},
+#if !defined(SDK_LITE)
     { "at+leinfo",              at_cmd_ext_le_info,       "Dump BLE packet info statistics"},
+#endif
     { "at+legain",              at_cmd_ext_le_gain,       "Configure LE Rx AGC gain"},
     { "at+auxadcdbg",           at_cmd_ext_auxadcdbg,     "Auxadc raw-data (for debug)"},
+#if !defined(SDK_LITE)
     { "at+auxadc",              at_cmd_ext_auxadc,        "Auxadc value"},
     { "at+adccalvbat",          at_cmd_ext_adccalvbat,    "Auxadc cal. from VBAT"},
+#endif
     { "at+adccalgpio",          at_cmd_ext_adccalgpio,    "Auxadc cal. from GPIO"},
     { "at+adcdef",              at_cmd_ext_adcdef,        "Auxadc re-cal all via int. src."},
     { "at+adcerase",            at_cmd_ext_adcerase,      "Erase adc-cal result"},
     { "at+adcstore",            at_cmd_ext_adcstore,      "Store adc-cal result"},
+#if !defined(SDK_LITE)
     { "at+adcreload",           at_cmd_ext_adcreload,     "Load adc-cal from flash"},
     { "at+adcvbat",             at_cmd_ext_adcvbat,       "Volt from Vbat"},
     { "at+adcgpio",             at_cmd_ext_adcgpio,       "Volt from GPIO"},
+#endif
     { "at+come",                at_cmd_rf_come,           "Parameters for AT+RX"},
     { "at+dcoc",                at_cmd_rf_dcoc,           "Trigger DCOC"},
     { "at+dcth",                at_cmd_rf_dcth,           "Set/Got DCOC threshold"},

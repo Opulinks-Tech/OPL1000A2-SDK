@@ -3,8 +3,14 @@
 PROJECT = ../../..
 FOLDER  = ../../targets/opl1000/Output-GCC
 
+# Build with "SDK_LITE" option or not
+LITE = 0
+
 # Output file names
 OUTPUT = opl1000_app_m3
+ifeq ("$(LITE)", "1")
+    OUTPUT = opl1000_app_m3_lite
+endif
 
 # Compiler & Linker
 CROSS_COMPILE = arm-none-eabi-
@@ -25,6 +31,9 @@ endif
 
 # Options for specific architecture
 DEFS  = -DGCC
+ifeq ("$(LITE)", "1")
+    DEFS += -DSDK_LITE
+endif 
 DEFS += -DARMCM3
 DEFS += -DOPL1000_APS
 DEFS += -D__noSIMULATOR__
@@ -227,7 +236,7 @@ ifeq ("$(SRC_EXIST)","1")
 		@$(CC) -o $(FOLDER)/$(OUTPUT).elf $(LFLAGS) $(CFLAGS) $(INCDIR) $(M_SRC) $(FOLDER)/$(OUTPUT).a
 		$(OBJCOPY) -O binary $(FOLDER)/$(OUTPUT).elf $(FOLDER)/$(OUTPUT).bin
 
-    lib: prebuild $(SRC)
+    lib: cleanobj prebuild $(SRC)
 		@$(AR) -r $(FOLDER)/$(OUTPUT).a $(SRC)
 
     %.o: %.c
@@ -251,3 +260,7 @@ else
 	@rm -f ../../targets/opl1000/Output-GCC/*.elf
 endif
 
+cleanobj:
+ifeq ("$(SRC_EXIST)","1")
+	@rm -f $(SRC)
+endif

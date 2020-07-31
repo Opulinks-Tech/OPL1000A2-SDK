@@ -26,8 +26,20 @@ static int wpa_cli_connect_patch(struct wpa_config * conf)
     if (conf->ssid == NULL) return FALSE;
     
     scan_info_t *pInfo = NULL;
+    hap_control_t *hap_temp = get_hap_control_struct();
+    
     pInfo = get_target_ap_record(conf->ssid->bssid, (char*)conf->ssid->ssid);
-    if (pInfo == NULL) return FALSE;
+    if (pInfo == NULL) {
+        if (hap_temp->hap_final_index != 0){
+            // Security check move to wifi_get_scan_record_by_ssid() from here.
+            if (!wpa_driver_netlink_connect(conf)) return FALSE;
+            return TRUE;
+        }
+        else {
+            return FALSE;
+        }
+    }
+    
     if (!target_ap_security_mode_chk(pInfo)) return FALSE;
     if (!wpa_driver_netlink_connect(conf)) return FALSE;
     

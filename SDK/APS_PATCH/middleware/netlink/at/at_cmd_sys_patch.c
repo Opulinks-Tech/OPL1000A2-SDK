@@ -296,6 +296,15 @@ extern at_command_t *g_AtCmdTbl_Sys_Ptr;
  */
 void at_cmd_sys_func_init_patch(void)
 {
+#ifdef SDK_LITE
+	extern void at_cmd_sys_func_init(void);
+
+	at_cmd_sys_func_init();
+
+    gAtCmdTbl_Sys[1].cmd_handle = at_cmd_sys_gmr_patch;
+    gAtCmdTbl_Sys[3].cmd_handle = at_cmd_sys_restore_patch;
+    gAtCmdTbl_Sys[15].cmd_handle = at_cmd_sys_fwver_patch;
+#else
     /** Command Table (System) */
     g_AtCmdTbl_Sys_Ptr          = gAtCmdTbl_Sys;
 
@@ -309,4 +318,5 @@ void at_cmd_sys_func_init_patch(void)
     g_u32FlashReadEnd           = AT_FLASH_READ_END;
     g_u32FlashWriteStart        = AT_FLASH_WRITE_START;
     g_u32FlashWriteEnd          = AT_FLASH_WRITE_END;
+#endif
 }

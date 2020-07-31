@@ -40,7 +40,8 @@ extern "C" {
 #define CONNECT_AP_ERR_AUTH_FAILED    203
 #define CONNECT_AP_ERR_ASSOC_FAILED   204
 
-#define CTRL_WIFI_ACT_AUTO  1
+#define CTRL_WIFI_ACT_AUTO    1
+#define CTRL_WIFI_ACT_HIDDEN  2
 
 #define CTRL_WIFI_ACT_BIT_SET(x, bit) (x |= (1 << bit))
 #define CTRL_WIFI_ACT_BIT_GET(x, bit) ((x >> bit) & 1)
