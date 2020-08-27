@@ -1,4 +1,30 @@
 ﻿## Release Version:
+SDK Package: MP_2.20
+Patch_Lib : 4414
+
+## Release Date: 2020/08/27
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 NONE
+   
+2. Tool version information and update:
+   2.1 NONE
+
+3. Demo update:
+   3.1 NONE
+   
+4. Examples update:
+   4.1 NONE
+   
+
+## Bug Fix List 
+1. DTO setting optimization
+2. TSF tracking mechanism optimization
+
+
+
+## Release Version:
 SDK Package: MP_2.19.3
 Patch_Lib : 4392
 

@@ -101,8 +101,11 @@
 uint8_t g_memp_num_tcp_pcb = 0;
 #endif
 
+#if !OPL_LWIP
 static const u8_t tcp_backoff[13] =
     { 1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 7};
+#endif
+
  /* Times per slowtmr hits */
 static const u8_t tcp_persist_backoff[7] = { 3, 6, 12, 24, 48, 96, 120 };
 
@@ -215,8 +218,12 @@ tcp_slowtmr_start:
           /* Double retransmission time-out unless we are trying to
            * connect to somebody (i.e., we are in SYN_SENT). */
           if (pcb->state != SYN_SENT) {
+#if OPL_LWIP
+              pcb->rto = 3; // (6=3000 ms, 3=1500 ms)
+#else
             u8_t backoff_idx = LWIP_MIN(pcb->nrtx, sizeof(tcp_backoff)-1);
             pcb->rto = ((pcb->sa >> 3) + pcb->sv) << tcp_backoff[backoff_idx];
+#endif
           }
 
           /* Reset the retransmission timer. */
@@ -556,8 +563,13 @@ tcp_alloc_patch(u8_t prio)
     /* As initial send MSS, we use TCP_MSS but limit it to 536.
        The send MSS is updated when an MSS option is received. */
     pcb->mss = INITIAL_MSS;
+#if OPL_LWIP
+    pcb->rto = 1500 / TCP_SLOW_INTERVAL;
+    pcb->sv = 1500 / TCP_SLOW_INTERVAL;
+#else
     pcb->rto = 3000 / TCP_SLOW_INTERVAL;
     pcb->sv = 3000 / TCP_SLOW_INTERVAL;
+#endif
     pcb->rtime = -1;
     pcb->cwnd = 1;
     pcb->tmr = tcp_ticks;

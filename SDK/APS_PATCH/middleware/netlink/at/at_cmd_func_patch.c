@@ -34,7 +34,7 @@ void at_func_init_patch(void)
     at_cmd_common_func_init_patch();
 #if !defined(SDK_LITE)
     at_msg_ext_init_patch();
-#endif
     // add new at command table
     at_cmd_ext_tbl_reg(gAtCmdTbl_Ext);
+#endif
 }

@@ -135,6 +135,7 @@ low_level_output_patch(struct netif *netif, struct pbuf *p)
 {
     struct ethernetif *ethernetif = netif->state;
     struct pbuf *q;
+    int ret = ERR_OK;
     
     LWIP_UNUSED_ARG(ethernetif);
 
@@ -149,26 +150,28 @@ low_level_output_patch(struct netif *netif, struct pbuf *p)
             dump_buffer(q->payload, q->len, 1);
         #endif
         
-        wifi_mac_tx_start(q->payload, q->len);
+        if (TX_QUEUE_FULL == wifi_mac_tx_start(q->payload, q->len)) {
+            ret = ERR_MEM;
+        }
     }
     else {
         q = pbuf_alloc(PBUF_RAW_TX, p->tot_len, PBUF_RAM);
         
         if (q != NULL) {
             pbuf_copy(q, p);
-        }
-        else {
-            printf("__packet_tx_task: pbuf malloc failed\r\n");
-            return ERR_OK;
-        }
-
         #ifdef TX_PKT_DUMP
             dump_buffer(q->payload, q->len, 1);
         #endif
 
-        wifi_mac_tx_start(q->payload, q->len);
-
-        pbuf_free(q);
+            if (TX_QUEUE_FULL == wifi_mac_tx_start(q->payload, q->len)) {
+                ret = ERR_MEM;
+            }
+            pbuf_free(q);
+        }
+        else {
+            printf("__packet_tx_task: pbuf malloc failed\r\n");
+            ret = ERR_MEM;
+        }
     }
 
 #if ETH_PAD_SIZE
@@ -177,7 +180,7 @@ low_level_output_patch(struct netif *netif, struct pbuf *p)
 
     LINK_STATS_INC(link.xmit);
 
-    return ERR_OK;
+    return ret;
 }
 
 void lwip_load_interface_wlannetif_patch(void)

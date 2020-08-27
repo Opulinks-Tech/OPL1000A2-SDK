@@ -12,6 +12,13 @@
 #ifndef _BLE_HOST_PATCH_INIT_H_
 #define _BLE_HOST_PATCH_INIT_H_
 
+#ifdef  SDK_LITE
+void LeGapIfPatch_Init(void);
+#define LeHostPatchAssign()         do {                            \
+                                        LeGapIfPatch_Init();        \
+                                    } while(0)
+#else   /* SDK_LITE */
 void LeHostPatchAssign(void);
+#endif  /* SDK_LITE */
 
 #endif

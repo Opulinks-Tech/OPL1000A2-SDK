@@ -16,22 +16,67 @@
 #include "controller_wifi_com.h"
 #include "driver_netlink.h"
 #include "wpa_supplicant_i.h"
+#include "wpa.h"
 #include "driver_netlink_patch.h"
 #include "events_netlink.h"
+#include "Sha1-pbkdf2.h"
 
 extern struct wpa_supplicant *wpa_s;
+extern struct wpa wpa;
 extern u8 g_bssid[6];
 extern u8 g_fastconn;
 extern u8 g_wifi_reconnection_counter;
+extern u8 g_wpa_psk[32];
+extern char g_passphrase[MAX_LEN_OF_PASSPHRASE]; 
+extern auto_connect_cfg_t g_AutoConnect;
 
 static const char *TAG = "DRV";
+
+#define WPA_IS_PROCESSING "WPA: Ignore, is processing\r\n"
+
+static char *get_ssid_by_bsssid(char *pbssid)
+{
+    int i;
+    
+    if (gScanReport.uScanApNum == 0)
+        return NULL;
+
+    for (i=0; i<gScanReport.uScanApNum; i++) {
+        if(os_memcmp((void*)(pbssid), (void*)(gScanReport.pScanInfo[i].bssid), MAC_ADDR_LEN) == 0) {
+            return gScanReport.pScanInfo[i].ssid;
+        }
+    }
+    
+    return NULL;
+}
+
+static int wpa_driver_cal_psk(char *pssid, uint16_t ssid_len, char *ppassphrase, uint16_t pass_len)
+{
+    if (pssid == NULL)
+        return -1;
+    
+    if (ssid_len == 0)
+        return -1;
+    
+    if (ppassphrase == NULL)
+        return -1;
+    
+    if (pass_len == 0)
+        return -1;
+    
+    pbkdf2_sha1(ppassphrase, pssid, ssid_len, 4096, wpa.psk, PMK_LEN);
+    wpa_sm_set_pmk(wpa_s->wpa, wpa.psk, PMK_LEN);
+    memcpy(&g_wpa_psk[0], wpa.psk, PMK_LEN);
+    
+    return 0;
+}
 
 Boolean wpa_driver_netlink_scan_patch(int mode)
 {
     if (wifi_ctrl_state_get() == WIFI_CTRL_SCANNING_ST ||
         wifi_ctrl_state_get() == WIFI_CTRL_CONNECTING_ST ||
         wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST) {
-        log_print(LOG_MED_LEVEL, TAG, "WPA: Ignore, is processing\r\n");
+        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING);
         return FALSE;
     }
     else {
@@ -53,7 +98,7 @@ Boolean wpa_driver_netlink_scan_by_cfg_patch(void *cfg)
     if (wifi_ctrl_state_get() == WIFI_CTRL_SCANNING_ST ||
         wifi_ctrl_state_get() == WIFI_CTRL_CONNECTING_ST ||
         wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST) {
-        log_print(LOG_MED_LEVEL, TAG, "WPA: Ignore, is processing\r\n");
+        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING);
         return FALSE;
     }
     else {
@@ -138,6 +183,11 @@ Boolean wpa_driver_netlink_connect_patch(struct wpa_config * conf)
         
         wpa_supplicant_set_state(wpa_s, WPA_ASSOCIATING);
         
+        if (strlen(g_passphrase) != 0) {
+            char *pssid = get_ssid_by_bsssid((char *)conf->ssid->bssid);
+            wpa_driver_cal_psk(pssid, strlen(pssid), g_passphrase, strlen(g_passphrase));
+        }
+        
         ret = wifi_sta_join(conf->ssid->bssid);
     } 
     else {
@@ -175,6 +225,11 @@ Boolean wpa_driver_netlink_connect_patch(struct wpa_config * conf)
         wpa_supplicant_set_state(wpa_s, WPA_ASSOCIATING);
         g_fastconn = 0;
         g_wifi_reconnection_counter = 0;
+        
+        if (strlen(g_passphrase) != 0) {
+            wpa_driver_cal_psk((char *)conf->ssid->ssid, strlen((char *)conf->ssid->ssid), g_passphrase, strlen(g_passphrase));
+        }
+        
         ret = wifi_sta_join(pInfo->bssid);
     }
 
@@ -183,9 +238,30 @@ done:
     return FALSE;
 }
 
+Boolean wpa_driver_netlink_connect_from_ac_patch(u8 index)
+{
+    if (index > MAX_NUM_OF_AUTO_CONNECT) {
+//        log_print(LOG_HIGH_LEVEL, TAG, "WPA: Invalid Parameter \r\n");
+        return FALSE;
+    }
+    
+    if (wifi_ctrl_state_get() == WIFI_CTRL_SCANNING_ST ||
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTING_ST ||
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST) {
+        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING);
+        return FALSE;
+    }
+    
+    wpa_sm_set_pmk(wpa_s->wpa, g_AutoConnect.pFCInfo[index].psk, PMK_LEN);
+    
+    control_auto_connect_by_index(index);
+    return TRUE;
+}
+
 void wpa_driver_func_init_patch(void)
 {
     wpa_driver_netlink_scan        = wpa_driver_netlink_scan_patch;
     wpa_driver_netlink_scan_by_cfg = wpa_driver_netlink_scan_by_cfg_patch;
     wpa_driver_netlink_connect     = wpa_driver_netlink_connect_patch;
+    wpa_driver_netlink_connect_from_ac = wpa_driver_netlink_connect_from_ac_patch;
 }

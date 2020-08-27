@@ -57,10 +57,6 @@ void wpa_supplicant_event_assoc_patch(struct wpa_supplicant *wpa_s,
 {
     u8 bssid[ETH_ALEN]={0};
     asso_data *pdata;
-    u8 mac_state;
-    u8 *ssid;
-//    int i;
-//    int i, j;
     u8 *pReqIE;
     scan_info_t *pInfo = NULL;
     auto_conn_info_t *pacInfo = NULL;
@@ -72,9 +68,6 @@ void wpa_supplicant_event_assoc_patch(struct wpa_supplicant *wpa_s,
     if(wpa_s == NULL) return;
 
     sm = wpa.supp;
-
-    //os_memset(passphrase, 0, 32);
-    memset(&g_wpa_psk[0], 0, 32);
     
     wpa_driver_netlink_get_bssid(bssid);
 
@@ -103,7 +96,6 @@ void wpa_supplicant_event_assoc_patch(struct wpa_supplicant *wpa_s,
 
     //Check if it's open system connection, it means it's connected
     //Check if it's security connection, it means it's not the final state, the following eapol key frame event will come
-    mac_state = wifi_get_mac_state();
 
     if (wpa_s->key_mgmt == WPA_KEY_MGMT_NONE ||
         wpa_s->key_mgmt == WPA_KEY_MGMT_WPA_NONE){
@@ -134,23 +126,9 @@ void wpa_supplicant_event_assoc_patch(struct wpa_supplicant *wpa_s,
 
     //wpa_supplicant_set_suites(wpa_s, NULL, ssid, wpa_ie, &wpa_ie_len)
 
-    if (mac_state == MAC_STA_3) {
-        //SSID
-        ssid = wifi_get_ssid();
-
-        //1.Caculate the PMK
-        //pbkdf2_sha1(passphrase, (char*)ssid, os_strlen((const char*)ssid), 4096, wpa.psk, 32);
-        if (CTRL_WIFI_ACT_BIT_GET(ctrl_wifi_act, CTRL_WIFI_ACT_AUTO)) {
-            pacInfo = wifi_get_ac_record(wpa_s->bssid);
-            wpa_sm_set_pmk(wpa_s->wpa, pacInfo->psk, PMK_LEN);
-        }
-        else {
-            pbkdf2_sha1(g_passphrase, (char*)ssid, os_strlen((const char*)ssid), 4096, wpa.psk, 32);
-            wpa_sm_set_pmk(wpa_s->wpa, wpa.psk, PMK_LEN);
-            memcpy(&g_wpa_psk[0], wpa.psk, 32);
-        }
-
-        //os_memcpy(wpa.psk, temp_psk, 32);
+    if (CTRL_WIFI_ACT_BIT_GET(ctrl_wifi_act, CTRL_WIFI_ACT_AUTO)) {
+        pacInfo = wifi_get_ac_record(wpa_s->bssid);
+        wpa_sm_set_pmk(wpa_s->wpa, pacInfo->psk, PMK_LEN);
     }
 }
 

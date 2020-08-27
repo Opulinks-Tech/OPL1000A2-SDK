@@ -49,7 +49,9 @@ extern "C" {
  *                          Public Variables
  *************************************************************************
  */
+#if !defined(SDK_LITE)
 extern at_command_t gAtCmdTbl_Ext[];
+#endif /* !defined(SDK_LITE) */
 /*
  *************************************************************************
  *                          Public Functions
