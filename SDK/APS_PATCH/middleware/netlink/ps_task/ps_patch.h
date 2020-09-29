@@ -70,6 +70,8 @@ typedef struct
     uint8_t app_io_exist;
     uint8_t gpio_lock;
 
+    double tick_32k;
+
 } t_ps_conf_patch;
 
 
@@ -92,7 +94,7 @@ int ps_sleep_patch(void);
 void ps_update_io_time(void);
 void ps_lock_gpio_apply(void);
 void ps_enable_timer_sleep_patch(uint32_t sleep_duration_ms);
-
+double ps_32k_xtal_measure(uint32_t duration_ms);
 
 #ifdef __cplusplus
 }

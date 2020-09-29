@@ -216,19 +216,19 @@ Boolean wpa_driver_netlink_connect_patch(struct wpa_config * conf)
             g_bssid[i] = pInfo->bssid[i];
         }
         
+        wpa_supplicant_set_state(wpa_s, WPA_ASSOCIATING);
+        if (strlen(g_passphrase) != 0) {
+            wpa_driver_cal_psk((char *)conf->ssid->ssid, strlen((char *)conf->ssid->ssid), g_passphrase, strlen(g_passphrase));
+        }
+        
         if (hap_temp->hap_en) {
             hap_temp->hap_ap_info = malloc(sizeof(auto_conn_info_t));
             wifi_sta_join_for_hiddenap_impl();
             goto done;
         }
         
-        wpa_supplicant_set_state(wpa_s, WPA_ASSOCIATING);
         g_fastconn = 0;
         g_wifi_reconnection_counter = 0;
-        
-        if (strlen(g_passphrase) != 0) {
-            wpa_driver_cal_psk((char *)conf->ssid->ssid, strlen((char *)conf->ssid->ssid), g_passphrase, strlen(g_passphrase));
-        }
         
         ret = wifi_sta_join(pInfo->bssid);
     }

@@ -35,7 +35,7 @@
 #include "mw_fim_default_group01.h"
 #include "mw_fim_default_group02.h"
 #include "mw_fim_default_group03.h"
-#include "ps.h"
+#include "ps_patch.h"
 #include "sys_common_api.h"
 #include "sys_common_types.h"
 #include "hal_flash.h"
@@ -250,7 +250,7 @@ int at_cmd_sys_sleep_patch(char *buf, int len, int mode)
  */
 int at_cmd_sys_fwver_patch(char *buf, int len, int mode)
 {
-    uint16_t uwProjectId = 0;
+	uint16_t uwProjectId = 0;
     uint16_t uwChipId = 0;
     uint16_t uwFirmwareId = 0;
 
@@ -275,6 +275,27 @@ int at_cmd_sys_fwver_patch(char *buf, int len, int mode)
             break;
     }
     
+    return true;
+}
+
+int at_cmd_at_slp_tmr_patch(char *buf, int len, int mode)
+{
+    uint32_t duration_ms = 1000;
+
+    if (mode == AT_CMD_MODE_SET)
+    {
+        int argc = 0;
+        char *argv[AT_MAX_CMD_ARGS] = {0};
+        at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS);
+
+        duration_ms = atoi(argv[1]);
+        if (duration_ms <= 0)
+            duration_ms = 1;
+    }
+
+    double xtal_freq = ps_32k_xtal_measure(duration_ms);
+
+    msg_print_uart1("\r\n32K XTAL Freq: %.2f\n\r", xtal_freq);
     return true;
 }
 
@@ -313,6 +334,7 @@ void at_cmd_sys_func_init_patch(void)
     gAtCmdTbl_Sys[3].cmd_handle = at_cmd_sys_restore_patch;
     gAtCmdTbl_Sys[7].cmd_handle = at_cmd_sys_sleep_patch;
     gAtCmdTbl_Sys[15].cmd_handle = at_cmd_sys_fwver_patch;
+    gAtCmdTbl_Sys[30].cmd_handle = at_cmd_at_slp_tmr_patch;
 
     g_u32FlashReadStart         = AT_FLASH_READ_START;
     g_u32FlashReadEnd           = AT_FLASH_READ_END;

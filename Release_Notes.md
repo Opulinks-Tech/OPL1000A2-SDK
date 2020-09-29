@@ -1,4 +1,23 @@
 ﻿## Release Version:
+SDK Package: MP_2.20.002
+Patch_Lib : 4444
+
+## Release Date: 2020/09/30
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 NONE
+   
+2. Tool version information and update:
+   2.1 NONE
+
+3. Demo update:
+   3.1 NONE
+   
+4. Examples update:
+   4.1 NONE
+
+## Release Version:
 SDK Package: MP_2.20
 Patch_Lib : 4414
 
