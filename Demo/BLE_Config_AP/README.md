@@ -14,6 +14,6 @@ Firmware corresponding example source code locates at SDK\APS_PATCH\examples\sys
 
 
 ## Note 
-(1) Device default BLE name is OPL_33:44:55:66 
+(1) Device default BLE name is OPL_33:44:55:66   
 (2) In order to use BLE OTA function, user need to store upgrade firmware (OTA format) into mobile in advance.       
 (3) You can download the APP called "Opulinks" in APP Store or Google Play
