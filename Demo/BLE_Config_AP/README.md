@@ -5,14 +5,15 @@ Firmware corresponding example source code locates at SDK\APS_PATCH\examples\sys
 
 ## Content
 1. OPL1000-Demo-BLE-setup-network-and-BLE-OTA-guide.pdf: Guide document of how to run this demo. 
-2. OPL1000-Demo-BLE-setup-network-and-BLE-OTA-guide_ENG.pdf:English guide document of how to run this demo. 
-3. opulinks_iot_app.apk: Android mobile APP program. 
-4. opulinks_iot_app_src.7z: Android mobile APP source code.
-5. OBWappforWechatminiprogram.7z: wechat mini-program source code. 
-6. opulinks_iot_ios_app_src.zip: IOS mobile APP source code.
+2. OPL1000-Demo-BLE-setup-network-and-BLE-OTA-guide_ENG.pdf:English guide document of how to run this demo.  
+3. opulinks_iot_app_src.7z: Android mobile APP source code.
+4. OBWappforWechatminiprogram.7z: wechat mini-program source code. 
+5. opulinks_iot_ios_app_src.zip: IOS mobile APP source code.  
+
 
 
 
 ## Note 
 (1) Device default BLE name is OPL_33:44:55:66 
-(2) In order to use BLE OTA function, user need to store upgrade firmware (OTA format) into mobile in advance.      
+(2) In order to use BLE OTA function, user need to store upgrade firmware (OTA format) into mobile in advance.       
+(3) You can download the APP called "Opulinks" in APP Store or Google Play
