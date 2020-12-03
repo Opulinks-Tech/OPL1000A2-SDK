@@ -200,6 +200,8 @@ extern osSemaphoreId g_taHalAux_SemaphoreId;
 uint8_t g_ubHalAux_Cal;
 uint8_t g_ubHalAux_Pu_WriteDirect;
 
+uint32_t g_ulHalAux_DelayUs;
+
 char *pAuxadcSrcName[ HAL_AUX_SRC_MAX_PATCH ] =
 {
     "GPIO",    // HAL_AUX_SRC_GPIO,
@@ -427,7 +429,8 @@ uint8_t Hal_Aux_AdcValueGet_patch(uint32_t *pulValue)
 
     uint32_t ulCurrentTick = 0;
     uint32_t ulDiffTick = 0;
-    uint32_t ulEscapeTime = HAL_AUX_ADC_READ_ERROR_TIME * Hal_Tick_PerMilliSec();
+    uint32_t ulEscapeTicks = HAL_AUX_ADC_READ_ERROR_TIME * Hal_Tick_PerMilliSec();
+    uint32_t ulDelayTicks = ( Hal_Tick_PerMilliSec() / 1000 ) * g_ulHalAux_DelayUs;
 
     Hal_Aux_AdcUpdateCtrlReg(1);
 
@@ -465,6 +468,9 @@ uint8_t Hal_Aux_AdcValueGet_patch(uint32_t *pulValue)
         AOS->PMS_SPARE = tmp;
     }
 
+    // Check delay time start
+    ulCurrentTick = Hal_Tick_Diff(0);
+
     if (g_ulHalAux_AverageCount == 0)
         g_ulHalAux_AverageCount = 1;
 
@@ -477,6 +483,18 @@ uint8_t Hal_Aux_AdcValueGet_patch(uint32_t *pulValue)
         osDelay(1);
     }
 
+    // Check delay time
+    ulDiffTick = Hal_Tick_Diff( ulCurrentTick );
+    if( ulDiffTick < ulDelayTicks )
+    {
+        osDelay( (ulDelayTicks - ulDiffTick) / Hal_Tick_PerMilliSec() );
+        do
+        {
+            ulDiffTick = Hal_Tick_Diff( ulCurrentTick );
+        }while( ulDiffTick < ulDelayTicks );
+    }
+
+    // Average
     for (j=0; j<ulRepeatCount; j++)
     {
         ulCurrentTick = Hal_Tick_Diff(0);
@@ -506,7 +524,7 @@ uint8_t Hal_Aux_AdcValueGet_patch(uint32_t *pulValue)
 
             // error handle if always zero
             ulDiffTick = Hal_Tick_Diff(ulCurrentTick);
-            if (ulDiffTick >= ulEscapeTime)
+            if (ulDiffTick >= ulEscapeTicks)
             {
                 osDelay(10);
                 break;
@@ -1016,6 +1034,33 @@ uint8_t Hal_Aux_AdcConvValue_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, 
 
     return HAL_AUX_OK;
 }
+
+/*************************************************************************
+* FUNCTION:
+*   Hal_Aux_AdcConvValue_Get_v2
+*
+* DESCRIPTION:
+*   New API for gotting the converted ADC value (map 0x000~0x3FF to 0 ~ 3000 mV)
+*
+* PARAMETERS
+*   1. tSrc      : [In] the source type of AUXADC
+*   2. ubGpioIdx : [In] the index of GPIO
+*   3. ulAvgCnt  : [In] the average counts of the source
+*   4. ulDelayUs : [In] the delay times for R-R-C type source
+*   5. pulValue  : [Out] the converted ADC value
+*
+* RETURNS
+*   1. HAL_AUX_OK   : success
+*   2. HAL_AUX_FAIL : fail
+*
+*************************************************************************/
+uint8_t Hal_Aux_AdcConvValue_Get_v2( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, uint32_t ulAvgCnt, uint32_t ulDelayUs, uint32_t *pulValue)
+{
+    g_ulHalAux_AverageCount = ulAvgCnt;
+    g_ulHalAux_DelayUs = ulDelayUs;
+
+    return Hal_Aux_AdcConvValue_Get( tSrc, ubGpioIdx, pulValue);
+}
 /*************************************************************************
 * FUNCTION:
 *   Hal_Aux_VbatGet
@@ -1081,6 +1126,7 @@ void Hal_Aux_PatchInit(void)
 {
     g_ubHalAux_Cal = 0;
     g_ubHalAux_Pu_WriteDirect = 0;
+    g_ulHalAux_DelayUs = 0;
 
     Hal_Aux_AdcCal_LoadDef();
 

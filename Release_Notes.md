@@ -1,4 +1,30 @@
 ﻿## Release Version:
+SDK Package: MP_2.20.003
+Patch_Lib : 4536
+
+## Release Date: 2020/11/27
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 NONE
+   
+2. Tool version information and update:
+   2.1 NONE
+
+3. Demo update:
+   3.1 NONE
+   
+4. Examples update:
+   4.1 NONE
+   
+
+## Bug Fix List 
+1. New feature: memory leak/corruption detection
+2. Disabled MAC fragmentation
+3. Enhanced rate setting in DTO
+
+
+## Release Version:
 SDK Package: MP_2.20.002
 Patch_Lib : 4444
 
@@ -16,6 +42,12 @@ Patch_Lib : 4444
    
 4. Examples update:
    4.1 NONE
+   
+
+## Bug Fix List 
+1. Fix issue: AP is hidden SSID with WPA or WPA2 PSK, connection is failed
+2. Enhance DHCP mechanism to reduce Got IP Time
+
 
 ## Release Version:
 SDK Package: MP_2.20

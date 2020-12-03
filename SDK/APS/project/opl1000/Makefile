@@ -226,6 +226,8 @@ INCDIR += -I ../../../APS_PATCH/project/opl1000/boot_sequence
 INCDIR += -I ../../../APS_PATCH/project/opl1000/include
 INCDIR += -I ../../../APS_PATCH/project/opl1000/startup
 INCDIR += -I ../../../APS_PATCH/project/opl1000/lib
+INCDIR += -I ../../../APS_PATCH/FreeRtos/Source
+
 
 #############   source    ##############
 M_SRC = ../../../APS_PATCH/project/opl1000/startup/main_patch.c

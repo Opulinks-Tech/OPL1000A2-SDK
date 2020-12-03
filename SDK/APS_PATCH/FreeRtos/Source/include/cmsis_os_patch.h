@@ -11,9 +11,9 @@
  *******************************************************************************
  *
  *  @file cmsis_os_patch.h
- * 
- *  @brief 
- *  
+ *
+ *  @brief
+ *
  ******************************************************************************/
 
 #ifndef _CMSIS_OS_PATCH_H_
@@ -44,6 +44,17 @@ extern "C" {
 
 
 
+
+typedef struct {
+    uint32_t    pmp_buf_sz;    /* 0 as no fail case */
+    void        *pmp_buf;
+    uint32_t    pmp_instance_id;
+    uint32_t    vmp_buf_sz;    /* 0 as no fail case */
+    void        *vmp_buf;
+    uint32_t    vmp_instance_id;
+    void        *unknown_buf;   /* Cannot find correct MagicNum */
+} osMemPoolFailLog_t;
+
 /*
  *************************************************************************
  *                          Public Variables
@@ -56,6 +67,8 @@ extern "C" {
  *                          Public Functions
  *************************************************************************
  */
+
+void osPatchInit(void);
 
 
 #ifdef __cplusplus

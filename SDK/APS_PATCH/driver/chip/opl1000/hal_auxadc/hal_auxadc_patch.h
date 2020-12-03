@@ -86,6 +86,7 @@ extern S_AuxadcCalTable_t sAuxadcCalTable;
 extern uint8_t g_ubHalAux_Pu_WriteDirect; // Only enable for calibration
 extern uint32_t g_ulHalAux_AverageCount;
 extern uint32_t g_ulHalAux_SkipCount;
+extern uint32_t g_ulHalAux_DelayUs;
 
 /*
  *************************************************************************
@@ -112,6 +113,7 @@ uint8_t Hal_Aux_AdcRawData_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, ui
 float Hal_Aux_AdcMiniVolt_Convert(uint32_t u32RawData);
 uint8_t Hal_Aux_AdcMiniVolt_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, float *pfVbat);
 uint8_t Hal_Aux_AdcConvValue_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, uint32_t *pulValue);
+uint8_t Hal_Aux_AdcConvValue_Get_v2( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, uint32_t ulAvgCnt, uint32_t ulDelayUs, uint32_t *pulValue);
 
 void Hal_Aux_PatchInit(void);
 

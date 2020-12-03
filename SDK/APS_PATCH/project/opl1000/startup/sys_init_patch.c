@@ -55,7 +55,7 @@
 #include "sys_cfg_patch.h"
 #include "opl1000_it_patch.h"
 #include "events_netlink_patch.h"
-
+#include "cmsis_os_patch.h"
 /*
  *************************************************************************
  *                          Definitions and Macros
@@ -493,7 +493,9 @@ void SysInit_EntryPoint(void)
     Hal_Uart_PatchInit();
     Hal_DbgUart_PatchInit();
     Hal_Aux_PatchInit();
+    
     // 14. os
+    osPatchInit();
 
     // 15. util api
 
