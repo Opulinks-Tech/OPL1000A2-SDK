@@ -4,9 +4,9 @@ Andrioid APP ，IOS APP and wechat mini-program source are provided.
 Firmware corresponding example source code locates at SDK\APS_PATCH\examples\system\blewifi.
 
 ## Content
-1. OPL1000-Demo-BLE-setup-network-and-BLE-OTA-guide.pdf: Guide document of how to run this demo. 
-2. OPL1000-Demo-BLE-setup-network-and-BLE-OTA-guide_ENG.pdf:English guide document of how to run this demo.  
-3. opulinks_iot_app_src.7z: Android mobile APP source code.
+1. Android_OBW_app_2_0_0.7z: Android mobile APP source code
+2. OPL1000-Demo-BLE-setup-network-and-BLE-OTA-guide.pdf: Guide document of how to run this demo. 
+3. OPL1000-Demo-BLE-setup-network-and-BLE-OTA-guide_ENG.pdf:English guide document of how to run this demo.  
 4. OBWappforWechatminiprogram.7z: wechat mini-program source code. 
 5. opulinks_iot_ios_app_src.zip: IOS mobile APP source code.  
 
