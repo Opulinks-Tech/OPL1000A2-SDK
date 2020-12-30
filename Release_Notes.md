@@ -1,4 +1,28 @@
 ﻿## Release Version:
+SDK Package: MP_2.20.004
+Patch_Lib : 4549
+
+## Release Date: 2020/12/24
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 NONE
+   
+2. Tool version information and update:
+   2.1 NONE
+
+3. Demo update:
+   3.1 NONE
+   
+4. Examples update:
+   4.1 NONE
+   
+
+## Bug Fix List 
+[SYS] Enhance memory protection mechanism
+
+
+## Release Version:
 SDK Package: MP_2.20.003
 Patch_Lib : 4536
 
