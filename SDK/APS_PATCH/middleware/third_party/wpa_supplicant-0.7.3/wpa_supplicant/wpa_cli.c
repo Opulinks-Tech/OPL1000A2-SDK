@@ -19,6 +19,9 @@
 
 #include "controller_wifi_com_patch.h"
 #include "wpa_cli_patch.h"
+#include "driver_netlink_patch.h"
+
+#define WPA_CLI_CMD_RESET           "wpa_reset"
 
 static int wpa_cli_connect_patch(struct wpa_config * conf)
 {
@@ -83,8 +86,53 @@ static int wpa_cli_scan_by_cfg_patch(void *cfg)
     return wpa_driver_netlink_scan_by_cfg(scan_cfg);
 }
 
+static int wpa_cli_cmd_handler_ext(int argc, char *argv[])
+{
+    if (argc < 1) return -1;
+    if (os_strncasecmp(WPA_CLI_CMD_RESET, argv[0], os_strlen(WPA_CLI_CMD_RESET)) == 0) {
+        wpa_cli_cmd_reset(argc, argv);
+    }
+    return 0;
+}
+
+static void wpa_cli_parse_patch(char* pszData) //pszData => wpa_xxx parm1 parm2 ...
+{
+    char *argv[WPA_CLI_CMD_NUM_MAX] = {0}; //argv[0]:wap_xxx argv[1]:parm1 argv[2]:parm3
+    int count = 0;
+    char *p = NULL;
+    char *pSavedPtr = NULL;
+
+    /* get the first word from the message, seperated by
+          space character */
+    p = strtok_r(pszData, " ", &pSavedPtr); //word1: wpa_xxx
+    argv[count] = p; //count = 0
+    count++;
+
+    /* the following loop gets the rest of the words until the
+     * end of the message */
+    while ((p = strtok_r(NULL, " ", &pSavedPtr)) != NULL){ //p: parmx
+        argv[count] = p;
+        count++;
+    }
+
+    wpa_cli_cmd_handler(count, argv);
+    wpa_cli_cmd_handler_ext(count, argv);
+}
+
+static int wpa_cli_disconnect_handler_patch(int argc, char *argv[])
+{
+    return wpa_driver_netlink_disconnect_patch(NULL, 0);
+}
+
+int wpa_cli_cmd_reset(int argc, char *argv[])
+{
+    return wpa_driver_netlink_reset();
+}
+
 void wpa_cli_func_init_patch(void)
 {
     wpa_cli_connect            = wpa_cli_connect_patch;
+    wpa_cli_disconnect_handler = wpa_cli_disconnect_handler_patch;
     wpa_cli_scan_by_cfg        = wpa_cli_scan_by_cfg_patch;
+    wpa_cli_parse              = wpa_cli_parse_patch;
 }

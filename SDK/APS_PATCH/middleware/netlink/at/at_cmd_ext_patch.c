@@ -84,7 +84,9 @@ int at_cmd_ext_le_info(char *buf, int len, int mode)
     int iRet = 0;
     int argc = 0;
     char *argv[AT_MAX_CMD_ARGS] = {0};
-
+    uint8_t enable = 0;
+    extern uint8_t le_ctrl_display_info_en;
+    
     at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS);
 
     if (mode == AT_CMD_MODE_SET)
@@ -95,8 +97,11 @@ int at_cmd_ext_le_info(char *buf, int len, int mode)
 
             if (argc == 3)
                 interval = atoi(argv[2]);
+            
+            enable = (atoi(argv[1]) == 0) ? 0 : 1;
+            le_ctrl_display_info_en = (atoi(argv[1]) == 2) ? 1 : 0;
 
-            if (!le_ctrl_packet_info_display(atoi(argv[1]), interval))
+            if (!le_ctrl_packet_info_display(enable, interval))
                 iRet = 1;
         }
     }
@@ -147,7 +152,6 @@ int at_cmd_ext_le_gain(char *buf, int len, int mode)
 int at_cmd_ext_auxadcdbg(char *buf, int len, int mode)
 {
     int iRet = 0;
-    uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
     uint8_t ubSrc = 0;
     uint8_t ubGpioIdx = 0;
     uint32_t u32Res = 0;
@@ -158,16 +162,27 @@ int at_cmd_ext_auxadcdbg(char *buf, int len, int mode)
 
     at_cmd_buf_to_argc_argv(buf, &argc, argv, AT_MAX_CMD_ARGS);
 
-    if (argc >= 2)
+    if(argc >= 2)
         ubSrc = atoi(argv[1]);
 
     if(argc >= 3)
         ubGpioIdx = atoi(argv[2]);
 
+    if(argc >= 4)
+        g_ulHalAux_AverageCount = atoi(argv[3]);
+    else
+        g_ulHalAux_AverageCount = 30;
+    msg_print_uart1("AvgCnt = %d\r\n", g_ulHalAux_AverageCount);
+
+    if(argc >= 5)
+        g_ulHalAux_PuEnDelay_Us = atoi(argv[4]);
+    else
+        g_ulHalAux_PuEnDelay_Us = 0;
+    msg_print_uart1("PuEnDelay_Us = %d\r\n", g_ulHalAux_PuEnDelay_Us);
+
     Hal_Aux_Init();
     Hal_Aux_AdcCal_Init();
-    // Force-enable
-    g_ubHalAux_Pu_WriteDirect = 1;
+
     u32Res = Hal_Aux_SourceSelect( (E_HalAux_Src_t)ubSrc, ubGpioIdx);
     if(u32Res == HAL_AUX_FAIL)
         goto done;
@@ -186,8 +201,6 @@ int at_cmd_ext_auxadcdbg(char *buf, int len, int mode)
 
     iRet = 1;
 done:
-    // Remove Force-enable
-    g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
     if(iRet)
         msg_print_uart1("OK\r\n");
     else
@@ -199,7 +212,6 @@ done:
 int at_cmd_ext_auxadc(char *buf, int len, int mode)
 {
     int iRet = 0;
-    uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
     uint8_t ubSrc = 0;
     uint8_t ubGpioIdx = 0;
     uint32_t u32Res = 0;
@@ -218,8 +230,7 @@ int at_cmd_ext_auxadc(char *buf, int len, int mode)
 
     Hal_Aux_Init();
     Hal_Aux_AdcCal_Init();
-    // Force-enable
-    g_ubHalAux_Pu_WriteDirect = 1;
+
     u32Res = Hal_Aux_AdcConvValue_Get( (E_HalAux_Src_Patch_t)ubSrc, ubGpioIdx, &u32Temp);
     if(u32Res == HAL_AUX_FAIL)
         goto done;
@@ -232,8 +243,6 @@ int at_cmd_ext_auxadc(char *buf, int len, int mode)
 
     iRet = 1;
 done:
-    // Remove Force-enable
-    g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
     if(iRet)
         msg_print_uart1("OK\r\n");
     else
@@ -378,14 +387,12 @@ int at_cmd_ext_adcreload(char *buf, int len, int mode)
 int at_cmd_ext_adcvbat(char *buf, int len, int mode)
 {
     int iRet = 0;
-    uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
     float fVbat = 0;
 
     Hal_Aux_Init();
     Hal_Aux_AdcCal_Init();
-    g_ubHalAux_Pu_WriteDirect = 1;
+
     iRet = Hal_Aux_VbatGet( &fVbat );
-    g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
 
     msg_print_uart1("Got Vbat = %f\r\n", fVbat);
 
@@ -399,7 +406,6 @@ int at_cmd_ext_adcvbat(char *buf, int len, int mode)
 int at_cmd_ext_adcgpio(char *buf, int len, int mode)
 {
     int iRet = 0;
-    uint8_t u8WriteDirect_bak = g_ubHalAux_Pu_WriteDirect;
     float fVbat = 0;
     uint8_t ubGpioIdx = 0;
 
@@ -413,9 +419,8 @@ int at_cmd_ext_adcgpio(char *buf, int len, int mode)
 
     Hal_Aux_Init();
     Hal_Aux_AdcCal_Init();
-    g_ubHalAux_Pu_WriteDirect = 1;
+
     iRet = Hal_Aux_IoVoltageGet( ubGpioIdx, &fVbat );
-    g_ubHalAux_Pu_WriteDirect = u8WriteDirect_bak;
 
     msg_print_uart1("Got GPIO = %f\r\n", fVbat);
 

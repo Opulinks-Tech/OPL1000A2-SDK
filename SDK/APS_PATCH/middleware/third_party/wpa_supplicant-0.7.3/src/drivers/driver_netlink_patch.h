@@ -57,6 +57,8 @@ extern "C" {
  *************************************************************************
  */
 void wpa_driver_func_init_patch(void);
+int wpa_driver_netlink_reset(void);
+Boolean wpa_driver_netlink_disconnect_patch(const u8 *bssid, u16 reason_code);
 
 #ifdef __cplusplus
 }

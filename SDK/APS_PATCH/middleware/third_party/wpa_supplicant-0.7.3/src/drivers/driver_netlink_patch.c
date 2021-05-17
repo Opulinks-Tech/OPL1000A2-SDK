@@ -14,6 +14,7 @@
 
 #include "../../wpa_supplicant/config.h"
 #include "controller_wifi_com.h"
+#include "controller_wifi_patch.h"
 #include "driver_netlink.h"
 #include "wpa_supplicant_i.h"
 #include "wpa.h"
@@ -29,10 +30,11 @@ extern u8 g_wifi_reconnection_counter;
 extern u8 g_wpa_psk[32];
 extern char g_passphrase[MAX_LEN_OF_PASSPHRASE]; 
 extern auto_connect_cfg_t g_AutoConnect;
+extern char g_ap_ssid[IEEE80211_MAX_SSID_LEN + 1];
 
 static const char *TAG = "DRV";
 
-#define WPA_IS_PROCESSING "WPA: Ignore, is processing\r\n"
+#define WPA_IS_PROCESSING "WPA: Ignore(%d)\r\n"
 
 static char *get_ssid_by_bsssid(char *pbssid)
 {
@@ -76,19 +78,16 @@ Boolean wpa_driver_netlink_scan_patch(int mode)
     if (wifi_ctrl_state_get() == WIFI_CTRL_SCANNING_ST ||
         wifi_ctrl_state_get() == WIFI_CTRL_CONNECTING_ST ||
         wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST) {
-        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING);
+        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING, wifi_ctrl_state_get());
         return FALSE;
     }
-    else {
-        if (wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_ST) {
-            wifi_ctrl_state_set(WIFI_CTRL_CONNECTED_SCAN_ST);
-        }
-        else {
-            wifi_ctrl_state_set(WIFI_CTRL_SCANNING_ST);
-            wpa_supplicant_set_state(wpa_s, WPA_SCANNING);
-        }
-        wifi_scan_req(mode);
+    
+    if (wifi_ctrl_state_get() == WIFI_CTRL_DISCONNECT_ST) {
+        wpa_supplicant_set_state(wpa_s, WPA_SCANNING);
     }
+    
+    wifi_scan_req(mode);
+    
     return TRUE;
 }
 
@@ -98,19 +97,16 @@ Boolean wpa_driver_netlink_scan_by_cfg_patch(void *cfg)
     if (wifi_ctrl_state_get() == WIFI_CTRL_SCANNING_ST ||
         wifi_ctrl_state_get() == WIFI_CTRL_CONNECTING_ST ||
         wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST) {
-        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING);
+        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING, wifi_ctrl_state_get());
         return FALSE;
     }
-    else {
-        if (wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_ST) {
-            wifi_ctrl_state_set(WIFI_CTRL_CONNECTED_SCAN_ST);
-        }
-        else {
-            wifi_ctrl_state_set(WIFI_CTRL_SCANNING_ST);
-            wpa_supplicant_set_state(wpa_s, WPA_SCANNING);
-        }
-        wifi_scan_req_by_cfg(cfg);
+
+    if (wifi_ctrl_state_get() == WIFI_CTRL_DISCONNECT_ST) {
+        wpa_supplicant_set_state(wpa_s, WPA_SCANNING);
     }
+    
+    wifi_scan_req_by_cfg(cfg);
+    
     return TRUE;
 }
 
@@ -157,20 +153,17 @@ Boolean wpa_driver_netlink_connect_patch(struct wpa_config * conf)
     
     if (wifi_ctrl_state_get() == WIFI_CTRL_SCANNING_ST ||
         wifi_ctrl_state_get() == WIFI_CTRL_CONNECTING_ST ||
-        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST) {
-        log_print(LOG_MED_LEVEL, TAG, "WPA: Ignore, is processing\r\n");
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST ||
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_ST) {
+        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING, wifi_ctrl_state_get());
         ret = -1;
         goto done;
     }
     
-    if (wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_ST) {
-        if (!connection_connected_ctrl()) {
-            ret = -1;
-            goto done;
-        }
-    }
-    
     if (conf->ssid->ssid == NULL) {
+        memset(&g_ap_ssid[0], 0, IEEE80211_MAX_SSID_LEN + 1);
+        memset(&g_wpa_psk[0], 0, PMK_LEN);
+        
         if(get_wifi_certified_mode() == WIFI_CERTIFIED)
         {
             if(wpa_supplicant_is_bssid_blocked_by_mic_error(conf->ssid->bssid, &u32Remain))
@@ -191,6 +184,9 @@ Boolean wpa_driver_netlink_connect_patch(struct wpa_config * conf)
         ret = wifi_sta_join(conf->ssid->bssid);
     } 
     else {
+        memset(&g_ap_ssid[0], 0, IEEE80211_MAX_SSID_LEN + 1);
+        memset(&g_wpa_psk[0], 0, PMK_LEN);
+        
         pInfo = wifi_get_scan_record_by_ssid((char*)(conf->ssid->ssid));
         if (pInfo == NULL) {
             if (hap_temp->hap_final_index!=0){
@@ -216,6 +212,8 @@ Boolean wpa_driver_netlink_connect_patch(struct wpa_config * conf)
             g_bssid[i] = pInfo->bssid[i];
         }
         
+        strncpy(g_ap_ssid, (char *)conf->ssid->ssid, strlen((char *)conf->ssid->ssid));
+        
         wpa_supplicant_set_state(wpa_s, WPA_ASSOCIATING);
         if (strlen(g_passphrase) != 0) {
             wpa_driver_cal_psk((char *)conf->ssid->ssid, strlen((char *)conf->ssid->ssid), g_passphrase, strlen(g_passphrase));
@@ -238,6 +236,25 @@ done:
     return FALSE;
 }
 
+Boolean wpa_driver_netlink_reconnect_patch(struct wpa_config * conf)
+{
+    int ret = 0;
+	if (conf == NULL) return FALSE;
+    if (conf->ssid == NULL) return FALSE;
+
+    if (wifi_ctrl_state_get() == WIFI_CTRL_SCANNING_ST ||
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST ||
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTING_ST ||
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_ST) {
+        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING, wifi_ctrl_state_get());
+        return FALSE;
+    }
+    
+    ret = wifi_sta_join(conf->ssid->bssid);
+    if(ret == 0) return TRUE;
+    return FALSE;
+}
+
 Boolean wpa_driver_netlink_connect_from_ac_patch(u8 index)
 {
     if (index > MAX_NUM_OF_AUTO_CONNECT) {
@@ -247,8 +264,9 @@ Boolean wpa_driver_netlink_connect_from_ac_patch(u8 index)
     
     if (wifi_ctrl_state_get() == WIFI_CTRL_SCANNING_ST ||
         wifi_ctrl_state_get() == WIFI_CTRL_CONNECTING_ST ||
-        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST) {
-        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING);
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST ||
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_ST) {
+        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING, wifi_ctrl_state_get());
         return FALSE;
     }
     
@@ -258,10 +276,33 @@ Boolean wpa_driver_netlink_connect_from_ac_patch(u8 index)
     return TRUE;
 }
 
+Boolean wpa_driver_netlink_disconnect_patch(const u8 *bssid, u16 reason_code)
+{
+    if (wifi_ctrl_state_get() == WIFI_CTRL_SCANNING_ST ||
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTED_SCAN_ST ||
+        wifi_ctrl_state_get() == WIFI_CTRL_CONNECTING_ST) {
+        log_print(LOG_MED_LEVEL, TAG, WPA_IS_PROCESSING, wifi_ctrl_state_get());
+        return FALSE;
+    }
+    
+    g_wifi_reconnection_counter = MAX_WIFI_RECONNECTION;
+    wifi_sta_leave(reason_code);
+    
+    return TRUE;
+}
+
+
+int wpa_driver_netlink_reset(void)
+{
+    ctrl_wifi_reset();
+    return 0;
+}
+
 void wpa_driver_func_init_patch(void)
 {
     wpa_driver_netlink_scan        = wpa_driver_netlink_scan_patch;
     wpa_driver_netlink_scan_by_cfg = wpa_driver_netlink_scan_by_cfg_patch;
     wpa_driver_netlink_connect     = wpa_driver_netlink_connect_patch;
+    wpa_driver_netlink_reconnect   = wpa_driver_netlink_reconnect_patch;
     wpa_driver_netlink_connect_from_ac = wpa_driver_netlink_connect_from_ac_patch;
 }

@@ -150,10 +150,29 @@ void IPC3_IRQHandler_Entry_patch(void)
 
 void GPIO_IRQHandler_Entry_patch(void)
 {
+    E_GpioIdx_t eGpioIdx = GPIO_IDX_00;
+    uint32_t u32Status = 0;
+    
     ps_update_io_time();
+    
+    // Get status
+    u32Status = Hal_Vic_GpioIntStatRead();
 
-    void GPIO_IRQHandler_Entry_impl(void);
-    GPIO_IRQHandler_Entry_impl();
+    for(eGpioIdx = GPIO_IDX_00; eGpioIdx<GPIO_IDX_MAX; eGpioIdx++)
+    {
+        if( u32Status & (1<<eGpioIdx) )
+        {
+            // Hook here...
+            if(g_taHalVicGpioCallBack[eGpioIdx] != 0)
+                g_taHalVicGpioCallBack[eGpioIdx](eGpioIdx);
+            
+            // Clear module interrupt
+            Hal_Vic_GpioIntClear(eGpioIdx);
+        }
+    }
+
+    // Clear VIC interrupt
+    Hal_Vic_IntClear(GPIO_IRQn);
 }
 
 

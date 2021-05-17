@@ -16,7 +16,15 @@
 #include <stdbool.h>
 #include "lwip/sockets.h"
 
+//#define HTTPCLIENT_SSL_ENABLE
+
 #ifdef HTTPCLIENT_SSL_ENABLE
+
+#if !defined(MBEDTLS_CONFIG_FILE)
+#include "config.h"
+#else
+#include MBEDTLS_CONFIG_FILE  
+#endif
 //#include "mbedtls/compat-1.3.h"
 #include "mbedtls/net.h"
 #include "mbedtls/ssl.h"
@@ -101,6 +109,7 @@ typedef struct {
     char *auth_password;            /**< Password for basic authentication. */
     bool is_http;                   /**< Http connection? if 1, http; if 0, https. */
     int timeout_ms;                 /**< Socket connect timeout value. Default 0 means socket will block until max SYN retries reached */
+    uint32_t net_handle;
 #ifdef HTTPCLIENT_SSL_ENABLE
     const char *server_cert;        /**< Server certification. */
     const char *client_cert;        /**< Client certification. */

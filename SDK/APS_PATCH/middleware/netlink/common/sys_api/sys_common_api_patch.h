@@ -76,6 +76,8 @@ int sys_set_wifi_lowpower_tx_vdd_rf(uint8_t level);
  */
 int sys_set_rf_temp_cal_mode(uint8_t mode);
 
+void sys_common_api_func_init_patch(void);
+
 #ifdef __cplusplus
 }
 #endif

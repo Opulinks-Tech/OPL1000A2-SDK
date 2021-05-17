@@ -466,5 +466,6 @@ a lot of data that needs to be copied, this should be set high. */
 #define OPL_DHCP               1
 #define OPL_LWIP_ARP           1
 #define OPL_RANDOM_TCP_PORT    1
+#define OPL_DISABLE_PHY_EQU    1
 
 #endif /* LWIP_LWIPOPTS_H */

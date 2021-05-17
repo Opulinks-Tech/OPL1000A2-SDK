@@ -34,7 +34,9 @@ extern "C" {
  *                          Definitions and Macros
  *************************************************************************
  */
-
+#define DEFAULT_AUXADC_AVG_CNT             30
+#define DEFAULT_AUXADC_PU_EN_DELAY_US      0
+#define DEFAULT_AUXADC_PU_EN_DELAY_US_MAX  5000 /* 5 ms */
 
 /*
  *************************************************************************
@@ -83,19 +85,15 @@ typedef struct _sAuxadcCalTable
  */
 extern char *pAuxadcSrcName[ HAL_AUX_SRC_MAX_PATCH ];
 extern S_AuxadcCalTable_t sAuxadcCalTable;
-extern uint8_t g_ubHalAux_Pu_WriteDirect; // Only enable for calibration
-extern uint32_t g_ulHalAux_AverageCount;
-extern uint32_t g_ulHalAux_SkipCount;
-extern uint32_t g_ulHalAux_DelayUs;
 
+extern uint32_t g_ulHalAux_AverageCount;
+extern uint8_t g_ubHalAux_AdcAlwaysOn;
+extern uint32_t g_ulHalAux_PuEnDelay_Us;
 /*
  *************************************************************************
  *                          Public Functions
  *************************************************************************
  */
-/* Internal used*/
-void Hal_Aux_AdcUpdateCtrlReg(uint32_t u32Enable);
-
 /* API */
 void Hal_Aux_AdcCal_Init( void );
 

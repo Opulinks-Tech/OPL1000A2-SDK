@@ -85,21 +85,6 @@ typedef struct
     uint8_t     bRxTaMatchEn; // Whether enable TA match filter
 } S_TRX_DBG_EXT;
 
-typedef struct
-{
-    uint8_t u8DcBeforeDcoc_I;
-    uint8_t u8DcBeforeDcoc_Q;
-
-    uint8_t u8DcAfterDcoc_I;
-    uint8_t u8DcAfterDcoc_Q;
-
-    uint32_t u32DrssiBeforeDcoc;
-    uint32_t u32DrssiAfterDcoc[4];
-
-    uint8_t u8DcocDone;
-    uint8_t u8Rsv[3];
-}S_Rf_DcocDbg_t;
-
 /*
  *************************************************************************
  *                          Public Variables

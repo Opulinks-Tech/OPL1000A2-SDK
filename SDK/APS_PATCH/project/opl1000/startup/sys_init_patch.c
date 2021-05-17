@@ -53,9 +53,11 @@
 #include "mw_fim_patch.h"
 #include "mw_fim_default_group01_patch.h"
 #include "sys_cfg_patch.h"
+#include "sys_common_api_patch.h"
 #include "opl1000_it_patch.h"
 #include "events_netlink_patch.h"
 #include "cmsis_os_patch.h"
+#include "util_func_patch.h"
 /*
  *************************************************************************
  *                          Definitions and Macros
@@ -498,6 +500,7 @@ void SysInit_EntryPoint(void)
     osPatchInit();
 
     // 15. util api
+    Util_Func_PatchInit();
 
     // 16. Power Saving
     ps_patch_init();
@@ -524,6 +527,7 @@ void SysInit_EntryPoint(void)
     // 24. OTA
 
     // 25. System Common
+    sys_common_api_func_init_patch();
 
     // 26. SYS config
     sys_cfg_pre_init_patch();

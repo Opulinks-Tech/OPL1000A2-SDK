@@ -44,6 +44,7 @@ typedef enum
 {
     AGENT_MSG_M0_PATCH = 0,
     AGENT_MSG_UART1_PATCH,
+    AGENT_MSG_AT_OUTPUT_PATCH,
 
     AGENT_MSG_MAX_PATCH
 } T_AgentMsgTypePatch;
@@ -61,6 +62,14 @@ typedef struct
     uint32_t u32ParamLen;
     uint8_t pu8Param[];
 } T_AgentMsgInt;
+
+typedef enum
+{
+    M3_MSG_AUXADC_CFG_SET = M3_MSG_MAX,
+    M3_MSG_AUXADC_REQ,
+
+    M3_MSG_MAX_PATCH
+} T_M3MsgTypePatch;
 
 typedef int (*T_AgentDataHandleFp)(uint32_t u32Type, uint8_t *u8aData, uint32_t u32DataLen, void *pParam);
 typedef void (*T_AgentDataHandleRegFp)(T_AgentDataHandleFp fpHandle, void *pParam);

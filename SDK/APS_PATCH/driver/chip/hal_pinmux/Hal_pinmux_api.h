@@ -15,6 +15,7 @@
 #include "stdint.h"
 #include "opl1000.h"
 #include "hal_vic.h"
+#include "hal_gpio.h"
 
 // Sec 2: Constant Definitions, Imported Symbols, miscellaneous
 #define PIN     ((S_App_Pin_Config_t *) (AOS_BASE + 0x090))
@@ -54,6 +55,7 @@ typedef struct
     uint8_t io;         /**< GPIO index */
     uint8_t row;        /**< excel row  */
     uint8_t col;        /**< excel col  */
+    E_SLEEP_IO_CFG eSlpCfg; /**< Sleep IO auto control */
 }T_Pin;
 
 /**

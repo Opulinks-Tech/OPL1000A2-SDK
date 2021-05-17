@@ -267,6 +267,11 @@ int httpclient_conn(httpclient_t *client, char *host)
 
     freeaddrinfo( addr_list );
 
+    if (ret == HTTPCLIENT_OK)
+    {
+       client->net_handle = 1;
+    }
+
     return ret;
 }
 
@@ -584,8 +589,11 @@ int httpclient_recv(httpclient_t *client, char *buf, int min_len, int max_len, i
     size_t readLen = 0;
     struct timeval tv;
 
+    if (client->is_http)
+    {
     ms_to_timeval(client->timeout_ms, &tv);
     setsockopt(client->socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+    }
 
     while (readLen < max_len) {
         buf[readLen] = '\0';
@@ -609,6 +617,8 @@ int httpclient_recv(httpclient_t *client, char *buf, int min_len, int max_len, i
 #ifdef HTTPCLIENT_SSL_ENABLE
         else {
             httpclient_ssl_t *ssl = (httpclient_ssl_t *)client->ssl;
+            mbedtls_ssl_conf_read_timeout(&ssl->ssl_conf, client->timeout_ms);
+
         #if 1
             if (readLen < min_len) {
                 mbedtls_ssl_set_bio(&ssl->ssl_ctx, &ssl->net_ctx, mbedtls_net_send, mbedtls_net_recv, NULL);
@@ -730,9 +740,20 @@ int httpclient_retrieve_content(httpclient_t *client, char *data, int len, httpc
                 }
             } while (!foundCrlf);
             data[crlf_pos] = '\0';
-            n = sscanf(data, "%x", &readLen);/* chunk length */
+            //n = sscanf(data, "%x", &readLen);/* chunk length */
+
+            readLen = strtoul(data, NULL, 16);
+            printf("chunk len=%d\n",readLen);
+            n = (0 == readLen) ? 0 : 1;
             client_data->retrieve_len = readLen;
             client_data->response_content_len += client_data->retrieve_len;
+            if ( readLen == 0 ) {
+                /* Last chunk */
+                client_data->is_more = false;
+                printf("no more (last chunk)\n");
+                break;
+            }
+
             if (n != 1) {
                 ERR("Could not read chunk length");
                 return HTTPCLIENT_ERROR_PRTCL;
@@ -741,12 +762,7 @@ int httpclient_retrieve_content(httpclient_t *client, char *data, int len, httpc
             memmove(data, &data[crlf_pos + 2], len - (crlf_pos + 2)); /* Not need to move NULL-terminating char any more */
             len -= (crlf_pos + 2);
 
-            if ( readLen == 0 ) {
-                /* Last chunk */
-                client_data->is_more = false;
-                DBG("no more (last chunk)");
-                break;
-            }
+
         } else {
             readLen = client_data->retrieve_len;
         }
@@ -849,7 +865,7 @@ int httpclient_response_parse(httpclient_t *client, char *data, int len, httpcli
         WARN("Response code %d", client->response_code);
     }
 
-    DBG("Reading headers%s", data);
+    DBG("Reading header :%s", data);
 
     memmove(data, &data[crlf_pos + 2], len - (crlf_pos + 2) + 1); /* Be sure to move NULL-terminating char as well */
     len -= (crlf_pos + 2);
@@ -976,6 +992,11 @@ HTTPCLIENT_RESULT httpclient_connect(httpclient_t *client, char *url)
         }
     }
 #endif
+
+    if (ret == HTTPCLIENT_OK)
+    {
+       client->net_handle = 1;
+    }
 
 #ifdef HTTPCLIENT_TIME_DEBUG
     end_time = sys_now();
@@ -1209,7 +1230,7 @@ static int httpclient_ssl_conn(httpclient_t *client, char *host)
     char port[10] = {0};
     httpclient_ssl_t *ssl;
 
-    client->ssl = pvPortMalloc(sizeof(httpclient_ssl_t));
+    client->ssl = malloc(sizeof(httpclient_ssl_t));
     if (!client->ssl) {
         DBG("Memory malloc error.");
         ret = -1;
@@ -1219,6 +1240,20 @@ static int httpclient_ssl_conn(httpclient_t *client, char *host)
 
     if (client->server_cert)
         authmode = MBEDTLS_SSL_VERIFY_REQUIRED;
+
+
+#if 1
+    static const int ciphersuite_preference[] =
+    {
+     MBEDTLS_TLS_RSA_WITH_AES_256_CBC_SHA256,
+     MBEDTLS_TLS_RSA_WITH_AES_256_CBC_SHA,
+     MBEDTLS_TLS_RSA_WITH_AES_128_CBC_SHA256,
+     MBEDTLS_TLS_RSA_WITH_AES_128_CBC_SHA,    };
+
+    mbedtls_ssl_setup_preference_ciphersuites(ciphersuite_preference);
+#endif
+
+    mbedtls_ssl_config_max_content_len(1024*6);
 
     /*
      * Initialize the RNG and the session data
@@ -1344,6 +1379,8 @@ static int httpclient_ssl_conn(httpclient_t *client, char *host)
     else
         DBG("svr_cert varification ok.");
 
+    DBG("Cipher suite is %s\r\n", mbedtls_ssl_get_ciphersuite(&ssl->ssl_ctx));
+
 exit:
     DBG("ret=%d.", ret);
     return ret;
@@ -1369,7 +1406,7 @@ static int httpclient_ssl_close(httpclient_t *client)
     mbedtls_ctr_drbg_free(&ssl->ctr_drbg);
     mbedtls_entropy_free(&ssl->entropy);
 
-    vPortFree(ssl);
+    free(ssl);
     return 0;
 }
 #endif

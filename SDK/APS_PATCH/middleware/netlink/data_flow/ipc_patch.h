@@ -41,7 +41,6 @@ extern "C" {
 #define IPC_SPARE0_MSQ_FLASH_READY   (1 << 6)
 #define IPC_SPARE0_APS_CLOCK_READY   (1 << 7)
 #define IPC_SPARE0_SEQ_32K_SRC_SEL   (1 << 24)
-#define IPC_SPARE0_AUXADC_M0_ACT     (1 << 30)
 
 #define IPC_DBG_TRX_PARAM_LEN_EXT    sizeof(S_TRX_DBG_EXT)
 

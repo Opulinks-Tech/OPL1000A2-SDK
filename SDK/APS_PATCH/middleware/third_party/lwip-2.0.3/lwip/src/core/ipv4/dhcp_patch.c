@@ -82,6 +82,8 @@
 #include "ipv4/dhcp_if.h"
 #endif
 
+extern void LWIP_ROMFN(dhcp_stop)(struct netif *netif);
+
 extern uint8_t g_dhcp_retry_mode;
 extern uint32_t g_lwip_dhcp_autoip_coop_tries;
 extern uint32_t g_dhcp_retry_interval;
@@ -188,6 +190,10 @@ static u8_t dhcp_discover_request_options[] = {
 
 extern struct udp_pcb *dhcp_pcb;
 extern LWIP_RETDATA int dhcp_does_arp_check_flag;
+
+#if OPL_DISABLE_PHY_EQU
+#include "controller_wifi_patch.h"
+#endif
 
 /*
  * Set the DHCP state of a DHCP client.
@@ -432,7 +438,11 @@ err_t dhcp_start_patch(struct netif *netif)
   LWIP_ERROR("netif is not up, old style port?", netif_is_up(netif), return ERR_ARG;);
   dhcp = netif_dhcp_data(netif);
   LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("dhcp_start(netif=%p) %c%c%"U16_F"\n", (void*)netif, netif->name[0], netif->name[1], (u16_t)netif->num));
-
+  
+#if OPL_DISABLE_PHY_EQU
+  ctrl_wifi_reg_write(WIFI_PHY_BYP_KEEP_ADDR, WIFI_PHY_DISABLE_EQU_VAL);
+#endif
+  
   /* check MTU of the netif */
   if (netif->mtu < DHCP_MAX_MSG_LEN_MIN_REQUIRED) {
     LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("dhcp_start(): Cannot use this netif with DHCP: MTU is too small\n"));
@@ -501,6 +511,22 @@ err_t dhcp_start_patch(struct netif *netif)
     return ERR_MEM;
   }
   return result;
+}
+
+/**
+ * @ingroup dhcp4
+ * Remove the DHCP client from the interface.
+ *
+ * @param netif The network interface to stop DHCP on
+ */
+void
+dhcp_stop_patch(struct netif *netif)
+{
+  LWIP_ROMFN(dhcp_stop)(netif);
+    
+#if OPL_DISABLE_PHY_EQU
+  ctrl_wifi_reg_write(WIFI_PHY_BYP_KEEP_ADDR, WIFI_PHY_ENABLE_EQU_VAL);
+#endif
 }
 
 /**
@@ -619,16 +645,69 @@ static void dhcp_bind_patch(struct netif *netif)
       dhcp->cb(netif);
   }
   /* Opulinks add end. */
+  
+#if OPL_DISABLE_PHY_EQU
+  ctrl_wifi_reg_write(WIFI_PHY_BYP_KEEP_ADDR, WIFI_PHY_ENABLE_EQU_VAL);
+#endif
+}
+
+/**
+ * The DHCP timer that checks for lease renewal/rebind timeouts.
+ * Must be called once a minute (see @ref DHCP_COARSE_TIMER_SECS).
+ */
+void
+dhcp_coarse_tmr_patch(void)
+{
+  struct netif *netif = netif_list;
+  LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE, ("dhcp_coarse_tmr()\n"));
+  /* iterate through all network interfaces */
+  while (netif != NULL) {
+    /* only act on DHCP configured interfaces */
+    struct dhcp *dhcp = netif_dhcp_data(netif);
+    if ((dhcp != NULL) && (dhcp->state != DHCP_STATE_OFF)) {
+      /* compare lease time to expire timeout */
+      if (dhcp->t0_timeout && (++dhcp->lease_used == dhcp->t0_timeout)) {
+#if OPL_DISABLE_PHY_EQU
+        ctrl_wifi_reg_write(WIFI_PHY_BYP_KEEP_ADDR, WIFI_PHY_DISABLE_EQU_VAL);
+#endif
+        LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("dhcp_coarse_tmr(): t0 timeout\n"));
+        /* this clients' lease time has expired */
+        dhcp_release(netif);
+        dhcp_discover(netif);
+      /* timer is active (non zero), and triggers (zeroes) now? */
+      } else if (dhcp->t2_rebind_time && (dhcp->t2_rebind_time-- == 1)) {
+#if OPL_DISABLE_PHY_EQU
+        ctrl_wifi_reg_write(WIFI_PHY_BYP_KEEP_ADDR, WIFI_PHY_DISABLE_EQU_VAL);
+#endif
+        LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("dhcp_coarse_tmr(): t2 timeout\n"));
+        /* this clients' rebind timeout triggered */
+        dhcp_t2_timeout(netif);
+      /* timer is active (non zero), and triggers (zeroes) now */
+      } else if (dhcp->t1_renew_time && (dhcp->t1_renew_time-- == 1)) {
+#if OPL_DISABLE_PHY_EQU
+        ctrl_wifi_reg_write(WIFI_PHY_BYP_KEEP_ADDR, WIFI_PHY_DISABLE_EQU_VAL);
+#endif
+        LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("dhcp_coarse_tmr(): t1 timeout\n"));
+        /* this clients' renewal timeout triggered */
+        dhcp_t1_timeout(netif);
+      }
+    }
+    /* proceed to next netif */
+    netif = netif->next;
+  }
 }
 
 void lwip_load_interface_dhcp_patch(void)
 {
-    g_dhcp_retry_interval = 1000;
+    g_dhcp_retry_mode     = 0;
+    g_dhcp_retry_interval = 2000;
     
     dhcp_discover_adpt  =  dhcp_discover_patch;
     dhcp_recv_adpt      =  dhcp_recv_patch;
     dhcp_start_adpt     =  dhcp_start_patch;
+    dhcp_stop_adpt      =  dhcp_stop_patch;
     dhcp_bind_adpt      =  dhcp_bind_patch;
+    dhcp_coarse_tmr_adpt = dhcp_coarse_tmr_patch;
 }
 
 #endif /* LWIP_IPV4 && LWIP_DHCP */

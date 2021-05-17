@@ -57,6 +57,7 @@ extern "C" {
  *************************************************************************
  */
 void wpa_cli_func_init_patch(void);
+int wpa_cli_cmd_reset(int argc, char *argv[]);
 
 #ifdef __cplusplus
 }

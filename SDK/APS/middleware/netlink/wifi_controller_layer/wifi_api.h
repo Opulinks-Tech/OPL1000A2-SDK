@@ -169,6 +169,17 @@ int wifi_start(void);
 int wifi_stop(void);
 
 /**
+  * @brief  Reset wifi status
+  *         When receive the disconnect event with reascon code (255), means the something wrong in OPL1000.
+  *         User must be invoke the wifi_reset function try to reset the status to idle.
+  *         Return 0 means the reset is successfully.
+  *
+  * @return    0  : success
+  * @return    other : failed
+  */
+int wifi_reset(void);
+
+/**
   * @brief     Scan all available APs.
   *            After invoke the #wifi_set_config() and #wifi_start(), then call #wifi_scan_start() to scan APs
   *

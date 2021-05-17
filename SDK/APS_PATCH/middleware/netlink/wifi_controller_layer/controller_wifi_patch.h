@@ -44,7 +44,9 @@ extern "C" {
  *                          Typedefs and Structures
  *************************************************************************
  */
-
+#define WIFI_PHY_BYP_KEEP_ADDR    0x40002010
+#define WIFI_PHY_ENABLE_EQU_VAL   0x00100000
+#define WIFI_PHY_DISABLE_EQU_VAL  0x00100020
 
 
 /*
@@ -62,6 +64,8 @@ extern "C" {
 void wifi_ctrl_init_patch(void);
 void wifi_sta_info_init_fn_impl(void);
 int ctrl_wifi_evt_cfg_patch(wifi_evt_t * pWifiEvt);
+int ctrl_wifi_reset(void);
+int ctrl_wifi_reg_write(uint32_t addr, uint32_t val);
 
 #ifdef __cplusplus
 }

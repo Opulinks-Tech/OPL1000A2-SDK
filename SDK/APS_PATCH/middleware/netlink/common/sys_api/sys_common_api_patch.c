@@ -17,12 +17,28 @@
 #include "sys_common_types.h"
 #include "sys_common_api_patch.h"
 #include "sys_common_ctrl.h"
+#include "sys_common_api_if.h"
 
 #define API_SYS_COMMON_LOGE(fmt,arg...)             printf(("E [API]: "fmt"\r\n"), ##arg)
 #define API_SYS_COMMON_LOGI(fmt,arg...)             printf(("I [API]: "fmt"\r\n"), ##arg)
 
-extern int at_cmd_rf_test_mode(char *buf, int len, int mode);
+extern int sys_set_config_rf_power_level_impl(uint8_t level);
+int sys_set_config_rf_power_level_patch(uint8_t level)
+{
+    if( (level & 0xF) >= 8) {
+        API_SYS_COMMON_LOGE("Invalid BLE param.");
+        return -1;
+    }
 
+    return sys_set_config_rf_power_level_impl(level);
+}
+
+void sys_common_api_func_init_patch(void)
+{
+    sys_set_config_rf_power_level_api = sys_set_config_rf_power_level_patch;
+}
+
+extern int at_cmd_rf_test_mode(char *buf, int len, int mode);
 int sys_set_wifi_lowpower_tx_vdd_rf(uint8_t level)
 {
     int ret;

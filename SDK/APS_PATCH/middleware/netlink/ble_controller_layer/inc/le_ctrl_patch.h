@@ -73,6 +73,7 @@ void le_ctrl_pre_patch_init(void);
 // le_ctrl_hci_uart_tl
 
 // le_ctrl_data
+void le_ctrl_data_hci_buf_fragment_routine_patch(uint16_t handle);
 
 // le_ctrl_enc
 
