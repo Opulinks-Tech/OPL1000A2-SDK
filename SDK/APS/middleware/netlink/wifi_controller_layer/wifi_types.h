@@ -106,6 +106,13 @@ typedef enum {
     WIFI_MODE_MAX
 } wifi_mode_t;
 
+/** @brief Structure of WiFi country-based regional restrictions.
+*/
+typedef struct {
+    char                  cc[3];        /**< country code string. Ex: "CN", "US", "JP", "EU" */
+    uint8_t               start_chan;   /**< start channel */
+    uint8_t               max_chan;     /**< maximum channel. Ex: "CN":13, "US":11, "JP":14, "EU":13 */
+} wifi_country_t;
 
 /** @brief This enumeration defines the wireless authentication mode to indicate the Wi-Fi device authentication attribute.
 */
@@ -155,6 +162,7 @@ typedef enum {
     WIFI_REASON_CODE_CONNECT_TIMEOUT,                    /**<  202  Connect to AP timeout. */
     WIFI_REASON_CODE_AUTH_FAILED,                        /**<  203  Connect to AP failed due to something wrong. */
     WIFI_REASON_CODE_ASSOC_FAILED,                       /**<  204  Connect to AP failed due to not supporting the AP option. */
+    WIFI_REASON_CODE_OUT_OF_COUNTRY,                     /**<  205  Connect to AP failed due to out of country regional restrictions. */
 } wifi_reason_code_t;
 
 /** @brief This enumeration defines the wireless STA scan type

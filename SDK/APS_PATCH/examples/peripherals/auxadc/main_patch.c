@@ -348,10 +348,8 @@ static void Main_AppThread_1(void *argu)
       
     
     while (1) {
-        g_ubHalAux_Pu_WriteDirect = 1;
         Hal_Aux_AdcCal_Init();
-        uint8_t ret = Hal_Aux_VbatGet(&fVbat);
-        g_ubHalAux_Pu_WriteDirect = 0;
+        uint8_t ret =  Hal_Aux_VbatGet(&fVbat);
         if (ret == HAL_AUX_OK) {
             temp = (uint32_t)(fVbat*1000);
             printf("Get bat voltage : %d.%03d \r\n", temp/1000,temp%1000);
@@ -360,10 +358,7 @@ static void Main_AppThread_1(void *argu)
         }
         osDelay(WAIT_TIME_MS);
         
-        g_ubHalAux_Pu_WriteDirect = 1;
-        Hal_Aux_AdcCal_Init();
         ret = Hal_Aux_IoVoltageGet(AUX_GPIO_IDX, &fIoVoltage);
-        g_ubHalAux_Pu_WriteDirect = 0;
         if (ret == HAL_AUX_OK) {
             temp = (uint32_t)(fIoVoltage*1000);
             printf("Get io %d voltage : %d.%03d \r\n", AUX_GPIO_IDX, temp/1000,temp%1000);

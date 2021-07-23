@@ -353,6 +353,26 @@ int wifi_config_set_opmode(uint8_t mode);
 int wifi_config_get_opmode(uint8_t *mode);
 
 /**
+  * @brief set the structure of wifi country code
+  *
+  * @param[in] the structure of wifi country code, please refer to wifi_types.h
+  *
+  * @return    0  : success
+  * @return    other : failed
+  */
+int wifi_set_country(const wifi_country_t *country);
+
+/**
+  * @brief get the structure of wifi country code
+  *
+  * @param[in] the structure of wifi country code, please refer to wifi_types.h
+  *
+  * @return    0  : success
+  * @return    other : failed
+  */
+int wifi_get_country(wifi_country_t *country);
+
+/**
   * @brief     Get mac of specified interface
   *
   * @param[in]   interface: Configure the current wifi working mode,The options are

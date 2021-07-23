@@ -39,6 +39,7 @@ extern "C" {
 
 #define CONNECT_AP_ERR_AUTH_FAILED    203
 #define CONNECT_AP_ERR_ASSOC_FAILED   204
+#define CONNECT_AP_ERR_OUT_OF_COUNTRY 205
 
 #define CTRL_WIFI_ACT_AUTO    1
 #define CTRL_WIFI_ACT_HIDDEN  2
@@ -59,6 +60,29 @@ typedef struct
     T_Ctrl_Wifi_EvtHandler_Fp fpFunc;
 } T_Ctrl_Wifi_EvtHandlerTbl;
 
+typedef struct
+{
+    /*
+     * Country code (String):
+     *    "CN", "US", "JP", "EU"
+     */
+    char cc[3];
+
+    /*
+     * Start channel 1.
+     */
+    uint8_t start_chan;
+
+    /*
+     * Maximum number of Channel:
+     *    "CN" : 13
+     *    "US" : 11
+     *    "JP" : 14
+     *    "EU" : 13
+     */
+    uint8_t max_chan;
+} ctrl_wifi_country_info_t;
+
 /*
  *************************************************************************
  *                          Public Variables
@@ -71,7 +95,8 @@ extern uint32_t ctrl_wifi_act;
  *                          Public Functions
  *************************************************************************
  */
-
+int ctrl_wifi_set_country_info(ctrl_wifi_country_info_t *info);
+int ctrl_wifi_get_country_info(ctrl_wifi_country_info_t *info);
 
 #ifdef __cplusplus
 }

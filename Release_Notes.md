@@ -1,4 +1,29 @@
 ﻿## Release Version:
+SDK Package: MP_2.21.002
+Patch_Lib : 5103
+
+## Release Date: 2021/07/23
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 NONE
+   
+2. Tool version information and update:
+   2.1 NONE
+
+3. Demo update:
+   3.1 NONE
+   
+4. Examples update:
+   4.1 NONE
+   
+
+## Bug Fix List 
+[PS] 		Handling RTOS tick count overflow condition
+[Wstack] 	Channel filter by country code
+[MAC]  		Processing un-scheduled beacon-tracking plus time improperly
+
+## Release Version:
 SDK Package: MP_2.21.001
 Patch_Lib : 4907
 

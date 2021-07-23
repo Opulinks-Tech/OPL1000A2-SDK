@@ -411,8 +411,13 @@ uint32_t g_restored_ip_addr = 0;
 bool dhcp_ip_addr_restore(struct netif *netif)
 {
     struct dhcp *dhcp = netif_dhcp_data(netif);
-    dhcp->offered_ip_addr.addr = g_restored_ip_addr;
-    return true;
+    if (g_restored_ip_addr == IPADDR_ANY) {
+        return false;
+    }
+    else {
+        dhcp->offered_ip_addr.addr = g_restored_ip_addr;
+        return true;
+    }
 }
 
 void dhcp_ip_addr_store(struct netif *netif)
