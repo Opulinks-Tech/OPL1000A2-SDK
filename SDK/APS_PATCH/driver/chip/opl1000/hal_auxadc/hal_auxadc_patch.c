@@ -754,7 +754,7 @@ uint8_t Hal_Aux_AdcMiniVolt_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, f
         return HAL_AUX_FAIL;
 
     // Convert RawData to mVlot
-    *pfVbat = (float)Hal_Aux_AdcMiniVolt_Convert(ulAdcValue)/(float)1000;
+    *pfVbat = (float)Hal_Aux_AdcMiniVolt_Convert(ulAdcValue);
     if(*pfVbat < 0)
     {
         *pfVbat = 0;
@@ -788,7 +788,7 @@ uint8_t Hal_Aux_AdcConvValue_Get( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioIdx, 
         return HAL_AUX_FAIL;
 
     // mVlot convert to ideal ADC code
-    *pulValue = (uint32_t)( (fAdcVol * 1023) + 3/2 ) / 3;
+    *pulValue = (uint32_t)( (fAdcVol * 1023) + 3000/2 ) / 3000;
     if( *pulValue >0x3FF)
     {
         *pulValue = 0x3FF;
@@ -841,9 +841,12 @@ uint8_t Hal_Aux_AdcConvValue_Get_v2( E_HalAux_Src_Patch_t tSrc, uint8_t ubGpioId
 uint8_t Hal_Aux_VbatGet_patch(float *pfVbat)
 {
     if( HAL_AUX_OK != Hal_Aux_AdcMiniVolt_Get( (E_HalAux_Src_Patch_t)HAL_AUX_SRC_VBAT, 0, pfVbat) )
+    {
         return HAL_AUX_FAIL;
-    else
+    }else{
+        *pfVbat /= 1000;
         return HAL_AUX_OK;
+    }
 }
 
 /*************************************************************************
@@ -865,9 +868,12 @@ uint8_t Hal_Aux_VbatGet_patch(float *pfVbat)
 uint8_t Hal_Aux_IoVoltageGet_patch(uint8_t ubGpioIdx, float *pfVoltage)
 {
     if( HAL_AUX_OK != Hal_Aux_AdcMiniVolt_Get((E_HalAux_Src_Patch_t)HAL_AUX_SRC_GPIO, ubGpioIdx, pfVoltage) )
+    {
         return HAL_AUX_FAIL;
-    else
+    }else{
+        *pfVoltage /= 1000;
         return HAL_AUX_OK;
+    }
 }
 
 /*************************************************************************

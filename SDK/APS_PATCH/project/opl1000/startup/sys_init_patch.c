@@ -432,6 +432,8 @@ void Sys_RomVersion_patch(void)
  */
 void SysInit_EntryPoint(void)
 {
+    ISR_SetupHardfaultPatch();
+    
     if (Boot_CheckWarmBoot())
         return;
 

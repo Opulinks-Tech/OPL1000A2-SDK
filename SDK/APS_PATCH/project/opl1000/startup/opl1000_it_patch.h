@@ -78,6 +78,7 @@ extern T_InterruptHandler DMA_IRQHandler_Entry;
  */
 
 void ISR_Pre_PatchInit(void);
+void ISR_SetupHardfaultPatch(void);
 #ifdef __cplusplus
 }
 #endif

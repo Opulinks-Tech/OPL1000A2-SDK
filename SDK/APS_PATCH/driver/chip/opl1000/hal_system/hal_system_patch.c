@@ -419,6 +419,9 @@ void Hal_SysPinMuxAppInit_patch(void);
 uint32_t Hal_Sys_RetRamTurnOff_patch(uint32_t u32RetRamIdxs);
 void Hal_Sys_ApsClkChangeApply_patch(void);
 uint32_t Hal_Sys_SwResetAll_patch(void);
+
+uint32_t Hal_Sys_ApsClkTreeSetup_impl(E_ApsClkTreeSrc_t eClkTreeSrc, uint8_t u8ClkDivEn, uint8_t u8PclkDivEn );
+uint32_t Hal_Sys_ApsClkTreeSetup_patch(E_ApsClkTreeSrc_t eClkTreeSrc, uint8_t u8ClkDivEn, uint8_t u8PclkDivEn );
 /*
  *************************************************************************
  *                          Public Variables
@@ -431,8 +434,8 @@ uint32_t Hal_Sys_SwResetAll_patch(void);
  *                          Private Variables
  *************************************************************************
  */
- extern uint8_t g_u8PclkDivEn_Curr;
-
+extern uint8_t g_u8PclkDivEn_Curr;
+extern E_ApsClkTreeSrc_t g_eClkTreeSrc_Curr;
 /*
  *************************************************************************
  *                          Public Functions
@@ -443,6 +446,7 @@ void Hal_Sys_PatchInit(void)
 {
     /* Clock relative */
     Hal_Sys_ApsClkChangeApply = Hal_Sys_ApsClkChangeApply_patch;
+    Hal_Sys_ApsClkTreeSetup = Hal_Sys_ApsClkTreeSetup_patch;
     
     /* Pin-Mux relative*/
     Hal_SysPinMuxAppInit = Hal_SysPinMuxAppInit_patch;
@@ -471,7 +475,42 @@ uint32_t Hal_Sys_ApsPclkGet(void)
  *                          Private Functions
  *************************************************************************
  */
-
+/*************************************************************************
+* FUNCTION:
+*  Hal_Sys_ApsClkTreeSetup
+*
+* DESCRIPTION:
+*   1. APS(M3) clock-tree setup. It contain a source select and two divider in clock-tree
+*       [SRC]---CLK DIV2---+---PCLK DIV2--->PCLK
+*                          +--->Other CLKs
+*   2. Related reg.: AOS 0x134 and 0x138
+* CALLS
+*
+* PARAMETERS
+*   1. eClkTreeSrc : Select the source of clock tree. Refer to E_ApsClkTreeSrc_t
+*   2. u8ClkDivEn  : 1 for Enable/0 for Disable the CLK divider
+*   3. u8PclkDivEn : 1 for Enable/0 for Disable the PCLK divider
+* RETURNS
+*   0: setting complete
+*   1: error
+* GLOBALS AFFECTED
+*
+*************************************************************************/
+uint32_t Hal_Sys_ApsClkTreeSetup_patch(E_ApsClkTreeSrc_t eClkTreeSrc, uint8_t u8ClkDivEn, uint8_t u8PclkDivEn )
+{
+    volatile E_ApsClkTreeSrc_t eClkTreeSrc_prev = g_eClkTreeSrc_Curr;
+    uint32_t u32Ret;
+    
+    u32Ret = Hal_Sys_ApsClkTreeSetup_impl(eClkTreeSrc, u8ClkDivEn, u8PclkDivEn);
+    
+    /* When clock switch from 1p2g to non-1p2g, set the clock MUX 176M source to XTAL_X4 */
+    if ((eClkTreeSrc_prev > APS_CLKTREE_SRC_XTAL_X2) &&
+        (g_eClkTreeSrc_Curr <= APS_CLKTREE_SRC_XTAL_X2) )
+    {
+        AOS->R_M3CLK_SEL = (AOS->R_M3CLK_SEL & ~AOS_APS_CLK_176M_SRC_MASK) | AOS_APS_CLK_176M_SRC_XTAL_X4;
+    }
+    return u32Ret;
+}
 
 /*************************************************************************
 * FUNCTION:

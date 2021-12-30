@@ -85,10 +85,6 @@ void ISR_Pre_PatchInit(void)
     IPC3_IRQHandler_Entry    = IPC3_IRQHandler_Entry_patch;
     GPIO_IRQHandler_Entry    = GPIO_IRQHandler_Entry_patch;
     WDT_IRQHandler_Entry     = WDT_IRQHandler_Entry_patch;
-    
-    
-    ISR_SetupHardfaultPatch();
-    
 }
 /* Setup Hard fault handler to HW patch entry 126 */
 void ISR_SetupHardfaultPatch(void)
