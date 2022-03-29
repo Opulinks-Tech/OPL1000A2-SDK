@@ -101,21 +101,6 @@ void ISR_SetupHardfaultPatch(void)
  *************************************************************************
  */
 
-#if defined(GCC)
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_LR(void)
-{
-    uint32_t __regLR;
-    __ASM volatile ("MOV %0, lr" : "=r" (__regLR));
-    return __regLR;
-}
-#else
-__STATIC_INLINE uint32_t __get_LR(void)
-{
-    register uint32_t __regLR;
-    __ASM {mov __regLR, __return_address()}
-    return __regLR;
-}
-#endif
 
 
 void ExceptionDumpStack(uint32_t u32RegPsp, uint32_t u32RegMsp, uint32_t u32RegLr)
@@ -172,35 +157,63 @@ void GPIO_IRQHandler_Entry_patch(void)
 }
 
 
-void WDT_IRQHandler_Entry_patch(void)
-{
-    uint32_t u32RegPsp, u32RegMsp, u32RegLr;
 
-    u32RegPsp = __get_PSP();
-    u32RegMsp = __get_MSP();
-    u32RegLr = __get_LR();
-    
+void WDT_PostProcess(uint32_t u32RegPsp, uint32_t u32RegMsp, uint32_t u32RegLr)
+{
     Hal_Vic_IntClear(WDT_IRQn);
-    
+    tracer_drct_printf("WDT\n");
     ExceptionDumpStack(u32RegPsp, u32RegMsp, u32RegLr);
+
     Hal_Sys_SwResetAll();
 }
-
-
-void HardFault_Handler_patch(void)
+void HardFault_PostProcess(uint32_t u32RegPsp, uint32_t u32RegMsp, uint32_t u32RegLr)
 {
-    uint32_t u32RegPsp, u32RegMsp, u32RegLr;
-
-    u32RegLr = __get_LR();
-    u32RegPsp = __get_PSP();
-    u32RegMsp = __get_MSP();
-    
     /* Stop WDT first, avoid WDT reset when clockswitch is from 1p2g */
     Hal_Wdt_Stop();
     
     tracer_drct_printf("Hard fault\nE000ED28: %08X %08X", reg_read(0xE000ED28), reg_read(0xE000ED2C));
     tracer_drct_printf(" %08X %08X %08X %08X\n\n", reg_read(0xE000ED30), reg_read(0xE000ED34), reg_read(0xE000ED38), reg_read(0xE000ED3C));
-    
     ExceptionDumpStack(u32RegPsp, u32RegMsp, u32RegLr);
+    
     Hal_Sys_SwResetAll();
 }
+
+#if defined(GCC)
+void WDT_IRQHandler_Entry_patch(void)
+{
+    __asm volatile (
+        "MRS r0, psp\n\t"
+        "MRS r1, msp\n\t"
+        "MOV r2, lr\n\t"
+        "BL WDT_PostProcess\n\t"
+        );
+}
+void HardFault_Handler_patch(void)
+{
+    __asm volatile (
+        "MRS r0, psp\n\t"
+        "MRS r1, msp\n\t"
+        "MOV r2, lr\n\t"
+        "BL HardFault_PostProcess\n\t"
+        );
+}
+#else
+__ASM void WDT_IRQHandler_Entry_patch(void)
+{
+    IMPORT WDT_PostProcess
+    
+    MRS r0, psp
+    MRS r1, msp
+    MOV r2, lr
+    BL WDT_PostProcess
+}
+__ASM void HardFault_Handler_patch(void)
+{
+    IMPORT HardFault_PostProcess
+    
+    MRS r0, psp
+    MRS r1, msp
+    MOV r2, lr
+    BL HardFault_PostProcess
+}
+#endif

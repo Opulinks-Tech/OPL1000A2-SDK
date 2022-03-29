@@ -29,12 +29,49 @@ extern "C" {
  *************************************************************************
  */
 #include "at_cmd_common.h"
+
 /*
  *************************************************************************
  *                          Definitions and Macros
  *************************************************************************
  */
+typedef struct {
+    uint32_t write_index;
+    uint32_t read_index;
+    uint32_t num;
+    uint32_t mask;
+    uint8_t *pbuf;
+} at_trans_ring_buf_cfg_t;
 
+#define RB_GET_NUM(st) \
+    ((st).num)
+
+#define RB_GET_MASK(st) \
+    ((st).mask)
+
+#define RB_IS_FULL(st) \
+    (((uint32_t)((st).write_index - (st).read_index)) >= RB_GET_NUM((st)))
+
+#define RB_GET_COUNT(st) \
+    (((uint32_t)((st).write_index) - (st).read_index)) & RB_GET_MASK((st)))
+
+#define RB_PUT_VAL(st, value) \
+    { \
+        (st).pbuf[(st).write_index & RB_GET_MASK((st))] = (value); \
+        ++(st).write_index; \
+    }
+
+#define RB_GET_VAL(st, value) \
+    { \
+        (value) = (st).pbuf[(st).read_index & RB_GET_MASK((st))] ; \
+        ++(st).read_index; \
+    }
+        
+#define RB_GET_READ_INDEX(st) \
+    ((st).read_index)
+
+#define RB_GET_WRITE_INDEX(st) \
+    ((st).write_index)
 
 /*
  *************************************************************************

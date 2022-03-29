@@ -45,6 +45,9 @@
 #include "at_cmd_data_process_patch.h"
 #include "agent_patch.h"
 
+at_trans_ring_buf_cfg_t at_ring_buf;
+
+extern TimerHandle_t at_trans_timer;
 
 /*
  * @brief Global variable msg_print_uart1 retention attribute segment
@@ -265,7 +268,7 @@ void uart1_rx_int_do_at_patch(uint32_t u32Data)
             }
             else
             {
-                // Others 
+                // Others
                 p->buf[ p->in ] = u8Buff;
 
                 if(at_echo_on)
@@ -321,7 +324,7 @@ void uart1_rx_int_at_data_receive_app_patch(uint32_t u32Data)
         u8Send = 1;
         u8Done = 1;
     }
-    
+
     if(g_u32AtAppDataOffset >= AT_DATA_LEN_MAX)
     {
         u8Send = 1;
@@ -373,9 +376,96 @@ void msg_print_uart1_patch(char *fmt,...)
 	}
 }
 
+/*
+ * @brief UART1 RX Data Handler of TCP/IP (Reserved)
+ *
+ * @param [in] u32Data 4bytes data from UART1 interrupt
+ */
+void uart1_rx_int_at_data_receive_tcpip_patch(uint32_t u32Data)
+{
+    int send_len = 0;
+    bool sendex_flag = FALSE;
+    at_socket_t *link = at_link_get_id(sending_id);
+
+    send_len = data_process_data_len_get();
+
+    if (at_state == AT_STATE_SENDING_RECV)
+    {
+        *pDataLine = (u32Data & 0xFF);
+
+        //if not transparent transmission mode, display back
+        //if(( (u32Data & 0xFF) != '\n') && (at_echo_on))
+        {
+            Hal_Uart_DataSend(UART_IDX_1, (u32Data & 0xFF));
+        }
+
+        if (link->send_mode == AT_SEND_MODE_SENDEX)
+        {
+            uint32_t index = 0;
+            for (index = 0; index < pDataLine - at_data_line; index++)
+            {
+                if ((at_data_line[index] == '\\') && (at_data_line[index + 1] == '0'))
+                {
+                    at_data_line[index] = '\0';
+                    sendex_flag = TRUE;
+                    send_len = index ;
+                    break;
+                }
+            }
+        }
+
+        if ((pDataLine >= &at_data_line[send_len - 1]) || (pDataLine >= &at_data_line[AT_DATA_LEN_MAX - 1]) || (sendex_flag == TRUE))
+        {
+            at_event_msg_t msg = {0};
+
+            msg.event = AT_DATA_TX_EVENT;
+            msg.length = send_len;
+            msg.param = at_data_line;
+            at_data_task_send(&msg);
+            at_state = AT_STATE_SENDING_DATA;
+            pDataLine = at_data_line;
+            sendex_flag = FALSE;
+        }
+        else
+        {
+            pDataLine++;
+        }
+    }
+    /* Enter transparent transmission, with a 20-ms
+     * interval between each packet, and a maximum of
+     * 2048 bytes per packet.
+     *
+     * Baurd Rate       Sec/Byte     Input Bytes In 20 ms
+     *  9600            0.001042           19.2
+     *  115200          0.000087           230.4
+     *  230400          0.000043           460.8
+     *  460800          0.000022           921.6
+     */
+    else if (at_state == AT_STATE_TRANSMIT)
+    {
+        if (RB_IS_FULL(at_ring_buf) == true) {
+            at_uart1_printf((char *)"\r\nError...\r\n");
+            return;
+        }
+
+        RB_PUT_VAL(at_ring_buf, (u32Data & 0xFF))
+    }
+    else //AT_STATE_SENDING_DATA
+    {
+        at_uart1_printf((char *)"\r\nbusy p...\r\n");
+    }
+}
+
 void at_cmd_common_func_init_patch(void)
 {
+    // init at transparen ring buffer
+    memset(&at_ring_buf, 0, sizeof(at_trans_ring_buf_cfg_t));
+    at_ring_buf.num  = AT_DATA_LEN_MAX;
+    at_ring_buf.mask = at_ring_buf.num - 1;
+    at_ring_buf.pbuf = &at_data_line[0];
+
     uart1_rx_int_do_at = uart1_rx_int_do_at_patch;
     uart1_rx_int_at_data_receive_app = uart1_rx_int_at_data_receive_app_patch;
     msg_print_uart1 = msg_print_uart1_patch;
+    uart1_rx_int_at_data_receive_tcpip  = uart1_rx_int_at_data_receive_tcpip_patch;
 }

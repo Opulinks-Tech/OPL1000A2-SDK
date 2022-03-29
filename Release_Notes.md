@@ -1,4 +1,32 @@
 ﻿## Release Version:
+SDK Package: MP_2.21.004
+Patch_Lib : 5753
+
+## Release Date: 2022/03/23
+
+## Function & Feature Update 
+1. Documents updating:
+   1.1 NONE
+   
+2. Tool version information and update:
+   2.1 NONE
+
+3. Demo update:
+   3.1 NONE
+   
+4. Examples update:
+   4.1 NONE
+   
+
+## Bug Fix List 
+[0003030] [AT] Enhanced TCP transparent mode mechanism
+[0003033] [WIFI_CTRL] When multiple APs have the same SSID, device may connect to the one with lower RSSI.
+
+
+
+
+
+## Release Version:
 SDK Package: MP_2.21.003
 Patch_Lib : 5442
 
